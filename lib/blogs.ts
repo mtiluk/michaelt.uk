@@ -2,14 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import type { Project } from "@/types/projects";
+import { Blog } from "@/types/blogs";
 
-const projectDirectory = path.join(process.cwd(), "content/projects");
+const blogDirectory = path.join(process.cwd(), "content/blogs");
 
-export function getAllProjects(): Project[] {
+export function getAllBlogs(): Blog[] {
   let fileNames: string[];
 
   try {
-    fileNames = fs.readdirSync(projectDirectory);
+    fileNames = fs.readdirSync(blogDirectory);
   } catch (error) {
     return [];
   }
@@ -18,7 +19,7 @@ export function getAllProjects(): Project[] {
     .filter((fileName) => fileName.endsWith(".mdx"))
     .map((fileName) => {
       const slug = fileName.replace(/\.mdx$/, "");
-      const fullPath = path.join(projectDirectory, fileName);
+      const fullPath = path.join(blogDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, "utf8");
       const { data, content } = matter(fileContents);
 
