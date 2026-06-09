@@ -41,18 +41,18 @@ function BlogItem({ blog }: { blog: Blog }) {
       <div className="max-w-[544px] mx-auto border-b border-foreground/10 group-hover:border-transparent group-last:border-b-0 pb-3 transition-colors">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <h3 className="text-[14px] font-medium text-text-highlight leading-tight">
+            <h3 className="text-[13px] font-medium text-text-highlight leading-tight">
               {blog.title}
             </h3>
-            <p className="mt-0.5 text-[13px] text-foreground/55 truncate">
+            <p className="mt-1 text-[11px] text-foreground/55 truncate">
               {blog.description}
             </p>
           </div>
           <div className="flex flex-col items-end gap-0.5 flex-shrink-0">
-            <span className="text-[12px] text-foreground/30 group-hover:text-foreground/50 transition-colors">
+            <span className="text-[11px] text-foreground/30 group-hover:text-foreground/50 transition-colors">
               {blog.date}
             </span>
-            <span className="text-[11px] text-foreground/25">
+            <span className="text-[10px] text-foreground/25">
               {blog.readTime}
             </span>
           </div>
