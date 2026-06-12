@@ -53,9 +53,9 @@ function ProjectListItem({ project }: { project: Project }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
-      className="group last:border-b-0 hover:bg-foreground/10 rounded-lg pt-3 block w-full transition-all"
+      className="group last:border-b-0 hover:bg-foreground/10 rounded-lg pt-2 block w-full transition-all"
     >
-      <div className="max-w-[544px] mx-auto border-b border-foreground/10 group-hover:border-transparent group-last:border-b-0 pb-3 transition-colors">
+      <div className="max-w-[544px] mx-auto border-b border-foreground/10 group-hover:border-transparent group-last:border-b-0 pb-2 transition-colors">
         <div className="flex justify-between w-full">
           <div className="flex items-center gap-2">
             <span className="text-[12px] text-foreground/30 leading-none group-hover:text-foreground/50 transition-colors flex-shrink-0">

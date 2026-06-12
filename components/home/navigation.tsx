@@ -7,7 +7,7 @@ import { Project } from "@/types/projects";
 import { usePlaySound } from "../ui/sensory-ui/config/use-play-sound";
 
 export default function Navigation({ projects }: { projects: Project[] }) {
-  const [isList, setIsList] = useState(false);
+  const [isList, setIsList] = useState(true);
   const [activeSection, setActiveSection] = useState("work");
 
   const { play } = usePlaySound({ sound: "interaction.subtle" });
