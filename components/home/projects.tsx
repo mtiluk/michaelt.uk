@@ -102,8 +102,19 @@ export default function Projects({ isList = false, projects }: { isList?: boolea
 
   if (projects.length === 0) {
     return (
-      <div className="max-w-[544px] mx-auto text-text-highlight/20">
-        <p>No projects found.</p>
+      <div className="w-full max-w-136 mx-auto text-center text-[10px] leading-3">
+        <div className="w-full border-t border-dashed border-foreground/20" />
+
+        <pre className="my-2 text-center text-[10px] text-foreground/20 leading-3">
+{` .-.
+(o o)
+| O \\
+|   \\
+'~~~'
+No projects yet`}
+        </pre>
+
+        <div className="w-full border-b border-dashed border-foreground/20" />
       </div>
     );
   }

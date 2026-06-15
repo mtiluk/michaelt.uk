@@ -39,16 +39,32 @@ function BlogItem({ blog }: { blog: Blog }) {
 }
 
 export default function Blogs({ blogs }: { blogs: Blog[] }) {
+  if (blogs.length === 0) {
+    return (
+      <div className="w-full max-w-136 mx-auto text-center text-[10px] leading-3">
+        <div className="w-full border-t border-dashed border-foreground/20" />
+
+        <pre className="my-2 text-center text-[10px] text-foreground/20 leading-3">
+{` .-.
+(o o)
+| O \\
+|   \\
+'~~~'
+No blogs yet`}
+        </pre>
+
+        <div className="w-full border-b border-dashed border-foreground/20" />
+      </div>
+    )
+  }
+
   return (
     <div>
-      {blogs.length > 0 && (
-        <div>
-          {blogs.map((blog, i) => (
-            <BlogItem key={i} blog={blog} />
-          ))}
-        </div>
-      )}
-      {blogs.length === 0 && <p>No blogs found.</p>}
+      <div>
+        {blogs.map((blog, i) => (
+          <BlogItem key={i} blog={blog} />
+        ))}
+      </div>
     </div>
   );
 }
