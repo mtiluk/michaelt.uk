@@ -1,7 +1,8 @@
-import type { MDXComponents } from 'mdx/types'
+import type { MDXComponents } from "mdx/types";
+import List from "./content/list";
 
-const components: MDXComponents = {}
+const components: MDXComponents = {
+  list: List,
+};
 
-export function useMDXComponents(): MDXComponents {
-  return components
-}
+export default components;

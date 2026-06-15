@@ -26,13 +26,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", inter.variable, instrumentSerif.variable, "font-sans")} >
+    <html
+      lang="en"
+      className={cn(
+        "h-full",
+        "antialiased",
+        inter.variable,
+        instrumentSerif.variable,
+        "font-sans",
+      )}
+    >
       <body className="min-h-full flex flex-col">
         <div>
           <Wave />
         </div>
         <div className="absolute inset-x-0 h-[39vh] bg-gradient-to-t from-background via-background/80 to-background/30 pointer-events-none z-10" />
-        <SensoryUIProvider config={{ theme: "retro", volume: 0.5 }}>{children}</SensoryUIProvider>
+        <SensoryUIProvider config={{ theme: "retro", volume: 0.5 }}>
+          {children}
+        </SensoryUIProvider>
       </body>
     </html>
   );

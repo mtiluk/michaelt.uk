@@ -23,6 +23,7 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   font-size: 14px;
+  padding-bottom: 3rem;
 }
 
 ::selection {
@@ -36,4 +37,9 @@ body {
     color: var(--foreground);
     opacity: 60%;
     text-transform: uppercase;
+}
+
+.blog-content > p {
+  margin-top: 1rem;
+  line-height: 160%;
 }

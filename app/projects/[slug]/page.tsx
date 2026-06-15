@@ -5,6 +5,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import components from "@/components/mdx-components";
 
 export default async function ProjectPage({
   params,
@@ -19,7 +20,7 @@ export default async function ProjectPage({
   try {
     const raw = await readFile(
       path.join(process.cwd(), "content/projects", `${slug}.mdx`),
-      "utf-8"
+      "utf-8",
     );
     const { content: mdxContent, data } = matter(raw);
     content = mdxContent;
@@ -59,7 +60,7 @@ export default async function ProjectPage({
 
         {/* Content Section */}
         <div className="mb-6 text-[12px] blog-content">
-          <MDXRemote source={content} />
+          <MDXRemote source={content} components={components} />
         </div>
 
         {/* Footer Section */}
