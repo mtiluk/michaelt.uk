@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Project } from "@/types/projects";
 import { usePlaySound } from "../ui/sensory-ui/config/use-play-sound";
 
-export default function Navigation({ projects }: { projects: Project[] }) {
+export default function Navigation({ projects, blogs }: { projects: Project[]; blogs: Blog[] }) {
   const [isList, setIsList] = useState(true);
   const [activeSection, setActiveSection] = useState("work");
 
@@ -43,7 +43,7 @@ export default function Navigation({ projects }: { projects: Project[] }) {
           <Projects isList={isList} projects={projects} />
         </div>
         <div className={activeSection === "blogs" ? undefined : "hidden"}>
-          <Blogs />
+          <Blogs blogs={blogs} />
         </div>
       </div>
     </div>

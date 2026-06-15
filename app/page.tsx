@@ -1,10 +1,18 @@
 import Contact from "@/components/home/contact";
 import AnimatedBadge from "@/components/home/animated-badge";
 import Navigation from "@/components/home/navigation";
-import { getAllProjects } from "@/lib/projects";
+import type { Blog } from "@/types/blogs";
+import type { Project } from "@/types/projects";
+import getAllContent from "@/lib/content";
+import path from "node:path";
+
+
+const blogDirectory = path.join(process.cwd(), "content/blogs");
+const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export default async function Home() {
-  const projects = getAllProjects();
+  const blogs = getAllContent<Blog>(blogDirectory);
+  const projects = getAllContent<Project>(projectDirectory);
 
   return (
     <div className="container max-w-xl mx-auto relative z-20 pt-[20vh]">
@@ -24,15 +32,15 @@ export default async function Home() {
 
         <div className="mt-3 text-[13px] leading-snug space-y-3 text-pretty">
           <p className="text-text-highlight">
-            I design and build world class interfaces with obsessive attention.
-            A generalist by nature, I learn by breaking things, making things,
-            and connecting dots across disciplines.
+            A Computer Science graduate and research assistant whose current
+            research interests centre on privacy redesigns of common systems,
+            secure cloud and networks engineering, and embedded and IOT Systems.
           </p>
 
           <p>
-            Currently focused on the intersection of creation and distribution.
-            The tools, platforms, and infrastructure that power what people
-            make, watch, and share.
+            Currently focused on building projects and researching, attempting
+            to increase my knowledge and understanding of distributed systems
+            and networking.
           </p>
 
           <p>Looking for my next thing. Come say hi.</p>
@@ -41,8 +49,7 @@ export default async function Home() {
         <Contact />
       </div>
 
-
-      <Navigation projects={projects} />
+      <Navigation projects={projects} blogs={blogs} />
     </div>
   );
 }

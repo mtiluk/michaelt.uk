@@ -8,30 +8,6 @@ type Blog = {
   readTime: string;
 };
 
-const blogs: Blog[] = [
-  {
-    slug: "building-a-design-system",
-    title: "Building a design system from scratch",
-    description: "How I approached building a consistent design system for a growing product.",
-    date: "Mar 2026",
-    readTime: "5 min",
-  },
-  {
-    slug: "next-js-performance",
-    title: "Next.js performance patterns I actually use",
-    description: "A practical look at the optimisations that made a real difference.",
-    date: "Jan 2026",
-    readTime: "8 min",
-  },
-  {
-    slug: "on-simplicity",
-    title: "On simplicity in software",
-    description: "Why I keep coming back to doing less, better.",
-    date: "Nov 2025",
-    readTime: "3 min",
-  },
-];
-
 function BlogItem({ blog }: { blog: Blog }) {
   return (
     <Link
@@ -62,12 +38,17 @@ function BlogItem({ blog }: { blog: Blog }) {
   );
 }
 
-export default function Blogs() {
+export default function Blogs({ blogs }: { blogs: Blog[] }) {
   return (
     <div>
-      {blogs.map((blog, i) => (
-        <BlogItem key={i} blog={blog} />
-      ))}
+      {blogs.length > 0 && (
+        <div>
+          {blogs.map((blog, i) => (
+            <BlogItem key={i} blog={blog} />
+          ))}
+        </div>
+      )}
+      {blogs.length === 0 && <p>No blogs found.</p>}
     </div>
   );
 }
