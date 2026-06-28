@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import Status from "./status";
 import LogoWave from "../logo-wave";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/projects";
@@ -15,7 +13,7 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="group/card block w-full rounded-lg pt-3 transition-colors last:border-b-0 hover:bg-foreground/10" >
       <div className="mx-auto flex max-w-136 items-center gap-2 border-b border-foreground/10 pb-3 transition-colors group-hover/card:border-transparent group-last/card:border-b-0">
-        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-foreground/[0.12] p-0.5">
+        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-foreground/12 p-0.5">
           <Image
             src={project.logo ?? "/logo-placeholder.svg"}
             width={24}
@@ -83,7 +81,7 @@ function ProjectListItem({ project }: { project: Project }) {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
-            <p className="hidden max-w-[160px] truncate text-[12px] text-foreground/55 sm:block">
+            <p className="hidden max-w-40 truncate text-[12px] text-foreground/55 sm:block">
               {project.subtitle}
             </p>
             <ChevronDown
