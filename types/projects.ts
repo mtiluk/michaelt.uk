@@ -1,12 +1,18 @@
 export interface Project {
-  logo: string;
   slug: string;
   title: string;
   subtitle: string;
-  description: string;
   startDate: string;
   endDate: string;
   year: string;
-  status: string;
+  status?: string;
+  logo?: string;
+  color?: string;
+  what?: string;
+  why?: string;
+  result?: string;
+  github?: string;
+  writeup?: string;
+  description: string;
   content: string;
 }

@@ -1,14 +1,19 @@
 ---
 slug: privacy-preserving-wifi-probe-requests
 title: Privacy Preserving Wi-Fi Probe Requests
-subtitle: "Wi-Fi Security investigation"
-description: "Ran end to end research and development across source scraping,
-  image preprocessing, geometry and cabin detection experiments, and a
-  selectable cabin mapping proof of concept."
+subtitle: "Wi-Fi security investigation"
+status: "completed"
+
+what: "A private pseudo-SSID scheme that lets a device reconnect to an access point without broadcasting the network name in plaintext."
+why: "Plaintext SSIDs in Probe Requests let passive listeners track a device's movement and infer home/work locations."
+result: "End-to-end prototype on hostapd + wpa_supplicant: reconnect Probe Requests carried a per-device token in a vendor-specific IE with the SSID absent — verified in Wireshark."
+github: "https://github.com/yourname/your-repo"
+writeup: "/projects/privacy-preserving-wifi-probe-requests"
+
+description: "Ran end to end research and development across source scraping, image preprocessing, geometry and cabin detection , and a selectable cabin mapping proof of concept."
 startDate: "June 2026"
 endDate: "July 2026"
 year: "2026"
-status:
 ---
 
 ### Project Explanation

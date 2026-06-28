@@ -16,16 +16,13 @@ export default async function Home() {
   ]);
 
   return (
-    <main className="container relative z-20 mx-auto max-w-xl pt-[20vh]">
+    <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">
       <div className="mx-auto max-w-136">
         <header className="flex items-baseline gap-2.5">
           <h1 className="font-serif text-[28px] text-balance text-text-highlight">
             Michael Tilley
           </h1>
-          <p
-            aria-hidden
-            className="text-[11px] tracking-wider text-text-highlight/45"
-          >
+          <p aria-hidden className="text-[11px] tracking-wider text-text-highlight/45" >
             /ˈmaɪ·kəl ˈtɪl·i/
           </p>
         </header>
