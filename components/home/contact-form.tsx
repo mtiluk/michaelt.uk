@@ -14,68 +14,86 @@ const PLACEHOLDERS = [
 ];
 
 const CYCLE_INTERVAL = 3000;
+const SUCCESS_RESET_DELAY = 2200;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type Step = "message" | "email" | "success";
 
 export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
-  const [step, setStep] = useState<"message" | "email" | "success">("message");
+  const [step, setStep] = useState<Step>("message");
   const [index, setIndex] = useState(0);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { play } = usePlaySound({
-    sound: "interaction.subtle",
-  });
+  const { play } = usePlaySound({ sound: "interaction.subtle" });
 
   useEffect(() => {
     if (message) return;
-
     const interval = setInterval(() => {
       setIndex((prev) => (prev + 1) % PLACEHOLDERS.length);
     }, CYCLE_INTERVAL);
-
     return () => clearInterval(interval);
   }, [message]);
 
+  useEffect(() => {
+    if (step !== "success") return;
+    const timer = setTimeout(() => {
+      setMessage("");
+      setEmail("");
+      setStep("message");
+    }, SUCCESS_RESET_DELAY);
+    return () => clearTimeout(timer);
+  }, [step]);
+
+  const emailIsValid = EMAIL_REGEX.test(email.trim());
+
   function handleNext() {
     if (!message.trim()) return;
+    setError(null);
     setStep("email");
   }
 
   async function handleSend() {
-    if (!email.trim() || !message.trim()) return;
+    if (sending || !emailIsValid || !message.trim()) return;
 
+    setSending(true);
+    setError(null);
     try {
-      setSending(true);
-
-      await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, email }),
+        body: JSON.stringify({ message: message.trim(), email: email.trim() }),
       });
 
-      setStep("success");
+      if (!res.ok) {
+        setError("Something went wrong. Please try again.");
+        return;
+      }
 
-      // reset after showing success
-      setTimeout(() => {
-        setMessage("");
-        setEmail("");
-        setStep("message");
-      }, 2200);
+      setStep("success");
+    } catch {
+      setError("Couldn't reach the server — check your connection.");
     } finally {
       setSending(false);
     }
   }
 
+  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (step === "email") handleSend();
+    else handleNext();
+  }
+
   const isEmailStep = step === "email";
-  const isSuccessStep = step === "success";
 
   return (
-    <motion.div
+    <motion.form
       layout
-      transition={{
-        layout: { duration: 0.3, ease: "easeInOut" },
-      }}
-      className="flex flex-col mx-1 mb-1 px-3 pt-2.5 pb-2 min-h-[82px] rounded-xl bg-text-highlight/[0.04] relative"
+      onSubmit={handleSubmit}
+      transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
+      className="flex flex-col mx-1 mb-1 px-3 pt-2.5 pb-2 min-h-20.5 rounded-xl bg-text-highlight/4 relative"
     >
       <AnimatePresence mode="wait">
         {step === "message" && (
@@ -87,7 +105,11 @@ export default function ContactForm() {
             transition={{ duration: 0.25 }}
             className="relative"
           >
+            <label htmlFor="contact-message" className="sr-only">
+              Your message
+            </label>
             <textarea
+              id="contact-message"
               className="block w-full bg-transparent text-[12px] leading-5 text-text-highlight outline-none resize-none border-0"
               rows={1}
               value={message}
@@ -95,12 +117,19 @@ export default function ContactForm() {
                 setMessage(e.target.value);
                 play();
               }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleNext();
+                }
+              }}
             />
 
             <AnimatePresence mode="wait">
               {!message && (
                 <motion.span
                   key={index}
+                  aria-hidden
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
@@ -127,12 +156,21 @@ export default function ContactForm() {
               {message}
             </div>
 
+            <label htmlFor="contact-email" className="sr-only">
+              Your email address
+            </label>
             <input
+              id="contact-email"
               autoFocus
               type="email"
+              name="email"
+              autoComplete="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) setError(null);
+              }}
               className="w-full bg-transparent text-[12px] text-text-highlight outline-none"
             />
           </motion.div>
@@ -147,20 +185,26 @@ export default function ContactForm() {
             transition={{ duration: 0.1 }}
             className="flex flex-col items-start gap-1"
           >
-            <div className="text-[12px] text-text-highlight">
+            <div role="status" className="text-[12px] text-text-highlight">
               Message sent!
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {error && (
+        <p role="alert" className="mt-2 text-[11px] text-red-400/80">
+          {error}
+        </p>
+      )}
+
       {step !== "success" && (
         <div className="flex items-center justify-end mt-4">
           <button
-            onClick={isEmailStep ? handleSend : handleNext}
-            disabled={
-              isEmailStep ? !email.trim() || sending : !message.trim()
-            }
+            type="submit"
+            aria-label={isEmailStep ? "Send message" : "Continue to email"}
+            aria-busy={sending}
+            disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
             className="w-7 h-7 flex items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight disabled:bg-text-highlight/10 disabled:text-background transition-colors"
           >
             <AnimatePresence mode="wait">
@@ -171,12 +215,12 @@ export default function ContactForm() {
                 exit={{ opacity: 0, scale: 0.7 }}
                 transition={{ duration: 0.1 }}
               >
-                <ChevronUp className="w-4 h-4" />
+                <ChevronUp className="w-4 h-4" aria-hidden />
               </motion.span>
             </AnimatePresence>
           </button>
         </div>
       )}
-    </motion.div>
+    </motion.form>
   );
 }
