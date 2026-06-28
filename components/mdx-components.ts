@@ -1,5 +1,5 @@
 import type { MDXComponents } from "mdx/types";
-import List from "./content/list";
+import List from "@/components/home/content/list";
 
 const components: MDXComponents = {
   list: List,

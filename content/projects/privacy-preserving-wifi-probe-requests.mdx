@@ -1,0 +1,49 @@
+---
+slug: privacy-preserving-wifi-probe-requests
+title: Privacy Preserving Wi-Fi Probe Requests
+subtitle: "Wi-Fi Security investigation"
+description: "Ran end to end research and development across source scraping,
+  image preprocessing, geometry and cabin detection experiments, and a
+  selectable cabin mapping proof of concept."
+startDate: "June 2026"
+endDate: "July 2026"
+year: "2026"
+status:
+---
+
+### Project Explanation
+
+When a Wi-Fi device looks for a known network, it broadcasts the network name (SSID) in plaintext via Probe Requsts. Anyone nearby passively listening can collect these broadcasts and, by cross-referencing with public geolocation databases, potentially track a device's movement, infer home or work locations, or build up a history of the networks it has visited.
+
+This project explores a simple alternative. Rather than broadcasting the real network name, a device cna instead use a private pseuudo-SSID - a stable, per-device alias - to identify itself to an access point, without ever revealing the network name in the air.
+
+The approach works by deriving a 16-byte token for each device from a SHA-256 hash of the access point's MAC address and the device's MAC address. The token is unique per device, consistent across reconnects, and requires no additional key management infrastructure.
+
+### What Happened
+
+The prototype was implemented as modifications to two open-source tools: hostapd (the access point daemon) and wpa_supplicant (the client daemon), running on a Raspberry Pi 4 with SoftMAC Wi-Fi adapters.
+
+The flow works in two stages:
+
+On first connection, the device connects normally using the real network name. The access point derives a token for that device, stores it, and hands it back to the device inside the Association Response in a vendor-specific Information Element.
+
+On subsequent connections, the device skips the directed network name probe entirely. Instead, it sends a wildcard Probe Request carrying its token in a vendor-specific IE. The access point recognises the token and proceeds with the normal association flow.
+
+No changes to the over-the-air protocol structure were required beyond the addition of a vendor-specific IE, which is an existing and legal extension point in the 802.11 standard.
+
+### The Results
+
+The prototype successfully demonstrated the full end-to-end flow:
+
+<list
+  items={[
+    "On first association, the access point correctly derived and provisioned a unique token to the client, embedding it within the association response in a custom Information Element.",
+    "The client parsed and stored this token, persisting it to disk so that it survived process restarts and power cycles without requiring re-provisioning.",
+    "On reconnect, the client sent a wildcard Probe Request — carrying no plaintext SSID — with the token attached as a vendor-specific IE.",
+    "The access point scanned incoming Probe Requests for matching tokens, and upon finding a valid one, completed the association handshake normally without any fallback to SSID-based matching.",
+  ]}
+/>
+
+This was validated through runtime logs from both daemons and packet captures analysed with tcpdump, tshark, and Wireshark.
+
+The plaintext SSID was absent from the reconnect Probe Request — the primary goal of the project. The token itself is sent in plaintext and is not a cryptographic secret; it acts as a stable discovery alias rather than a confidential credential. Full privacy guarantees, token rotation, and production hardening were explicitly out of scope and remain areas for future work.

@@ -44,6 +44,7 @@ export default function SocialProfile({
         className="relative hover:bg-text-highlight/10 flex items-center p-1.5 text-[10px] rounded-[6px] text-foreground hover:text-text-highlight transition-colors duration-200"
         href={href}
         onMouseEnter={play}
+        target="_blank"
       >
         {icon}
       </Link>
