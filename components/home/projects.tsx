@@ -1,100 +1,175 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronDown } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import Status from "./status";
 import LogoWave from "../logo-wave";
-import { Project } from "@/types/projects";
+import { cn } from "@/lib/utils";
+import type { Project } from "@/types/projects";
 import { usePlaySound } from "../ui/sensory-ui/config/use-play-sound";
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <Link href={`/projects/${project.slug}`} className="group/card last:border-b-0 hover:bg-foreground/10 rounded-lg pt-3 block w-full transition-all" >
-      <div className="max-w-[544px] mx-auto border-b border-foreground/10 group-hover/card:border-transparent group-last/card:border-b-0 pb-3 transition-colors">
-        <div className="flex items-center gap-2">
-          <div className="w-12 h-12 rounded flex-shrink-0 flex items-center justify-center overflow-hidden relative border border-foreground/[0.12] p-0.5">
-            <Image
-              src="/logo-livedocs.svg"
-              width="24"
-              height="24"
-              alt="Live docs"
-              className="w-6 h-6 object-contain rounded-[3px] block relative z-10"
-            />
-
-            <div className="absolute inset-0 opacity-5 group-hover/card:opacity-100 transition-opacity duration-300">
-              <LogoWave color="#5E6C32" />
-            </div>
-          </div>
-
-          <div className="flex justify-between w-full">
-            <div>
-              <div className="flex gap-2 items-center">
-                <h3 className="text-[14px] font-medium text-text-highlight leading-tight flex flex-wrap items-center gap-1.5">
-                  {project.title}
-                </h3>
-                <Status status={project.status} />
-              </div>
-              <p className="mt-0.5 text-[13px] text-foreground/55 truncate">
-                {project.subtitle}
-              </p>
-            </div>
-
-            <span className="text-[12px] text-foreground/30 group-hover/card:text-foreground/50 transition-colors flex-shrink-0">
-              {project.startDate} – {project.endDate}
-            </span>
+    <div className="group/card block w-full rounded-lg pt-3 transition-colors last:border-b-0 hover:bg-foreground/10" >
+      <div className="mx-auto flex max-w-136 items-center gap-2 border-b border-foreground/10 pb-3 transition-colors group-hover/card:border-transparent group-last/card:border-b-0">
+        <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-foreground/[0.12] p-0.5">
+          <Image
+            src={project.logo ?? "/logo-placeholder.svg"}
+            width={24}
+            height={24}
+            alt=""
+            aria-hidden
+            className="relative z-10 block h-6 w-6 rounded-[3px] object-contain"
+          />
+          <div className="absolute inset-0 opacity-5 transition-opacity duration-300 group-hover/card:opacity-100">
+            <LogoWave color={project.color ?? "#5E6C32"} />
           </div>
         </div>
+
+        <div className="flex w-full min-w-0 items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex min-w-0 items-center gap-2">
+              <h3 className="min-w-0 truncate text-[14px] font-medium leading-tight text-text-highlight">
+                {project.title}
+              </h3>
+            </div>
+            <p className="mt-0.5 truncate text-[13px] text-foreground/55">
+              {project.subtitle}
+            </p>
+          </div>
+
+          <span className="hidden shrink-0 text-[12px] text-foreground/30 transition-colors group-hover/card:text-foreground/50 sm:block">
+            {project.startDate} – {project.endDate}
+          </span>
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
 function ProjectListItem({ project }: { project: Project }) {
+  const [open, setOpen] = useState(false);
+  const panelId = `project-panel-${project.slug}`;
+
+  const { play: playExpand } = usePlaySound({ sound: "overlay.expand" });
+  const { play: playCollapse } = usePlaySound({ sound: "overlay.collapse" });
+
+  function toggle() {
+    if (open) playCollapse();
+    else playExpand();
+    setOpen((v) => !v);
+  }
+
   return (
-    <Link
-      href={`/projects/${project.slug}`}
-      className="group last:border-b-0 hover:bg-foreground/10 rounded-lg pt-2 block w-full transition-all"
-    >
-      <div className="max-w-[544px] mx-auto border-b border-foreground/10 group-hover:border-transparent group-last:border-b-0 pb-2 transition-colors">
-        <div className="flex justify-between w-full">
-          <div className="flex items-center gap-2">
-            <span className="text-[12px] text-foreground/30 leading-none group-hover:text-foreground/50 transition-colors flex-shrink-0">
+    <div className="last:border-b-0 cursor-pointer">
+      <button
+        type="button"
+        onClick={toggle}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className="group w-full rounded-lg py-2 text-left transition-colors hover:bg-foreground/10"
+      >
+        <div className="mx-auto flex max-w-136 items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="shrink-0 text-[12px] leading-none text-foreground/30 transition-colors group-hover:text-foreground/50">
               {project.year}
             </span>
-            <div className="flex gap-2 items-center">
-              <h3 className="text-[13px] font-medium text-text-highlight leading-none flex flex-wrap items-center">
-                {project.title}
-              </h3>
-              <Status status={project.status} />
-            </div>
+            <h3 className="min-w-0 truncate text-[13px] font-medium leading-none text-text-highlight">
+              {project.title}
+            </h3>
           </div>
-          <p className="mt-0.5 text-[12px] text-foreground/55 truncate">
-            {project.subtitle}
-          </p>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <p className="hidden max-w-[160px] truncate text-[12px] text-foreground/55 sm:block">
+              {project.subtitle}
+            </p>
+            <ChevronDown
+              aria-hidden
+              className={cn(
+                "h-3.5 w-3.5 text-foreground/30 transition-transform duration-200",
+                open && "rotate-180",
+              )}
+            />
+          </div>
         </div>
-      </div>
-    </Link>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="panel"
+            id={panelId}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="mx-auto max-w-136 space-y-1 pb-3 text-[11px] leading-snug text-foreground/70">
+              {project.what && (
+                <p>
+                  <span className="text-foreground/40 underline">What:</span> {project.what}
+                </p>
+              )}
+              {project.why && (
+                <p>
+                  <span className="text-foreground/40 underline">Why:</span> {project.why}
+                </p>
+              )}
+              {project.result && (
+                <p>
+                  <span className="text-foreground/40 underline">Result:</span> {project.result}
+                </p>
+              )}
+
+              {/*{(project.github || project.writeup) && (
+                <div className="flex flex-wrap items-center gap-3 pt-1">
+                  {project.github && (
+                    <Link
+                      href={project.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-text-highlight underline underline-offset-4 transition-colors hover:text-foreground"
+                    >
+                      GitHub
+                    </Link>
+                  )}
+                  {project.writeup && (
+                    <Link
+                      href={project.writeup}
+                      className="text-text-highlight underline underline-offset-4 transition-colors hover:text-foreground"
+                    >
+                      Writeup
+                    </Link>
+                  )}
+                </div>
+              )}*/}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
-export default function Projects({ isList = false, projects }: { isList?: boolean; projects: Project[] }) {
+export default function Projects({
+  isList = false,
+  projects,
+}: {
+  isList?: boolean;
+  projects: Project[];
+}) {
   const [showAll, setShowAll] = useState(false);
 
-  const { play: playExpand } = usePlaySound({
-    sound: "overlay.expand",
-  });
-
-  const { play: playCollapse } = usePlaySound({
-    sound: "overlay.collapse",
-  });
+  const { play: playExpand } = usePlaySound({ sound: "overlay.expand" });
+  const { play: playCollapse } = usePlaySound({ sound: "overlay.collapse" });
 
   const handleToggle = () => {
-    if (showAll) {
-      playCollapse();
-    } else {
-      playExpand();
-    }
-
+    if (showAll) playCollapse();
+    else playExpand();
     setShowAll((prev) => !prev);
   };
 
@@ -102,35 +177,40 @@ export default function Projects({ isList = false, projects }: { isList?: boolea
 
   if (projects.length === 0) {
     return (
-      <div className="w-full max-w-136 mx-auto text-center text-[10px] leading-3">
+      <div className="mx-auto w-full max-w-136 text-center">
         <div className="w-full border-t border-dashed border-foreground/20" />
-
-        <pre className="my-2 text-center text-[10px] text-foreground/20 leading-3">
+        <pre
+          aria-hidden
+          className="my-2 text-[10px] leading-3 text-foreground/20"
+        >
 {` .-.
 (o o)
 | O \\
 |   \\
-'~~~'
-No projects yet`}
+'~~~'`}
         </pre>
-
+        <p className="mb-2 text-[10px] text-foreground/40">No projects yet</p>
         <div className="w-full border-b border-dashed border-foreground/20" />
       </div>
     );
   }
 
-  const visibleProjects =
-    !isList && !showAll ? projects.slice(0, 3) : projects;
+  const visibleProjects = !isList && !showAll ? projects.slice(0, 3) : projects;
 
   return (
     <div>
       <div>
         {visibleProjects.map((project) => (
-          <Component key={project.title} project={project} />
+          <Component key={project.slug} project={project} />
         ))}
       </div>
       {!isList && projects.length > 3 && (
-        <button onClick={handleToggle} className="mt-2 text-[11px] w-full text-center mt-2 text-foreground/40 hover:text-foreground/70 transition-colors" >
+        <button
+          type="button"
+          onClick={handleToggle}
+          aria-expanded={showAll}
+          className="mt-2 w-full text-center text-[11px] text-foreground/40 transition-colors hover:text-foreground/70"
+        >
           {showAll ? "Show less" : "View all"}
         </button>
       )}
