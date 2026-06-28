@@ -1,5 +1,5 @@
-import type { SoundRole } from "../config/sound-roles";
-import type { SoundSynthesizer, PlaySoundOptions, SoundPlayback } from "../config/engine";
+import type { SoundRole } from "@/lib/sound-roles"
+import type { SoundSynthesizer, PlaySoundOptions, SoundPlayback } from "@/lib/engine";
 import {
   SOFT_INSTRUMENT,
   AERO_INSTRUMENT,
@@ -10,8 +10,8 @@ import {
   MINIMAL_INSTRUMENT,
   RETRO_INSTRUMENT,
   CRISP_INSTRUMENT,
-} from "./core/instruments";
-import { generateSoundPack } from "./core/pack-generator";
+} from "@/lib/instruments";
+import { generateSoundPack } from "@/lib/pack-generator";
 
 // ---------------------------------------------------------------------------
 // Sound Pack Type

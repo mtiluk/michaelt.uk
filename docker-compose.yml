@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    image: michaelt:latest
+    container_name: michaelt-web
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:3000"
+    networks:
+      - web
+
+networks:
+  web:

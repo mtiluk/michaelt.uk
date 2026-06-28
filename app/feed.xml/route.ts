@@ -1,10 +1,16 @@
+import path from "node:path";
+import type { Blog } from "@/types/blogs";
 import { Feed } from "feed";
 import { NextResponse } from "next/server";
-import { getAllBlogs } from "@/lib/blogs";
 import { siteConfig } from "@/lib/site.config";
+import getAllContent from "@/lib/content";
+
+const blogDirectory = path.join(process.cwd(), "content/blogs");
 
 export async function GET() {
-  const posts = getAllBlogs();
+  const [blogs] = await Promise.all([
+    getAllContent<Blog>(blogDirectory),
+  ]);
 
   const feed = new Feed({
     title: siteConfig.name,
@@ -18,7 +24,7 @@ export async function GET() {
     },
   });
 
-  for (const post of posts) {
+  for (const post of blogs) {
     feed.addItem({
       title: post.title,
       id: `https://${siteConfig.url}/blog/${post.slug}`,

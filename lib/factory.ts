@@ -1,4 +1,4 @@
-import type { SoundSynthesizer, PlaySoundOptions, SoundPlayback } from "../../config/engine";
+import type { SoundSynthesizer, PlaySoundOptions, SoundPlayback } from "@/lib/engine"
 import type { BaseTune } from "./tunes";
 import type { InstrumentConfig } from "./instruments";
 import { createNoiseBuffer, applyDecayToBuffer } from "./instruments";

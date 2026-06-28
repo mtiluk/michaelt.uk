@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { useSensoryUI } from "./provider";
-import type { SoundRole } from "./sound-roles";
+import { useSensoryUI } from "@/lib/provider";
+import type { SoundRole } from "@/lib/sound-roles";
 
 export interface UsePlaySoundOptions {
   /**

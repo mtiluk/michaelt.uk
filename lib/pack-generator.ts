@@ -1,5 +1,5 @@
-import type { SoundRole } from "../../config/sound-roles";
-import type { SoundSynthesizer } from "../../config/engine";
+import type { SoundRole } from "@/lib/sound-roles";
+import type { SoundSynthesizer } from "@/lib/engine";
 import type { InstrumentConfig } from "./instruments";
 import {
   INTERACTION_TUNES,

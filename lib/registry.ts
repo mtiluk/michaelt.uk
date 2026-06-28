@@ -11,7 +11,7 @@ import {
   retroPack,
   crispPack,
   type SoundPackName,
-} from "../sounds/packs";
+} from "@/lib/packs";
 
 // Re-export so consumers can import SoundPackName from this module
 export type { SoundPackName };
@@ -55,4 +55,3 @@ export const DEFAULT_PACK: SoundPackName = "aero";
  * Backwards-compat alias: the default pack's role → source mapping.
  */
 export const roleRegistry: SoundPack = aeroPack;
-
