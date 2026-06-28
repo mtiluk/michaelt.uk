@@ -37,7 +37,7 @@ export default function RootLayout({
     <html lang="en" className={cn( "h-full antialiased font-sans", inter.variable, instrumentSerif.variable, )} >
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
         <Wave aria-hidden />
-        <div aria-hidden className="absolute inset-x-0 h-[39vh] bg-gradient-to-t from-background via-background/85 to-background/30 pointer-events-none z-10" />
+        <div aria-hidden className="absolute inset-x-0 h-[39vh] bg-linear-to-t from-background via-background/85 to-background/30 pointer-events-none z-10" />
 
         <SensoryUIProvider config={sensoryConfig}>
           {children}
