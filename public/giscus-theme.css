@@ -1,99 +1,150 @@
-/* giscus theme — Michael Tilley
-   Edit the palette block to match your globals.css tokens exactly. */
+/* ───────────────────────────────────────────────
+   giscus theme — michaelt.uk
+   Built from globals.css tokens:
+     --background:      #0c0504
+     --foreground:      #d1c5ad (shown at ~60% in-app)
+     --foreground-div:  #1c0b09
+     --text-highlight:  #d1c5ad
+     --highlight:       #ff003c
+     --active-status:   #5e6c32
+   ─────────────────────────────────────────────── */
 
 main {
-    /* ---- palette: replace with your real token hex ---- */
-    --mt-bg: #1c1b18; /* background */
-    --mt-bg-subtle: #232220; /* foreground-div / panels */
-    --mt-bg-inset: #181714; /* inputs, insets */
-    --mt-text: #c4bfb3; /* foreground (body) */
-    --mt-text-bright: #ece6d8; /* text-highlight */
-    --mt-text-muted: #8f8a7e; /* foreground at low opacity */
-    --mt-border: #34322d;
-    --mt-border-soft: #28261f;
-    --mt-accent: #8a9a4e; /* olive — links, primary buttons */
-    --mt-accent-soft: rgba(138, 154, 78, 0.15);
-    --mt-danger: #cf8a7d; /* muted terracotta, not pure red */
-    --mt-warning: #d8b56a;
+    /* ---- palette ---- */
+    --mt-bg: #0c0504; /* background */
+    --mt-bg-subtle: #160a08; /* panels — between bg and foreground-div */
+    --mt-bg-inset: #1c0b09; /* foreground-div — inputs, code, insets */
+    --mt-bg-hover: #241310;
 
-    /* ---- map palette → Primer ---- */
+    --mt-text: #d1c5ad; /* text-highlight (full strength for readability) */
+    --mt-text-muted: #d1c5ad99; /* foreground (the ~60% warm grey) */
+    --mt-text-faint: #d1c5ad55;
+
+    --mt-border: #2a1a16;
+    --mt-border-soft: #1f100d;
+
+    --mt-accent: #5e6c32; /* active-status olive — links + primary */
+    --mt-accent-hi: #76863f; /* lifted olive for hover */
+    --mt-accent-soft: rgba(94, 108, 50, 0.18);
+
+    --mt-crimson: #ff003c; /* highlight — used sparingly, danger/selection */
+    --mt-crimson-soft: rgba(255, 0, 60, 0.15);
+
     color-scheme: dark;
 
-    --color-fg-default: var(--mt-text);
+    /* ---- foreground ---- */
+    --color-fg-default: var(--mt-text-muted);
     --color-fg-muted: var(--mt-text-muted);
-    --color-fg-subtle: var(--mt-text-muted);
+    --color-fg-subtle: var(--mt-text-faint);
     --color-fg-on-emphasis: var(--mt-bg);
 
+    /* ---- canvas / surfaces ---- */
     --color-canvas-default: var(--mt-bg);
     --color-canvas-overlay: var(--mt-bg-subtle);
     --color-canvas-inset: var(--mt-bg-inset);
     --color-canvas-subtle: var(--mt-bg-subtle);
 
+    /* ---- borders ---- */
     --color-border-default: var(--mt-border);
     --color-border-muted: var(--mt-border-soft);
-    --color-neutral-muted: rgba(196, 191, 179, 0.12);
-    --color-neutral-emphasis: var(--mt-text-muted);
+    --color-neutral-muted: rgba(209, 197, 173, 0.1);
+    --color-neutral-emphasis: var(--mt-text-faint);
     --color-neutral-emphasis-plus: var(--mt-text);
 
-    --color-accent-fg: var(--mt-accent);
+    /* ---- accent: links, active states ---- */
+    --color-accent-fg: var(--mt-accent-hi);
     --color-accent-emphasis: var(--mt-accent);
     --color-accent-muted: var(--mt-accent-soft);
     --color-accent-subtle: var(--mt-accent-soft);
 
-    --color-success-fg: var(--mt-accent);
+    /* ---- success (reuse olive) ---- */
+    --color-success-fg: var(--mt-accent-hi);
     --color-success-emphasis: var(--mt-accent);
-    --color-danger-fg: var(--mt-danger);
-    --color-danger-emphasis: var(--mt-danger);
-    --color-attention-fg: var(--mt-warning);
-    --color-attention-emphasis: var(--mt-warning);
-    --color-attention-subtle: rgba(216, 181, 106, 0.12);
+    --color-success-muted: var(--mt-accent-soft);
+    --color-success-subtle: var(--mt-accent-soft);
 
+    /* ---- danger (your crimson) ---- */
+    --color-danger-fg: var(--mt-crimson);
+    --color-danger-emphasis: var(--mt-crimson);
+    --color-danger-muted: var(--mt-crimson-soft);
+    --color-danger-subtle: var(--mt-crimson-soft);
+
+    /* ---- attention / open ---- */
+    --color-attention-fg: var(--mt-accent-hi);
+    --color-attention-emphasis: var(--mt-accent);
+    --color-attention-subtle: var(--mt-accent-soft);
+    --color-open-fg: var(--mt-accent-hi);
+    --color-open-emphasis: var(--mt-accent);
+
+    /* ---- default buttons ---- */
     --color-btn-text: var(--mt-text);
-    --color-btn-bg: var(--mt-bg-subtle);
+    --color-btn-bg: var(--mt-bg-inset);
     --color-btn-border: var(--mt-border);
-    --color-btn-hover-bg: #2a2825;
+    --color-btn-hover-bg: var(--mt-bg-hover);
     --color-btn-hover-border: var(--mt-border);
-    --color-btn-active-bg: #2a2825;
+    --color-btn-active-bg: var(--mt-bg-hover);
     --color-btn-active-border: var(--mt-border);
-    --color-btn-selected-bg: var(--mt-bg-inset);
+    --color-btn-selected-bg: var(--mt-bg);
+    --color-btn-counter-bg: var(--mt-bg-subtle);
 
-    --color-btn-primary-text: var(--mt-bg);
+    /* ---- primary button (Comment) — olive ---- */
+    --color-btn-primary-text: #0c0504;
     --color-btn-primary-bg: var(--mt-accent);
     --color-btn-primary-border: transparent;
-    --color-btn-primary-hover-bg: #9aab58;
-    --color-btn-primary-selected-bg: #7a8a45;
-    --color-btn-primary-disabled-text: rgba(28, 27, 24, 0.6);
+    --color-btn-primary-hover-bg: var(--mt-accent-hi);
+    --color-btn-primary-hover-border: transparent;
+    --color-btn-primary-selected-bg: #4d5829;
+    --color-btn-primary-disabled-text: rgba(12, 5, 4, 0.55);
     --color-btn-primary-disabled-bg: var(--mt-accent-soft);
+    --color-btn-primary-disabled-border: transparent;
 
+    /* ---- reactions ---- */
     --color-social-reaction-bg-hover: var(--mt-bg-inset);
     --color-social-reaction-bg-reacted-hover: var(--mt-accent-soft);
 
-    --color-primer-fg-disabled: var(--mt-text-muted);
+    /* ---- inputs / misc ---- */
+    --color-primer-fg-disabled: var(--mt-text-faint);
     --color-primer-border-active: var(--mt-accent);
+    --color-primer-shadow-focus: 0 0 0 2px var(--mt-accent-soft);
+    --color-segmented-control-bg: var(--mt-bg-inset);
+    --color-segmented-control-button-bg: var(--mt-bg-subtle);
 
-    /* syntax highlighting inside code blocks in comments */
-    --color-prettylights-syntax-comment: var(--mt-text-muted);
-    --color-prettylights-syntax-constant: var(--mt-warning);
-    --color-prettylights-syntax-entity: var(--mt-text-bright);
-    --color-prettylights-syntax-entity-tag: var(--mt-accent);
-    --color-prettylights-syntax-keyword: var(--mt-danger);
-    --color-prettylights-syntax-string: #a9b86e;
-    --color-prettylights-syntax-variable: var(--mt-warning);
-    --color-prettylights-syntax-markup-heading: var(--mt-accent);
-    --color-prettylights-syntax-markup-bold: var(--mt-text-bright);
-    --color-prettylights-syntax-markup-italic: var(--mt-text-bright);
-    --color-prettylights-syntax-markup-inserted-text: var(--mt-accent);
-    --color-prettylights-syntax-markup-deleted-text: var(--mt-danger);
+    /* ---- syntax highlighting in comment code blocks ---- */
+    --color-prettylights-syntax-comment: var(--mt-text-faint);
+    --color-prettylights-syntax-constant: #c98a3a;
+    --color-prettylights-syntax-entity: var(--mt-text);
+    --color-prettylights-syntax-storage-modifier-import: var(--mt-text-muted);
+    --color-prettylights-syntax-entity-tag: var(--mt-accent-hi);
+    --color-prettylights-syntax-keyword: var(--mt-crimson);
+    --color-prettylights-syntax-string: #8a9a4e;
+    --color-prettylights-syntax-variable: #c98a3a;
+    --color-prettylights-syntax-brackethighlighter-unmatched: var(--mt-crimson);
+    --color-prettylights-syntax-invalid-illegal-text: var(--mt-text);
+    --color-prettylights-syntax-invalid-illegal-bg: var(--mt-crimson-soft);
+    --color-prettylights-syntax-carriage-return-text: var(--mt-text);
+    --color-prettylights-syntax-carriage-return-bg: var(--mt-crimson);
+    --color-prettylights-syntax-string-regexp: var(--mt-accent-hi);
+    --color-prettylights-syntax-markup-list: #c98a3a;
+    --color-prettylights-syntax-markup-heading: var(--mt-accent-hi);
+    --color-prettylights-syntax-markup-italic: var(--mt-text);
+    --color-prettylights-syntax-markup-bold: var(--mt-text);
+    --color-prettylights-syntax-markup-deleted-text: var(--mt-crimson);
+    --color-prettylights-syntax-markup-deleted-bg: var(--mt-crimson-soft);
+    --color-prettylights-syntax-markup-inserted-text: var(--mt-accent-hi);
+    --color-prettylights-syntax-markup-inserted-bg: var(--mt-accent-soft);
 }
 
-/* a few touches Primer vars don't reach */
+/* a few spots Primer vars don't reach */
 main .gsc-comment-box-tabs,
 main .gsc-comment-box-preview {
-    background-color: var(--mt-bg-subtle);
+    background-color: var(--mt-bg-inset);
 }
 main .gsc-comment-box-textarea {
-    color: var(--mt-text-bright);
+    color: var(--mt-text);
 }
 main .gsc-comment .gsc-comment-content a {
-    color: var(--mt-accent);
+    color: var(--mt-accent-hi);
+}
+main .gsc-comment-box-bottom {
+    border-color: var(--mt-border);
 }
