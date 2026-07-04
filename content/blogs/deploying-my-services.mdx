@@ -1,0 +1,50 @@
+---
+slug: deploying-my-services
+title: Deploying My Services
+description: This blog will briefly explore how I deploy this application and several others both efficiently and affordably. I'll explain a few things in particular where my applications are deployed to, security measures and how certain applications are deployed.
+timeToRead: 5 Minutes
+publishedAt: "June 2026"
+series:
+  title: "Self-Hosting Everything"
+  slug: self-hosting
+order: 1
+---
+
+This blog will briefly explore how I deploy this application and several others both efficiently and affordably. I'll explain a few things in particular: where my applications are deployed to, security measures and how certain applications are deployed.
+
+This is the first post of many that will explore homelabbing, deployment and other topics related to system administration and cloud computing.
+
+### Where are they deployed to?
+Many months ago, I would say that all my services are self-hosted from within my home - but this has changed. As electricity prices sore to record highs and [memory supply shortages](https://en.wikipedia.org/wiki/2025%E2%80%93present_global_memory_supply_shortage) caused by AI exacerbate the problem further, I had to change where my things are hosted.
+
+All of my public facing services are now hosted on [VPS-3](https://www.ovhcloud.com/en-gb/vps/) from OVH. This is relatively small specs wise at only: 6 vCores, 12 GB RAM, 100 GB NVME SSD and 1 Gbps public bandwidth. However, as these services don't serve customers nor do they have high resource consumption, it is notably more than enough for my needs.
+
+In the future, I will explore my previous homelab and networking setup before the big shift in another blog...
+
+### Operating System & Security
+There isn't anything entirely special about the setup of the VPS. The operating system is a freshly installed [Ubuntu 26.04 LTS](https://documentation.ubuntu.com/release-notes/26.04/), this was chosen over Debian, which is usually my second choice, simply because of my vast experience with Ubuntu and for stability reasons. 
+
+Following on from the installation, I immediately put into place a few common security practices that at a minimum all system administrators should put into practice:
+- Firstly, password authentication was disabled so that VPS access is only possible through the use of SSH keys.
+- Secondly, the firewall was enabled with default-deny on by default for all inbound traffic and only certain ports were opened to allow traffic to come in.
+- Third, [fail2ban](https://github.com/fail2ban/fail2ban) was setup to automatically temporarily ban IPs that fail auth repeatedly. 
+- Finally, automatic security updates for Ubuntu were enabled.
+
+There are some specific application security practices though these will be explained in the next section.
+
+### Pipelines & This Website
+
+Rather than explain every application running on this VPS, I'll focus on how this site getse deployed automatically, and how it's served to the public. A deeper dive into the development of this site is coming in a future post - but in short, it's a [Next.js Application](https://nextjs.org/)
+
+This website, like many others on my VPS, sits behind a [Caddy Reverse Proxy](https://caddyserver.com/). Caddy lets me serve multiple applications from a single IP address. All traffic arrives on the standard ports (80 and 443), and Caddy forwards each request to the right application on its own internal port based on the hostname (mtil.uk). It also provisions and renews SSL certificates for me automatically.
+
+Every application runs inside its own Docker container rather than under a heavier platform like Proxmox - I lean towards simplicity wherever I can. Each container exposes its own port, and the reverse proxy forwards traffic to it.
+
+Deployment is handled automatically through GitHub. Whenever I push to the `main` branch, a GitHub actions workflow builds the application's Docker image and pushes it to a container registry. Once the image is published, the VPS pulls the new version and restarts the container, so the latest changes go live without me ever touching the server. 
+
+Finally, every site sits behind Cloudflare, which acts primarily as a [WAF](https://www.cloudflare.com/products/waf/) and secondarily as a [CDN](https://www.cloudflare.com/products/cdn/). 
+
+### Conclusion
+It's a short post but that's truly it. I've always disliked the idea of 'Serverless' deployments and this further proves my point. Majority of applications and services that people serve can be deployed with relative ease safely and securely. I also believe that for most Computer Science students - they should have all attempted this at least once rather than relying on platforms like [GitHub Pages](https://docs.github.com/en/pages) or [Vercel](https://vercel.com/)
+
+In future posts, I'll dive into how I minimised my homelab and how this website was developed.

@@ -1,8 +1,15 @@
+export interface SeriesMeta {
+  title: string;
+  slug: string;
+}
+
 export interface Blog {
   slug: string;
   title: string;
   description: string;
-  timeToRead: number;
   publishedAt: string;
-  content: string;
+  timeToRead: string;
+  series?: SeriesMeta;
+  order?: number;
+  references?: (string | { title: string; url: string })[];
 }

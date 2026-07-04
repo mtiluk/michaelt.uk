@@ -12,6 +12,20 @@ interface GetAllContentOptions<T> {
   extension?: string;
 }
 
+
+type WithSeries = {
+  title: string;
+  series?: { title: string; slug: string };
+  order?: number;
+};
+
+export interface SeriesContext<T> {
+  series: { title: string; slug: string };
+  part: number;
+  total: number;
+  posts: ContentItem<T>[];
+}
+
 function getAllContent<T extends { title: string }>(
   directory: string,
   options: GetAllContentOptions<T> = {},
@@ -43,4 +57,39 @@ function getAllContent<T extends { title: string }>(
   return items.sort(sort ?? ((a, b) => a.title.localeCompare(b.title)));
 }
 
+export function getContentBySlug<T extends { title: string }>(
+  directory: string,
+  slug: string,
+  extension = ".mdx",
+): ContentItem<T> | null {
+  if (slug.includes("/") || slug.includes("\\") || slug.includes("..")) {
+    return null;
+  }
+
+  let fileContents: string;
+  try {
+    fileContents = fs.readFileSync(path.join(directory, `${slug}${extension}`), "utf8");
+  } catch {
+    return null;
+  }
+
+  const { data, content } = matter(fileContents);
+  return { ...(data as T), slug, content };
+}
+
+export function getSeriesContext<T extends WithSeries>(
+  directory: string,
+  slug: string,
+): SeriesContext<T> | null {
+  const current = getContentBySlug<T>(directory, slug);
+  if (!current?.series) return null;
+
+  const seriesSlug = current.series.slug;
+  const posts = getAllContent<T>(directory)
+    .filter((post) => post.series?.slug === seriesSlug)
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  const part = posts.findIndex((post) => post.slug === slug) + 1;
+  return { series: current.series, part, total: posts.length, posts };
+}
 export default getAllContent;

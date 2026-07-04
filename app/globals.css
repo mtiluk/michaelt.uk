@@ -3,6 +3,7 @@
 :root {
     --background: #0c0504;
     --foreground: #d1c5ad99;
+    --foreground-div: #1c0b09;
     --text-highlight: #d1c5ad;
     --highlight: #ff003c;
     --active-status: #5e6c32;
@@ -11,6 +12,7 @@
 @theme inline {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
+    --color-foreground-div: var(--foreground-div);
     --color-text-highlight: var(--text-highlight);
     --color-highlight: var(--highlight);
     --color-active-status: var(--active-status);
@@ -28,6 +30,7 @@ body {
 
 ::selection {
     background: var(--highlight);
+    color: white;
 }
 
 .blog-content > h3 {

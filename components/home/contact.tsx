@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default async function Contact() {
   return (
-    <div className="mt-5 flex flex-col rounded-xl bg-text-highlight/[0.02] transition-colors duration-300">
+    <div className="mt-5 flex flex-col rounded-xl bg-text-highlight/2 transition-colors duration-300">
       <div className="flex px-2 py-1 justify-between">
         <div className="flex gap-1">
           {/*<SocialProfile
@@ -48,14 +48,14 @@ export default async function Contact() {
 
         <div className="flex items-center gap-4">
           <Link
-            href="mailto:your@email.com"
+            href="mailto:mdtilley04@gmail.com"
             className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]"
           >
             <MdEmail /> Email
           </Link>
 
           <Link
-            href="mailto:your@email.com"
+            href="mailto:mdtilley04@gmail.com"
             className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]"
           >
             <MdEmail /> Book a call
