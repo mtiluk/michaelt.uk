@@ -15,7 +15,7 @@ main {
     --mt-bg-subtle: #160a08; /* panels — between bg and foreground-div */
     --mt-bg-inset: #1c0b09; /* foreground-div — inputs, code, insets */
     --mt-bg-hover: #241310;
-
+3
     --mt-text: #d1c5ad; /* text-highlight (full strength for readability) */
     --mt-text-muted: #d1c5ad99; /* foreground (the ~60% warm grey) */
     --mt-text-faint: #d1c5ad55;
@@ -23,9 +23,9 @@ main {
     --mt-border: #2a1a16;
     --mt-border-soft: #1f100d;
 
-    --mt-accent: #5e6c32; /* active-status olive — links + primary */
-    --mt-accent-hi: #76863f; /* lifted olive for hover */
-    --mt-accent-soft: rgba(94, 108, 50, 0.18);
+    --mt-accent: #ff003c; /* active-status olive — links + primary */
+    --mt-accent-hi: #ff003c /* lifted olive for hover */
+        --mt-accent-soft: rgba(255, 0, 60, 0.15);
 
     --mt-crimson: #ff003c; /* highlight — used sparingly, danger/selection */
     --mt-crimson-soft: rgba(255, 0, 60, 0.15);
@@ -147,4 +147,20 @@ main .gsc-comment .gsc-comment-content a {
 }
 main .gsc-comment-box-bottom {
     border-color: var(--mt-border);
+}
+
+main .gsc-comments > .gsc-header {
+    display: none;
+}
+
+main .gsc-comments > .gsc-footer {
+    display: none;
+}
+
+main .gsc-header .gsc-comments-count {
+    display: none;
+}
+
+main .gsc-comment-box {
+    margin-top: 0.5rem;
 }
