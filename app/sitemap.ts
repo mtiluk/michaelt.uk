@@ -4,6 +4,9 @@ import getAllContent from '@/lib/content'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.NEXT_PUBLIC_SITE_URL
+  if (!base) {
+    throw new Error('NEXT_PUBLIC_SITE_URL is not set')
+  }
 
   const posts = getAllContent<{ title: string }>(
     path.join(process.cwd(), 'content', 'blogs')
@@ -12,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     path.join(process.cwd(), 'content', 'projects')
   )
 
+  // Fix type issues
   return [
     { url: base },
     { url: `${base}/blog` },
