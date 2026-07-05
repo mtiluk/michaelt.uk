@@ -39,6 +39,8 @@ jobs:
             ${{ env.IMAGE }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=https://michaelt.uk
 
   deploy:
     needs: build
