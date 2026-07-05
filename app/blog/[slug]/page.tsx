@@ -34,9 +34,7 @@ export function generateStaticParams(): { slug: string }[] {
   return getAllContent<Blog>(blogDirectory).map((blog) => ({ slug: blog.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: BlogPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { slug } = await params;
   const blog = getContentBySlug<Blog>(blogDirectory, slug);
   if (!blog) return {};
@@ -55,10 +53,7 @@ export default async function BlogPost({ params }: BlogPageProps) {
         <header className="mb-8 border-b border-foreground/10 pb-6">
           <Reveal variant="fade-down">
             <div className="mb-6 flex items-center justify-between">
-              <Link
-                href="/"
-                className="group flex items-center gap-1.5 text-[12px] text-foreground/70 transition-colors hover:text-text-highlight"
-              >
+              <Link href="/" className="group flex items-center gap-1.5 text-[12px] text-foreground/70 transition-colors hover:text-text-highlight" >
                 <ArrowLeft
                   className="h-3 w-3 transition-transform duration-300 group-hover:-translate-x-0.5"
                   aria-hidden
@@ -124,11 +119,7 @@ export default async function BlogPost({ params }: BlogPageProps) {
       </main>
 
       <aside className="hidden pt-[14vh] lg:block z-10">
-        <Reveal
-          variant="fade"
-          delay={0.25}
-          className="sticky top-24 max-w-55 text-[11px]"
-        >
+        <Reveal variant="fade" delay={0.25} className="sticky top-24 max-w-55 text-[11px]" >
           {seriesCtx && (
             <SeriesCard
               series={seriesCtx.series}

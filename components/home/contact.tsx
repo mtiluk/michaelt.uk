@@ -47,17 +47,11 @@ export default async function Contact() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link
-            href="mailto:mdtilley04@gmail.com"
-            className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]"
-          >
+          <Link href="mailto:mdtilley04@gmail.com" className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]">
             <MdEmail /> Email
           </Link>
 
-          <Link
-            href="mailto:mdtilley04@gmail.com"
-            className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]"
-          >
+          <Link href="mailto:mdtilley04@gmail.com" className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]">
             <MdEmail /> Book a call
           </Link>
         </div>

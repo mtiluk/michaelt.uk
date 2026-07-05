@@ -15,6 +15,7 @@ export default async function Home() {
     getAllContent<Blog>(blogDirectory),
     getAllContent<Project>(projectDirectory),
   ]);
+
   return (
     <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">
       <div className="mx-auto max-w-136">
@@ -23,10 +24,8 @@ export default async function Home() {
             <h1 className="font-serif text-[28px] text-balance text-text-highlight">
               Michael Tilley
             </h1>
-            <p
-              aria-hidden
-              className="text-[11px] tracking-wider text-text-highlight/45"
-            >
+
+            <p aria-hidden className="text-[11px] tracking-wider text-text-highlight/45" >
               /ˈmaɪ·kəl ˈtɪl·i/
             </p>
           </header>
@@ -43,11 +42,13 @@ export default async function Home() {
               research interests centre on privacy redesigns of common systems,
               secure cloud and networks engineering, and embedded and IOT
             </p>
+
             <p>
               Currently focused on building projects and researching, attempting
               to increase my knowledge and understanding of distributed systems
               and networking.
             </p>
+
             <p>Looking for my next thing. Come say hi.</p>
           </div>
         </Reveal>

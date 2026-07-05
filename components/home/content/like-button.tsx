@@ -1,57 +1,23 @@
-// components/home/content/like-button.tsx
-//
-// ─── COMPACT SIDEBAR VERSION ─────────────────────────────────────────────────
-//
-// One row that lives under the table of contents:
-//
-//   [♥] Like 12                            Scroll to top ↑
-//
-// Same mechanics as before (Josh Comeau style): the heart fills a fifth per
-// click, capped at 5 per visitor (enforced server-side by hashed IP), rapid
-// clicks are batched into one request, updates are optimistic, and the 5th
-// click fires a burst of hearts. Each click plays the same subtle
-// interaction sound as the contact form.
-//
-// The heart sits in a small chip styled after the ContactForm's surface:
-// bg-text-highlight/4 with a hairline text-highlight border, warming
-// slightly on hover like the form's send button.
-//
-// The heart itself uses its own accent — --highlight: #ff003c — set as a
-// CSS variable on the wrapper, so it's independent of the site-wide
-// text-highlight token. If you later promote --highlight to :root in your
-// globals.css, just delete the inline style here and it keeps working.
-//
-// Usage (in the blog page's <aside>, below the TOC):
-//
-//   <TableOfContents items={toc} />
-//   <div className="my-5 border-t border-foreground/10" />
-//   <LikeButton slug={slug} />
-//
-// ─────────────────────────────────────────────────────────────────────────────
-
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { usePlaySound } from "@/components/ui/sensory-ui/config/use-play-sound";
+import { useSound } from "@web-kits/audio/react";
+import { retro } from "@/lib/audio";
 
 const MAX = 5;
-
-/** How long we wait after the last click before sending the batch (ms). */
 const FLUSH_DELAY = 600;
 
-/** One celebration particle: randomized flight path + look. */
 type Particle = {
   id: number;
-  x: number; // horizontal drift in px (negative = left)
-  y: number; // how high it flies in px
+  x: number;
+  y: number;
   scale: number;
-  rotate: number; // degrees
-  duration: number; // ms
-  delay: number; // ms — staggers the burst slightly
+  rotate: number;
+  duration: number;
+  delay: number;
 };
 
-/** A single heart path, reused for the button and the particles. */
 function HeartPath() {
   return (
     <path d="M12 21s-6.716-4.35-9.428-8.286C.6 9.86 1.9 5.5 5.5 4.5c2.06-.573 4.24.36 5.5 2.086 1.26-1.727 3.44-2.66 5.5-2.086 3.6 1 4.9 5.36 2.928 8.214C18.716 16.65 12 21 12 21z" />
@@ -59,21 +25,17 @@ function HeartPath() {
 }
 
 export default function LikeButton({ slug }: { slug: string }) {
-  const [total, setTotal] = useState<number | null>(null); // null = loading
+  const [total, setTotal] = useState<number | null>(null);
   const [userLikes, setUserLikes] = useState(0);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [popping, setPopping] = useState(false); // scale "pop" on each click
+  const [popping, setPopping] = useState(false);
 
-  // Hooks must be called at the component's top level (never inside
-  // handlers) — we grab `play` here and call it wherever we like.
-  const { play } = usePlaySound({ sound: "interaction.subtle" });
-  const { play: playSuccess } = usePlaySound({ sound: "notification.success" });
+  const playSuccess = useSound(retro.success);
+  const playInteraction = useSound(retro.tap);
 
-  // Clicks not yet sent to the server, and the timer that will flush them.
   const pending = useRef(0);
   const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ── Load the current state on mount ───────────────────────────────────────
   useEffect(() => {
     let cancelled = false;
     fetch(`/api/likes/${slug}`)
@@ -84,8 +46,6 @@ export default function LikeButton({ slug }: { slug: string }) {
         setUserLikes(data.userLikes);
       })
       .catch(() => {
-        // If the API is down, render an empty heart at 0 —
-        // a like button should never break the page.
         if (!cancelled) setTotal(0);
       });
     return () => {
@@ -93,7 +53,6 @@ export default function LikeButton({ slug }: { slug: string }) {
     };
   }, [slug]);
 
-  // ── Send whatever clicks have accumulated ─────────────────────────────────
   function flush() {
     const count = pending.current;
     pending.current = 0;
@@ -109,20 +68,15 @@ export default function LikeButton({ slug }: { slug: string }) {
         return res.json();
       })
       .then((data) => {
-        // Reconcile with the server's truth — quietly fixes any drift
-        // from optimistic updates (other visitors, other tabs, the cap...)
         setTotal(data.total);
         setUserLikes(data.userLikes);
       })
       .catch(() => {
-        // Network/storage failed: roll the optimistic update back so the
-        // UI doesn't lie about likes that were never saved.
         setUserLikes((u) => Math.max(0, u - count));
         setTotal((t) => (t === null ? t : Math.max(0, t - count)));
       });
   }
 
-  // Flush any unsent clicks if the reader navigates away mid-batch.
   useEffect(() => {
     return () => {
       if (flushTimer.current) clearTimeout(flushTimer.current);
@@ -131,18 +85,15 @@ export default function LikeButton({ slug }: { slug: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ── The celebration 🎉 ─────────────────────────────────────────────────────
   function celebrate() {
-    // Skip the fireworks entirely for reduced-motion users.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     playSuccess();
 
-    // ~12 hearts fanning upward-outward with randomized everything.
     const burst: Particle[] = Array.from({ length: 12 }, (_, i) => ({
       id: Date.now() + i,
-      x: (Math.random() - 0.5) * 100, // -50px … +50px sideways
-      y: 30 + Math.random() * 60, //  30px … 90px upward
+      x: (Math.random() - 0.5) * 100,
+      y: 30 + Math.random() * 60,
       scale: 0.4 + Math.random() * 0.6,
       rotate: (Math.random() - 0.5) * 60,
       duration: 700 + Math.random() * 500,
@@ -150,38 +101,29 @@ export default function LikeButton({ slug }: { slug: string }) {
     }));
     setParticles(burst);
 
-    // Clean the particles out of the DOM once the longest one has finished.
     const longest = Math.max(...burst.map((p) => p.duration + p.delay));
     setTimeout(() => setParticles([]), longest + 100);
   }
 
-  // ── Click handler ──────────────────────────────────────────────────────────
   function handleClick() {
     if (total === null || userLikes >= MAX) return;
 
-    // Tactile feedback — after the guard, so a maxed heart stays silent
-    // (sound and UI should always agree about whether something happened).
-    play();
+    playInteraction();
 
-    // 1. Optimistic UI: fill the heart and bump the count immediately.
     const next = userLikes + 1;
     setUserLikes(next);
     setTotal((t) => (t ?? 0) + 1);
 
-    // 2. Little scale "pop" for tactile feedback on every click.
     setPopping(true);
     setTimeout(() => setPopping(false), 200);
 
-    // 3. Queue the click and (re)start the batch timer.
     pending.current += 1;
     if (flushTimer.current) clearTimeout(flushTimer.current);
     flushTimer.current = setTimeout(flush, FLUSH_DELAY);
 
-    // 4. The big moment: 5th like → heart burst.
     if (next === MAX) celebrate();
   }
 
-  // ── Scroll to top ──────────────────────────────────────────────────────────
   function scrollToTop() {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -189,18 +131,14 @@ export default function LikeButton({ slug }: { slug: string }) {
     window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
   }
 
-  // 0 → 1: how full the heart is. Drives the clip-path below.
   const fill = userLikes / MAX;
   const maxed = userLikes >= MAX;
 
   return (
-    // The wrapper defines --highlight so every color inside can reference it.
     <div
       className="flex items-center justify-between"
       style={{ "--highlight": "#ff003c" } as React.CSSProperties}
     >
-      {/* The @keyframes for the particle flight. Each particle reads its
-          own CSS variables, so one rule animates all of them. */}
       <style>{`
         @keyframes like-burst {
           0% {
@@ -215,7 +153,6 @@ export default function LikeButton({ slug }: { slug: string }) {
         }
       `}</style>
 
-      {/* ── Left: [heart chip] + "Like" + total ── */}
       <button
         type="button"
         onClick={handleClick}
@@ -230,11 +167,6 @@ export default function LikeButton({ slug }: { slug: string }) {
           maxed ? "cursor-default" : "cursor-pointer",
         )}
       >
-        {/* Chip around the heart, borrowed from the ContactForm's surface:
-            the same text-highlight/4 wash and a hairline border from the
-            same alpha ramp, warming slightly on hover like the form's
-            send button. No overflow-hidden — the celebration hearts are
-            meant to fly past the chip's edges. */}
         <div
           className={cn(
             "flex items-center justify-center rounded-lg p-1.5",
@@ -242,13 +174,10 @@ export default function LikeButton({ slug }: { slug: string }) {
             "transition-colors duration-300",
             !maxed &&
               "group-hover:border-text-highlight/20 group-hover:bg-text-highlight/10",
-            // At 5/5 the border picks up the heart's red instead.
-            // (Tailwind v4 syntax — on v3 use "border-[#ff003c33]".)
+
             maxed && "border-[color:var(--highlight)]/20",
           )}
         >
-          {/* The heart: outline underneath, solid --highlight heart on top,
-              revealed bottom-up by an animated clip-path inset. */}
           <span
             className={cn(
               "relative block h-4 w-4 transition-transform duration-200",
@@ -256,7 +185,6 @@ export default function LikeButton({ slug }: { slug: string }) {
               !maxed && "group-hover:scale-110 group-active:scale-95",
             )}
           >
-            {/* Celebration particles, launched from the heart's center. */}
             {particles.map((p) => (
               <span
                 key={p.id}

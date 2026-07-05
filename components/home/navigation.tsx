@@ -1,13 +1,13 @@
 "use client";
-
 import { useRef, useState } from "react";
 import { Menu, Columns3 } from "lucide-react";
+import { useSound } from "@web-kits/audio/react";
+import { retro } from "@/lib/audio";
 import Projects from "@/components/home/projects";
 import Blogs from "@/components/home/blogs";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/projects";
 import type { Blog } from "@/types/blogs";
-import { usePlaySound } from "../ui/sensory-ui/config/use-play-sound";
 
 const TABS = [
   { id: "work", label: "Work" },
@@ -21,11 +21,13 @@ export default function Navigation({ projects, blogs }: { projects: Project[]; b
   const [activeTab, setActiveTab] = useState<TabId>("work");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const { play } = usePlaySound({ sound: "interaction.subtle" });
+  const playSelect = useSound(retro.select);
+  const playToggle = useSound(retro.toggleOn);
 
   function selectTab(id: TabId) {
+    if (id === activeTab) return;
+    playSelect();
     setActiveTab(id);
-    play();
   }
 
   function onTabKeyDown(e: React.KeyboardEvent, index: number) {
@@ -33,24 +35,23 @@ export default function Navigation({ projects, blogs }: { projects: Project[]; b
     e.preventDefault();
     const dir = e.key === "ArrowRight" ? 1 : -1;
     const next = (index + dir + TABS.length) % TABS.length;
+    playSelect();
     setActiveTab(TABS[next].id);
     tabRefs.current[next]?.focus();
-    play();
   }
 
   function selectView(list: boolean) {
+    if (list === isList) return;
+    playToggle();
     setIsList(list);
-    play();
   }
 
-  const viewButton =
-    "relative flex items-center rounded-md p-1.5 text-foreground transition-colors duration-200 hover:bg-text-highlight/10 hover:text-text-highlight";
+  const viewButton = "relative flex items-center rounded-md p-1.5 text-foreground transition-colors duration-200 hover:bg-text-highlight/10 hover:text-text-highlight";
 
   return (
     <div className="mt-10">
       <div className="mx-auto flex max-w-136 items-center justify-between">
         <div role="tablist" aria-label="Content sections" className="flex items-center gap-5" >
-
           {TABS.map((tab, i) => {
             const selected = activeTab === tab.id;
             return (
@@ -71,7 +72,7 @@ export default function Navigation({ projects, blogs }: { projects: Project[]; b
                   "text-[15px] font-medium transition-all",
                   selected
                     ? "text-text-highlight/80"
-                    : "text-text-highlight/20",
+                    : "text-text-highlight/20 hover:text-text-highlight/40",
                 )}
               >
                 {tab.label}
@@ -94,6 +95,7 @@ export default function Navigation({ projects, blogs }: { projects: Project[]; b
         <div role="tabpanel" id="panel-work" aria-labelledby="tab-work" hidden={activeTab !== "work"} >
           <Projects isList={isList} projects={projects} />
         </div>
+
         <div role="tabpanel" id="panel-blogs" aria-labelledby="tab-blogs" hidden={activeTab !== "blogs"} >
           <Blogs blogs={blogs} />
         </div>

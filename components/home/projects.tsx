@@ -4,26 +4,24 @@ import { useState } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import LogoWave from "../logo-wave";
+import { useSound } from "@web-kits/audio/react";
+import { retro } from "@/lib/audio";
+import Wave from "@/components/ui/wave";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/projects";
-import { usePlaySound } from "../ui/sensory-ui/config/use-play-sound";
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <div className="group/card block w-full rounded-lg pt-3 transition-colors last:border-b-0 hover:bg-foreground/10" >
+    <div className="group/card block w-full rounded-lg pt-3 transition-colors last:border-b-0 hover:bg-foreground/10">
       <div className="mx-auto flex max-w-136 items-center gap-2 border-b border-foreground/10 pb-3 transition-colors group-hover/card:border-transparent group-last/card:border-b-0">
         <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-foreground/12 p-0.5">
-          <Image
-            src={project.logo ?? "/logo-placeholder.svg"}
-            width={24}
-            height={24}
-            alt=""
-            aria-hidden
-            className="relative z-10 block h-6 w-6 rounded-[3px] object-contain"
-          />
+          <Image src={project.logo ?? "/logo-placeholder.svg"} width={24} height={24} alt="" aria-hidden className="relative z-10 block h-6 w-6 rounded-[3px] object-contain" />
           <div className="absolute inset-0 opacity-5 transition-opacity duration-300 group-hover/card:opacity-100">
-            <LogoWave color={project.color ?? "#5E6C32"} />
+            <Wave
+              color={project.color ?? "#5E6C32"}
+              variant="logo"
+              className="h-full w-full"
+            />
           </div>
         </div>
 
@@ -52,8 +50,8 @@ function ProjectListItem({ project }: { project: Project }) {
   const [open, setOpen] = useState(false);
   const panelId = `project-panel-${project.slug}`;
 
-  const { play: playExpand } = usePlaySound({ sound: "overlay.expand" });
-  const { play: playCollapse } = usePlaySound({ sound: "overlay.collapse" });
+  const playExpand = useSound(retro.expand);
+  const playCollapse = useSound(retro.collapse);
 
   function toggle() {
     if (open) playCollapse();
@@ -62,14 +60,8 @@ function ProjectListItem({ project }: { project: Project }) {
   }
 
   return (
-    <div className="last:border-b-0 cursor-pointer">
-      <button
-        type="button"
-        onClick={toggle}
-        aria-expanded={open}
-        aria-controls={panelId}
-        className="group w-full rounded-lg py-2 text-left transition-colors hover:bg-foreground/10"
-      >
+    <div className="cursor-pointer last:border-b-0">
+      <button type="button" onClick={toggle} aria-expanded={open} aria-controls={panelId} className="group w-full rounded-lg py-2 text-left transition-colors hover:bg-foreground/10"      >
         <div className="mx-auto flex max-w-136 items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <span className="shrink-0 text-[12px] leading-none text-foreground/30 transition-colors group-hover:text-foreground/50">
@@ -109,42 +101,22 @@ function ProjectListItem({ project }: { project: Project }) {
             <div className="mx-auto max-w-136 space-y-1 pb-3 text-[11px] leading-snug text-foreground/70">
               {project.what && (
                 <p>
-                  <span className="text-foreground/40 underline">What:</span> {project.what}
+                  <span className="text-foreground/40 underline">What:</span>{" "}
+                  {project.what}
                 </p>
               )}
               {project.why && (
                 <p>
-                  <span className="text-foreground/40 underline">Why:</span> {project.why}
+                  <span className="text-foreground/40 underline">Why:</span>{" "}
+                  {project.why}
                 </p>
               )}
               {project.result && (
                 <p>
-                  <span className="text-foreground/40 underline">Result:</span> {project.result}
+                  <span className="text-foreground/40 underline">Result:</span>{" "}
+                  {project.result}
                 </p>
               )}
-
-              {/*{(project.github || project.writeup) && (
-                <div className="flex flex-wrap items-center gap-3 pt-1">
-                  {project.github && (
-                    <Link
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-text-highlight underline underline-offset-4 transition-colors hover:text-foreground"
-                    >
-                      GitHub
-                    </Link>
-                  )}
-                  {project.writeup && (
-                    <Link
-                      href={project.writeup}
-                      className="text-text-highlight underline underline-offset-4 transition-colors hover:text-foreground"
-                    >
-                      Writeup
-                    </Link>
-                  )}
-                </div>
-              )}*/}
             </div>
           </motion.div>
         )}
@@ -153,17 +125,11 @@ function ProjectListItem({ project }: { project: Project }) {
   );
 }
 
-export default function Projects({
-  isList = false,
-  projects,
-}: {
-  isList?: boolean;
-  projects: Project[];
-}) {
+export default function Projects({ isList = false, projects }: { isList?: boolean; projects: Project[]; }) {
   const [showAll, setShowAll] = useState(false);
 
-  const { play: playExpand } = usePlaySound({ sound: "overlay.expand" });
-  const { play: playCollapse } = usePlaySound({ sound: "overlay.collapse" });
+  const playExpand = useSound(retro.expand);
+  const playCollapse = useSound(retro.collapse);
 
   const handleToggle = () => {
     if (showAll) playCollapse();
@@ -203,12 +169,7 @@ export default function Projects({
         ))}
       </div>
       {!isList && projects.length > 3 && (
-        <button
-          type="button"
-          onClick={handleToggle}
-          aria-expanded={showAll}
-          className="mt-2 w-full text-center text-[11px] text-foreground/40 transition-colors hover:text-foreground/70"
-        >
+        <button type="button" onClick={handleToggle} aria-expanded={showAll} className="mt-2 w-full text-center text-[11px] text-foreground/40 transition-colors hover:text-foreground/70" >
           {showAll ? "Show less" : "View all"}
         </button>
       )}
