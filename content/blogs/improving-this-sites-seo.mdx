@@ -1,0 +1,102 @@
+---
+slug: improving-this-sites-seo
+title: Improving This Site's SEO
+description: >-
+  This blog will briefly explore how I plan to improve this site's SEO.
+  It will also give you example code snippets and guidelines to help you
+  improve your own site's SEO.
+timeToRead: 5 Minutes
+publishedAt: "July 2026"
+series:
+  title: "Development of this Site"
+  slug: site-development
+order: 1
+---
+
+[Search Engine Optimisation (SEO)](https://en.wikipedia.org/wiki/Search_engine_optimization) is a rather straightforward yet complex area of website management that must be taken to ensure people can discover and identify your website and its content from a single search. However, I believe that people sometimes overcomplicate what is necessary to increase their site's rankings. In this blog, I'll explain the steps I'll be taking to push my site to new people.
+ 
+### Backlinks
+ 
+A backlink is essentially a link on another website that points back to a page on your website. They signal to a search engine that your site is more trustworthy and can be ranked higher within search results, simply because sites link to your site.
+ 
+Backlinks are hard to achieve because your content must be good enough or your services popular enough for other sites to want to link to yours. However, there's a few ways in which you can get backlinks:
+ 
+1. Updating all social media platforms (Twitter, LinkedIn or GitHub) to have your website connected to them.
+2. Listing your website on directories, forums and subreddits.
+3. Getting your friends to link to your site.
+It should be expected that building a large list of backlinks takes a long time and good content.
+ 
+### Google Search Console
+ 
+[Google Search Console](https://search.google.com/search-console/about) and Bing Webmaster Tools can both be used to help monitor, maintain and troubleshoot a website's presence in their respective search results. It shows which search queries drive traffic to the site, how often the pages are clicked, and any technical issues that may degrade search rankings.
+ 
+Google Search Console provides helpful features such as:
+ 
+- A performance report showing what keywords users type into Google to find the website, along with how many times the page appeared and how many times it was clicked.
+- Which pages Google has successfully crawled and added to its search index.
+- The ability to request a re-crawl to add more pages to the index.
+<Callout type="warning">
+  Although it only takes a moment to set your domain up through one DNS modification — especially since I use Cloudflare, so Google handles it automatically through a click of a button — it will take roughly 24–48 hours for a report to be generated for the site.
+</Callout>
+### Robots
+ 
+This is a text document placed at the website's root directory telling search engines and bots which pages or folders they are allowed to crawl and index. It is primarily used to stop crawlers from accessing unimportant or sensitive files — for instance, disallowing crawling of `/admin` and `/api` endpoints because they are unimportant and should not be indexed.
+ 
+Here is my `robots.ts` with an explanation of each setting:
+ 
+```ts
+import type { MetadataRoute } from 'next'
+ 
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: '*',
+      allow: '/',
+      disallow: ['/api/'],
+    },
+    sitemap: process.env.NEXT_PUBLIC_SITE_URL + '/sitemap.xml',
+  }
+}
+```
+ 
+- `userAgent: '*'` — applies to all crawlers
+- `allow: '/'` — crawlers may index every link
+- `disallow` — stops them from indexing and crawling certain endpoints
+- `sitemap` — points crawlers at my sitemap
+
+### Sitemap
+ 
+Again, another text document at the website's root directory, acting essentially as a list or map of the website's pages. This helps search engines discover and index content more efficiently.
+ 
+My sitemap is dynamic and will automatically update based on the projects and blogs within my content directories. This is good because as soon as I publish a new one, once Google or another search engine checks my sitemap, it will be indexed automatically.
+ 
+```ts
+import type { MetadataRoute } from 'next'
+import path from 'node:path'
+import getAllContent from '@/lib/content'
+ 
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = process.env.NEXT_PUBLIC_SITE_URL
+ 
+  const posts = getAllContent<{ title: string }>(
+    path.join(process.cwd(), 'content', 'blogs')
+  )
+  const projects = getAllContent<{ title: string }>(
+    path.join(process.cwd(), 'content', 'projects')
+  )
+ 
+  return [
+    { url: base },
+    { url: `${base}/blog` },
+    { url: `${base}/projects` },
+    ...posts.map((p) => ({ url: `${base}/blog/${p.slug}` })),
+    ...projects.map((p) => ({ url: `${base}/projects/${p.slug}` })),
+  ]
+}
+```
+ 
+### Content
+ 
+And finally, the one that is most ignored but the most important. You must simply have good content on your website worth discovering. For a personal website, this is quite challenging because all things on it will be regarding you and your life.
+ 
+The content on my website is both my projects and blogs. As this website grows, I hope to post a lot of guides and progress within my career that others may find exciting. I'm also a big fan of open source, so as I develop more projects, I will link back to this website with development blogs and so forth.

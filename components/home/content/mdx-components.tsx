@@ -2,9 +2,13 @@ import type { ComponentPropsWithoutRef } from "react";
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 import List from "@/components/home/content/list";
+import Callout from "@/components/home/content/blog/callout";
+import CodeBlock from "@/components/home/content/blog/code-block";
 
 export const mdxComponents = {
   list: List,
+  Callout: Callout,
+  pre: CodeBlock,
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
       <h2 className="mt-12 mb-3 scroll-mt-24 font-serif text-[19px] text-text-highlight" {...props} />
   ),
@@ -20,9 +24,15 @@ export const mdxComponents = {
   li: (props: ComponentPropsWithoutRef<"li">) => (
     <li className="leading-relaxed" {...props} />
   ),
-  code: (props: ComponentPropsWithoutRef<"code">) => (
-    <code className="rounded bg-foreground/10 px-1 py-0.5 text-[12px]" {...props} />
-  ),
+  code: ({ className, ...props }: ComponentPropsWithoutRef<"code">) => {
+    const isBlock =
+      className?.includes("language-") || "data-language" in props;
+    return isBlock ? (
+      <code className={className} {...props} />
+    ) : (
+      <code className="rounded bg-foreground/10 px-1 py-0.5 text-[12px]" {...props} />
+    );
+  },
   a: ({ href, children, ...props }: ComponentPropsWithoutRef<"a">) => {
     const url = href ?? "";
     const isExternal = /^https?:\/\//.test(url);

@@ -20,6 +20,7 @@ import MobileToc from "@/components/home/content/mobile-toc";
 import ShareMenu from "@/components/home/content/share-menu";
 import References from "@/components/home/content/references";
 import { Reveal } from "@/components/ui/reveal";
+import rehypePrettyCode from "rehype-pretty-code";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
 
@@ -89,7 +90,14 @@ export default async function BlogPost({ params }: BlogPageProps) {
             <MDXRemote
               source={blog.content}
               components={mdxComponents}
-              options={{ mdxOptions: { rehypePlugins: [rehypeSlug] } }}
+              options={{
+                mdxOptions: {
+                  rehypePlugins: [
+                    rehypeSlug,
+                    [rehypePrettyCode, { theme: "vesper", keepBackground: false }],
+                  ],
+                },
+              }}
             />
           </article>
         </Reveal>
