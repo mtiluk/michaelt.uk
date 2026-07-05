@@ -40,7 +40,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            NEXT_PUBLIC_SITE_URL=https://michaelt.uk
+            NEXT_PUBLIC_SITE_URL=https://mtil.uk
 
   deploy:
     needs: build
