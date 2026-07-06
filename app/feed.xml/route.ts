@@ -20,15 +20,15 @@ export async function GET() {
     language: siteConfig.language,
     copyright: `© ${new Date().getFullYear()} ${siteConfig.name}`,
     feedLinks: {
-      rss: `https://${siteConfig.url}feed.xml`
+      rss: `${siteConfig.url}/feed.xml`
     },
   });
 
   for (const post of blogs) {
     feed.addItem({
       title: post.title,
-      id: `https://${siteConfig.url}/blog/${post.slug}`,
-      link: `https://${siteConfig.url}/blog/${post.slug}`,
+      id: `${siteConfig.url}/blog/${post.slug}`,
+      link: `${siteConfig.url}/blog/${post.slug}`,
       description: post.description,
       date: new Date(post.publishedAt),
     });
