@@ -1,0 +1,168 @@
+---
+slug: self-updating-readme
+title: Self-Updating Readme
+description: >-
+  A guide on how I implemented a self-updating GitHub readme using an RSS feed and GitHub actions to display my most recent blog posts.
+timeToRead: 5 Minutes
+publishedAt: "July 2026"
+---
+
+Recently, I've been working on a lot of personal projects alongside my research. This has led to me writing more posts on topics that I find interesting. I wanted to add a section to my GitHub README displaying my most recent blogs but wondered if there was a way to automate this instead of manually editing each time.
+
+### Blog Implementation
+Before exploring implementation details on the readme, we must understand how this blog is made. There is no API on this website. There is no database. How can I fetch the blogs efficiently and simple without an interface to do so?
+
+The underlying implementation uses [MDX](https://nextjs.org/docs/app/guides/mdx) provided by [NextJS](https://nextjs.org/) to automatically convert markdown files to HTML. This was chosen due to the simplicity and lightweight nature that it provides to me, I can write any blog in a simple markdown file and immediately push it to the website. The code required is straight forward and typescript components can easily be passed in.
+
+So.. now that we know there is no endpoint or database to fetch from - what will we use? Luckily, this site already has a [public RSS feed](https://mtil.uk/feed.xml) that can be used to do what I want.
+
+### Really Simple Syndication
+Most people are already familiar with what [Really Simple Syndication](https://en.wikipedia.org/wiki/RSS) is but for those who don't, I'll give a basic explanation. It's a simple feed automatically generated that allows users and applications to access updates to websites in a standardised format. 
+
+You can view [this sites RSS feed at this link](https://mtil.uk/feed.xml) and get a similar output to:
+```xml
+<rss>
+  <channel>
+    <title>Michael Tilley</title>
+
+    <item>
+      <title>Deploying My Services</title>
+      <link>https://mtil.uk/blog/deploying-my-services</link>
+      <pubDate>Mon, 01 Jun 2026 00:00:00 GMT</pubDate>
+      <description>
+        This blog explores how I deploy my applications efficiently and
+        affordably, including hosting choices, security measures, and my
+        deployment workflow.
+      </description>
+    </item>
+
+    <item>
+      <title>Improving This Site's SEO</title>
+      <link>https://mtil.uk/blog/improving-this-sites-seo</link>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 GMT</pubDate>
+      <description>
+        An overview of the SEO improvements I'm making to this site, along
+        with practical examples and code snippets you can apply to your own
+        projects.
+      </description>
+    </item>
+  </channel>
+</rss>
+```
+
+Using this RSS feed, I should be able to periodically do a GET request to fetch the latest blog posts and update the README accordingly.
+
+### Implementation
+GitHub profile READMEs are repositories named after your account that contain a README file to display on your profile. Because of this, you're allowed to include other files. We can write a simple program to do a request to the RSS feed and automatically write an update to the README file.  
+
+For this, I chose to use Go although you could use any programming language of your choice. 
+
+```go
+func main() {
+    // Fetch the RSS feed
+	resp, err := http.Get(feedURL)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	// Parse the feed and keep only the newest posts
+	items, err := mostRecentBlogs(body)
+	if err != nil {
+		panic(err)
+	}
+
+	// Replace the blog section in the README
+	if err := updateReadme(items); err != nil {
+		panic(err)
+	}
+}
+```
+
+The `mostRecentBlogs` function parses the RSS feed into Go structs, sorts the entries by publication date, and returns the three most recent posts
+
+```go
+func mostRecentBlogs(body []byte) ([]Entry, error) {
+	var feed RSS
+	if err := xml.Unmarshal(body, &feed); err != nil {
+		return nil, err
+	}
+
+	items := feed.Channel.Entries
+	sort.Slice(items, func(i, j int) bool {
+		return parseDate(items[i].Published).After(parseDate(items[j].Published))
+	})
+
+	if len(items) > maxPosts {
+		items = items[:maxPosts]
+	}
+	return items, nil
+}
+```
+
+Finally, `updateReadme` locates two HTML comment markers in the README and replaces everything between them with a freshly generated Markdown list of blog posts.
+
+```markdown
+<!-- BLOG:START -->
+- [Deploying My Services](...)
+- [Improving This Site's SEO](...)
+- [Self Updating Readme](...)
+<!-- BLOG:END -->
+```
+
+### Automation
+We now have a script that fetches the RSS feed and updates the README, but that isn't automation. The program still has to be executed whenever a new blog is published.
+
+Fortunately, GitHub provides a solution through [GitHub Actions](https://github.com/features/actions). GitHub actions will allow the repository to periodically execute the Go program without requiring my intervention. 
+
+Rather than triggering on every push, it needed a scheduled workflow. Every morning at `06:00 UTC`, GitHub checks out the profile repository, runs the Go application, and compares the generated README with the existing one. If nothing has changed, the workflow exits without creating a commit. If a new blog post has appeared in the RSS feed, the updated README Is committed and pushed back to the repository automatically. 
+
+The workflow itself is small: 
+
+```yml
+name: Update blog posts
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+
+      - name: Fetch latest posts and update README
+        run: go run main.go
+
+      - name: Commit changes (if any)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet README.md; then
+            git add README.md
+            git commit -m "chore: update latest blog posts"
+            git push
+          else
+            echo "README already up to date, nothing to commit."
+          fi
+```
+
+The end result is exactly what I wanted. Whenever I publish a new post to my website, the RSS feed is updated automatically. The next scheduled workflow fetches the latest posts and refreshes the "Latest Blogs" section of my GitHub profile.
+
+It's a small addition, but it means my profile always reflects my latest work while requiring virtually no maintenance.
