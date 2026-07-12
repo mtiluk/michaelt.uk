@@ -9,7 +9,7 @@ import type { Blog } from "@/types/blogs";
 
 
 const SEARCH_THRESHOLD = 4;
-const PER_PAGE = 4;
+const PER_PAGE = 4
 
 function BlogItem({ blog }: { blog: Blog }) {
   return (
@@ -97,6 +97,7 @@ export default function Blogs({ blogs }: { blogs: Blog[] }) {
   }
 
   const showSearch = blogs.length >= SEARCH_THRESHOLD;
+
 
   return (
     <div ref={topRef} className="scroll-mt-24">

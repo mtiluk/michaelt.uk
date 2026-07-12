@@ -1,0 +1,14 @@
+# Fields:
+#   type      book | article | blog          (required)
+#   title                                    (required)
+#   url                                      (required)
+#   author    person, or leave off to show the site's hostname instead
+#   note      one sentence on why it's here  (optional, earns its place)
+#   favorite  true → red heart               (optional, use sparingly)
+#   status    reading → pinned to the top with a live dot (optional)
+
+- type: blog
+  title: Data Lake
+  url: https://www.martinfowler.com/bliki/DataLake.html
+  note: Short article exploring the concept of a data lake, data warehouse, and some careful considerations.
+  favorite:

@@ -1,3 +1,4 @@
+// components/home/navigation.tsx
 "use client";
 import { useRef, useState } from "react";
 import { Menu, Columns3 } from "lucide-react";
@@ -5,18 +6,21 @@ import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import Projects from "@/components/home/projects";
 import Blogs from "@/components/home/blogs";
+import Reads from "@/components/home/reads";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/projects";
 import type { Blog } from "@/types/blogs";
+import type { Read } from "@/lib/reads";
 
 const TABS = [
   { id: "work", label: "Work" },
   { id: "blogs", label: "Blogs" },
+  { id: "reads", label: "Reads" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
-export default function Navigation({ projects, blogs }: { projects: Project[]; blogs: Blog[]; }) {
+export default function Navigation({ projects, blogs, reads }: { projects: Project[]; blogs: Blog[]; reads: Read[]; }) {
   const [isList, setIsList] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("work");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -81,23 +85,62 @@ export default function Navigation({ projects, blogs }: { projects: Project[]; b
           })}
         </div>
 
-        <div className="flex gap-1" role="group" aria-label="View layout">
-          <button type="button" onClick={() => selectView(true)} aria-label="List view" aria-pressed={isList} className={cn(viewButton, isList && "bg-text-highlight/10")} >
+        <div
+          className={cn(
+            "flex gap-1 transition-opacity duration-200",
+            activeTab !== "work" && "pointer-events-none opacity-0",
+          )}
+          role="group"
+          aria-label="View layout"
+          aria-hidden={activeTab !== "work"}
+        >
+          <button
+            type="button"
+            onClick={() => selectView(true)}
+            aria-label="List view"
+            aria-pressed={isList}
+            tabIndex={activeTab === "work" ? 0 : -1}
+            className={cn(viewButton, isList && "bg-text-highlight/10")}
+          >
             <Menu className="h-3 w-3" aria-hidden />
           </button>
-          <button type="button" onClick={() => selectView(false)} aria-label="Card view" aria-pressed={!isList} className={cn(viewButton, !isList && "bg-text-highlight/10")} >
+          <button
+            type="button"
+            onClick={() => selectView(false)}
+            aria-label="Card view"
+            aria-pressed={!isList}
+            tabIndex={activeTab === "work" ? 0 : -1}
+            className={cn(viewButton, !isList && "bg-text-highlight/10")}
+          >
             <Columns3 className="h-3 w-3" aria-hidden />
           </button>
         </div>
       </div>
 
       <div className="mt-4 w-full">
-        <div role="tabpanel" id="panel-work" aria-labelledby="tab-work" hidden={activeTab !== "work"} >
+        <div
+          role="tabpanel"
+          id="panel-work"
+          aria-labelledby="tab-work"
+          hidden={activeTab !== "work"}
+        >
           <Projects isList={isList} projects={projects} />
         </div>
-
-        <div role="tabpanel" id="panel-blogs" aria-labelledby="tab-blogs" hidden={activeTab !== "blogs"} >
+        <div
+          role="tabpanel"
+          id="panel-blogs"
+          aria-labelledby="tab-blogs"
+          hidden={activeTab !== "blogs"}
+        >
           <Blogs blogs={blogs} />
+        </div>
+        <div
+          role="tabpanel"
+          id="panel-reads"
+          aria-labelledby="tab-reads"
+          hidden={activeTab !== "reads"}
+        >
+          <Reads reads={reads} />
         </div>
       </div>
     </div>

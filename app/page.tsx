@@ -6,15 +6,21 @@ import Contact from "@/components/home/contact";
 import AnimatedBadge from "@/components/home/animated-badge";
 import Navigation from "@/components/home/navigation";
 import { Reveal } from "@/components/ui/reveal";
+import { getReads } from "@/lib/reads";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export default async function Home() {
-  const [blogs, projects] = await Promise.all([
-    getAllContent<Blog>(blogDirectory),
+  const [projects] = await Promise.all([
     getAllContent<Project>(projectDirectory),
   ]);
+
+  const blogs = getAllContent<Blog>(blogDirectory, {
+    sort: (a, b) => b.publishedAt.localeCompare(a.publishedAt),
+  });
+
+  const reads = getReads();
 
   return (
     <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">
@@ -59,7 +65,7 @@ export default async function Home() {
       </div>
 
       <Reveal variant="fade" delay={0.25}>
-        <Navigation projects={projects} blogs={blogs} />
+        <Navigation projects={projects} blogs={blogs} reads={reads} />
       </Reveal>
     </main>
   );
