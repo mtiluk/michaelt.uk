@@ -12,3 +12,9 @@
   url: https://www.martinfowler.com/bliki/DataLake.html
   note: Short article exploring the concept of a data lake, data warehouse, and some careful considerations.
   favorite:
+
+- type: blog
+  title: How Software Bugs led to ‘One of the Greatest Miscarriages of Justice’ in British History
+  url: https://cacm.acm.org/news/how-software-bugs-led-to-one-of-the-greatest-miscarriages-of-justice-in-british-history/
+  note: In the news for the past few years, explained in detail how software bugs led to one of the greatest miscarriages of justice in British history.
+  favorite: true
