@@ -18,3 +18,8 @@
   url: https://cacm.acm.org/news/how-software-bugs-led-to-one-of-the-greatest-miscarriages-of-justice-in-british-history/
   note: In the news for the past few years, explained in detail how software bugs led to one of the greatest miscarriages of justice in British history.
   favorite: true
+
+- type: book
+  title: Learning Go, 2nd Edition
+  url: https://www.oreilly.com/library/view/learning-go-2nd/9781098139285/ch04.html
+  favorite: true
