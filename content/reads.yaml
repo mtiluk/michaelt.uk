@@ -23,3 +23,18 @@
   title: Learning Go, 2nd Edition
   url: https://www.oreilly.com/library/view/learning-go-2nd/9781098139285/ch04.html
   favorite: true
+
+- type: blog
+  title: Serverless Doesn’t Mean DevOpsLess or NoOps
+  url: https://thenewstack.io/serverless-doesnt-mean-devopsless-or-noops/
+
+- type: blog
+  title: Use One Big Server
+  url: https://specbranch.com/posts/one-big-server/
+  note: An interesting blog exploring One Big Server vs Serverless - screw serverless.
+  favorite: true
+
+- type: blog
+  title: Why we're leaving the cloud
+  url: https://world.hey.com/dhh/why-we-re-leaving-the-cloud-654b47e0
+  note: Cloud is not always the best
