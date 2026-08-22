@@ -68,9 +68,9 @@ export function FaLetterboxd({ size = "1em", title, style, ...props }: IconProps
     >
       {title ? <title>{title}</title> : null}
       <g fillRule="evenodd" clipRule="evenodd">
-        <circle cx="5" cy="4" r="3" />
-        <circle cx="12" cy="4" r="3" />
-        <circle cx="19" cy="4" r="3" />
+        <circle cx="4" cy="5" r="2.7" />
+        <circle cx="12" cy="5" r="2.7" />
+        <circle cx="19" cy="5" r="2.7" />
       </g>
     </svg>
   );
