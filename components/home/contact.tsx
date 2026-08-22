@@ -1,8 +1,6 @@
-import { BsGithub, BsLinkedin, BsTwitterX } from "react-icons/bs";
-import { FaLetterboxd } from "react-icons/fa6";
+import { BsGithub, BsLinkedin, BsTwitterX, FaLetterboxd, MdEmail } from "@/components/icons"
 import SocialProfile from "./social-profile";
 import ContactForm from "./contact-form";
-import { MdEmail } from "react-icons/md";
 import Link from "next/link";
 
 export default async function Contact() {
