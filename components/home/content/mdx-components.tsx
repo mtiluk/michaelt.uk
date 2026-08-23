@@ -1,12 +1,10 @@
 import type { ComponentPropsWithoutRef } from "react";
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
-import List from "@/components/home/content/list";
 import Callout from "@/components/home/content/blog/callout";
 import CodeBlock from "@/components/home/content/blog/code-block";
 
 export const mdxComponents = {
-  list: List,
   Callout: Callout,
   pre: CodeBlock,
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
