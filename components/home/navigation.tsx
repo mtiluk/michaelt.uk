@@ -1,4 +1,3 @@
-// components/home/navigation.tsx
 "use client";
 import { useRef, useState } from "react";
 import { Menu, Columns3 } from "lucide-react";
@@ -20,7 +19,7 @@ const TABS = [
 
 type TabId = (typeof TABS)[number]["id"];
 
-export default function Navigation({ projects, blogs, reads }: { projects: Project[]; blogs: Blog[]; reads: Read[]; }) {
+export default function Navigation({ projects, blogs, reads }: { projects: Project[]; blogs: Blog[]; reads: Read[] }) {
   const [isList, setIsList] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>("work");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -55,7 +54,7 @@ export default function Navigation({ projects, blogs, reads }: { projects: Proje
   return (
     <div className="mt-10">
       <div className="mx-auto flex max-w-136 items-center justify-between">
-        <div role="tablist" aria-label="Content sections" className="flex items-center gap-5" >
+        <div role="tablist" aria-label="Content sections" className="flex items-center gap-5">
           {TABS.map((tab, i) => {
             const selected = activeTab === tab.id;
             return (
@@ -118,28 +117,13 @@ export default function Navigation({ projects, blogs, reads }: { projects: Proje
       </div>
 
       <div className="mt-4 w-full">
-        <div
-          role="tabpanel"
-          id="panel-work"
-          aria-labelledby="tab-work"
-          hidden={activeTab !== "work"}
-        >
+        <div role="tabpanel" id="panel-work" aria-labelledby="tab-work" hidden={activeTab !== "work"}>
           <Projects isList={isList} projects={projects} />
         </div>
-        <div
-          role="tabpanel"
-          id="panel-blogs"
-          aria-labelledby="tab-blogs"
-          hidden={activeTab !== "blogs"}
-        >
+        <div role="tabpanel" id="panel-blogs" aria-labelledby="tab-blogs" hidden={activeTab !== "blogs"}>
           <Blogs blogs={blogs} />
         </div>
-        <div
-          role="tabpanel"
-          id="panel-reads"
-          aria-labelledby="tab-reads"
-          hidden={activeTab !== "reads"}
-        >
+        <div role="tabpanel" id="panel-reads" aria-labelledby="tab-reads" hidden={activeTab !== "reads"}>
           <Reads reads={reads} />
         </div>
       </div>

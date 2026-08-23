@@ -1,4 +1,4 @@
-import { BsGithub, BsLinkedin, BsTwitterX, FaLetterboxd, MdEmail } from "@/components/icons"
+import { BsGithub, BsLinkedin, BsTwitterX, FaLetterboxd, MdEmail } from "@/components/icons/brand"
 import SocialProfile from "./social-profile";
 import ContactForm from "./contact-form";
 import Link from "next/link";
