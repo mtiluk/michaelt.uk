@@ -18,6 +18,9 @@ const CYCLE_INTERVAL = 3000;
 const SUCCESS_RESET_DELAY = 2200;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_TEXTAREA_HEIGHT = 120;
+const MAX_MESSAGE_LENGTH = 1024;
+const MAX_EMAIL_LENGTH = 320;
+const COUNTER_THRESHOLD = 100;
 
 type Step = "message" | "email" | "success";
 
@@ -113,6 +116,8 @@ export default function ContactForm() {
   }
 
   const isEmailStep = step === "email";
+  const remaining = MAX_MESSAGE_LENGTH - message.length;
+  const showCounter = step === "message" && remaining <= COUNTER_THRESHOLD;
 
   return (
     <motion.form layout onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
@@ -134,6 +139,7 @@ export default function ContactForm() {
               autoFocus={visited}
               className="block max-h-30 w-full resize-none overflow-y-auto border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-hidden"
               rows={1}
+              maxLength={MAX_MESSAGE_LENGTH}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
@@ -194,6 +200,7 @@ export default function ContactForm() {
               type="email"
               name="email"
               autoComplete="email"
+              maxLength={MAX_EMAIL_LENGTH}
               placeholder="you@example.com"
               value={email}
               onChange={(e) => {
@@ -253,25 +260,43 @@ export default function ContactForm() {
             )}
           </AnimatePresence>
 
-          <button
-            type="submit"
-            aria-label={isEmailStep ? "Send message" : "Continue to email"}
-            aria-busy={sending}
-            disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors disabled:bg-text-highlight/10 disabled:text-background"
-          >
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={isEmailStep ? "send" : "next"}
-                initial={{ opacity: 0, scale: 0.7 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.7 }}
-                transition={{ duration: 0.1 }}
-              >
-                <ChevronUp className="h-4 w-4" aria-hidden />
-              </motion.span>
+          <div className="flex items-center gap-2">
+            <AnimatePresence initial={false}>
+              {showCounter && (
+                <motion.span
+                  key="counter"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  aria-live="polite"
+                  className={`text-[10px] tabular-nums ${remaining === 0 ? "text-red-400/70" : "text-foreground/30"}`}
+                >
+                  {remaining}
+                </motion.span>
+              )}
             </AnimatePresence>
-          </button>
+
+            <button
+              type="submit"
+              aria-label={isEmailStep ? "Send message" : "Continue to email"}
+              aria-busy={sending}
+              disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors disabled:bg-text-highlight/10 disabled:text-background"
+            >
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={isEmailStep ? "send" : "next"}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.1 }}
+                >
+                  <ChevronUp className="h-4 w-4" aria-hidden />
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </div>
         </div>
       )}
     </motion.form>
