@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
+import { ChevronLeft, ChevronUp } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
@@ -27,6 +27,7 @@ export default function ContactForm() {
   const [index, setIndex] = useState(0);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [visited, setVisited] = useState(false);
 
   const playKey = useSound(retro.keyPress);
   const playSelect = useSound(retro.select);
@@ -47,6 +48,7 @@ export default function ContactForm() {
     const timer = setTimeout(() => {
       setMessage("");
       setEmail("");
+      setVisited(false);
       setStep("message");
     }, SUCCESS_RESET_DELAY);
     return () => clearTimeout(timer);
@@ -58,7 +60,14 @@ export default function ContactForm() {
     if (!message.trim()) return;
     playSelect();
     setError(null);
+    setVisited(true);
     setStep("email");
+  }
+
+  function handleBack() {
+    playSelect();
+    setError(null);
+    setStep("message");
   }
 
   async function handleSend() {
@@ -114,7 +123,8 @@ export default function ContactForm() {
 
             <textarea
               id="contact-message"
-              className="block w-full resize-none border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-none"
+              autoFocus={visited}
+              className="block w-full resize-none border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-hidden"
               rows={1}
               value={message}
               onChange={(e) => {
@@ -156,9 +166,14 @@ export default function ContactForm() {
             transition={{ duration: 0.1 }}
             className="space-y-3"
           >
-            <div className="border-l border-foreground/10 pl-2 text-[11px] text-foreground/40">
+            <button
+              type="button"
+              onClick={handleBack}
+              aria-label="Edit your message"
+              className="block w-full border-l border-foreground/10 pl-2 text-left text-[11px] text-foreground/40 transition-colors hover:border-text-highlight/40 hover:text-foreground/70"
+            >
               {message}
-            </div>
+            </button>
 
             <label htmlFor="contact-email" className="sr-only">
               Your email address
@@ -177,7 +192,10 @@ export default function ContactForm() {
                 playKey();
                 if (error) setError(null);
               }}
-              className="w-full bg-transparent text-[12px] text-text-highlight outline-none"
+              onKeyDown={(e) => {
+                if (e.key === "Escape") handleBack();
+              }}
+              className="w-full bg-transparent text-[12px] text-text-highlight outline-hidden"
             />
           </motion.div>
         )}
@@ -205,7 +223,27 @@ export default function ContactForm() {
       )}
 
       {step !== "success" && (
-        <div className="mt-4 flex items-center justify-end">
+        <div className="mt-4 flex items-center justify-between">
+          <AnimatePresence initial={false}>
+            {isEmailStep ? (
+              <motion.button
+                key="back"
+                type="button"
+                onClick={handleBack}
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -4 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-center gap-0.5 text-[11px] text-foreground/40 transition-colors hover:text-text-highlight"
+              >
+                <ChevronLeft className="h-3 w-3" aria-hidden />
+                Back
+              </motion.button>
+            ) : (
+              <span />
+            )}
+          </AnimatePresence>
+
           <button
             type="submit"
             aria-label={isEmailStep ? "Send message" : "Continue to email"}
