@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
+import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
 
 const PLACEHOLDERS = [
   "Say hello...",
@@ -16,10 +17,7 @@ const PLACEHOLDERS = [
 
 const CYCLE_INTERVAL = 3000;
 const SUCCESS_RESET_DELAY = 2200;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_TEXTAREA_HEIGHT = 120;
-const MAX_MESSAGE_LENGTH = 1024;
-const MAX_EMAIL_LENGTH = 320;
 const COUNTER_THRESHOLD = 100;
 
 type Step = "message" | "email" | "success";
@@ -64,7 +62,7 @@ export default function ContactForm() {
     return () => clearTimeout(timer);
   }, [step]);
 
-  const emailIsValid = EMAIL_REGEX.test(email.trim());
+  const emailIsValid = isValidEmail(email);
 
   function handleNext() {
     if (!message.trim()) return;
