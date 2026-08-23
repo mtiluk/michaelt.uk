@@ -1,10 +1,9 @@
-import Link from "next/link";
-import { MdEmail } from "@/components/icons/brand";
 import SocialLinks from "./socials";
 import ContactForm from "./contact-form";
+import EmailLink from "./email-link";
 import { getSocialsWithData } from "@/lib/socials";
 
-const linkClass = "inline-flex items-center gap-1 text-[11px] text-foreground/75 transition-all hover:text-text-highlight/75";
+const EMAIL = "mdtilley04@gmail.com";
 
 export default async function Contact() {
   const socials = await getSocialsWithData();
@@ -14,9 +13,7 @@ export default async function Contact() {
       <div className="flex justify-between px-2 py-1">
         <SocialLinks socials={socials} />
         <div className="flex items-center gap-4">
-          <Link href="mailto:mdtilley04@gmail.com" className={linkClass}>
-            <MdEmail /> Email
-          </Link>
+          <EmailLink email={EMAIL} />
         </div>
       </div>
       <ContactForm />

@@ -1,12 +1,12 @@
 "use client";
 
-import { ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { Check, ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
+import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
-import Confetti from "./confetti";
+import Confetti, { preloadConfetti } from "./confetti";
 
 const PLACEHOLDERS = [
   "Say hello...",
@@ -38,7 +38,9 @@ export default function ContactForm() {
   const [error, setError] = useState<string | null>(null);
   const [visited, setVisited] = useState(false);
   const [website, setWebsite] = useState("");
+  const [lockedHeight, setLockedHeight] = useState<number | null>(null);
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const playKey = useSound(retro.keyPress);
   const playSelect = useSound(retro.select);
@@ -73,6 +75,7 @@ export default function ContactForm() {
       setEmail("");
       setWebsite("");
       setVisited(false);
+      setLockedHeight(null);
       setStep("message");
     }, SUCCESS_RESET_DELAY);
     return () => clearTimeout(timer);
@@ -83,6 +86,7 @@ export default function ContactForm() {
   function handleNext() {
     if (!message.trim()) return;
     playSelect();
+    preloadConfetti();
     setError(null);
     setVisited(true);
     setStep("email");
@@ -116,6 +120,7 @@ export default function ContactForm() {
       }
 
       playSuccess();
+      setLockedHeight(formRef.current?.offsetHeight ?? null);
       setStep("success");
     } catch {
       playError();
@@ -136,7 +141,8 @@ export default function ContactForm() {
   const showCounter = step === "message" && remaining <= COUNTER_THRESHOLD;
 
   return (
-    <motion.form layout onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
+    <MotionConfig reducedMotion="user">
+    <motion.form ref={formRef} layout onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} style={{ height: lockedHeight ?? undefined }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
       <AnimatePresence mode="wait">
         {step === "message" && (
           <motion.div
@@ -202,7 +208,7 @@ export default function ContactForm() {
               type="button"
               onClick={handleBack}
               aria-label="Edit your message"
-              className="block w-full border-l border-foreground/10 pl-2 text-left text-[11px] text-foreground/40 transition-colors hover:border-text-highlight/40 hover:text-foreground/70"
+              className="block w-full rounded-sm border-l border-foreground/10 pl-2 text-left text-[11px] text-foreground/40 transition-colors hover:border-text-highlight/40 hover:text-foreground/70 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50"
             >
               {message}
             </button>
@@ -240,7 +246,7 @@ export default function ContactForm() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="relative flex items-center gap-2.5 py-1"
+className="relative flex flex-1 items-center gap-2.5"
           >
             <Confetti />
 
@@ -275,7 +281,7 @@ export default function ContactForm() {
 
       {step !== "success" && (
         <div className="mt-4 flex items-center justify-between">
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="wait">
             {isEmailStep ? (
               <motion.button
                 key="back"
@@ -285,13 +291,25 @@ export default function ContactForm() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -4 }}
                 transition={{ duration: 0.15 }}
-                className="flex items-center gap-0.5 text-[11px] text-foreground/40 transition-colors hover:text-text-highlight"
+                className="flex items-center gap-0.5 rounded-md px-1 -mx-1 text-[11px] text-foreground/40 transition-colors hover:text-text-highlight focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50"
               >
                 <ChevronLeft className="h-3 w-3" aria-hidden />
                 Back
               </motion.button>
+            ) : message.trim() ? (
+              <motion.span
+                key="hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="text-[10px] text-foreground/25"
+              >
+                <kbd className="font-sans">↵</kbd> continue ·{" "}
+                <kbd className="font-sans">⇧↵</kbd> new line
+              </motion.span>
             ) : (
-              <span />
+              <span key="spacer" />
             )}
           </AnimatePresence>
 
@@ -317,7 +335,7 @@ export default function ContactForm() {
               aria-label={isEmailStep ? "Send message" : "Continue to email"}
               aria-busy={sending}
               disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
-              className={`flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors ${
+              className={`flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50 ${
                 sending ? "" : "disabled:bg-text-highlight/10 disabled:text-background"
               }`}
             >
@@ -341,5 +359,6 @@ export default function ContactForm() {
         </div>
       )}
     </motion.form>
+    </MotionConfig>
   );
 }

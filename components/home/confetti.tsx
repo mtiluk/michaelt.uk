@@ -4,6 +4,10 @@ import { useEffect, useRef } from "react";
 
 const COLORS = ["#2ea043", "#40bcf4", "#ff8000", "#e5c07b", "#c678dd"];
 
+export function preloadConfetti() {
+  void import("canvas-confetti").catch(() => {});
+}
+
 export default function Confetti() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
