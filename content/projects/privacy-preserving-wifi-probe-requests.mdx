@@ -1,54 +1,66 @@
 ---
 slug: privacy-preserving-wifi-probe-requests
 title: Privacy Preserving Wi-Fi Probe Requests
-subtitle: "Wi-Fi security investigation"
+subtitle: "Final year project"
 status: "completed"
 
-what: "A private pseudo-SSID scheme that lets a device reconnect to an access point without broadcasting the network name in plaintext."
-why: "Plaintext SSIDs in Probe Requests let passive listeners track a device's movement and infer home/work locations."
-result: "End-to-end prototype on hostapd + wpa_supplicant: reconnect Probe Requests carried a per-device token in a vendor-specific IE with the SSID absent — verified in Wireshark."
-github: "https://github.com/yourname/your-repo"
-writeup: "/projects/privacy-preserving-wifi-probe-requests"
+what: "A modified hostapd and wpa_supplicant that let a device rediscover an access point using a per-device token."
+why: "Plaintext SSIDs in Probe Requests can be collected passively and cross-referenced with geolocation databases to infer where a device has been."
+result: "Working prototype: reconnect scans used a wildcard SSID with the token in a vendor-specific IE, with no directed plaintext probe"
+github: "https://github.com/mtiluk/hostapd-privacy-demo"
+writeup: ""
 
-description: "Ran end to end research and development across source scraping, image preprocessing, geometry and cabin detection , and a selectable cabin mapping proof of concept."
+description: "A research prototype showing that Wi-Fi discovery can run on an obfuscated per-device alias rather than a plaintext SSID."
 startDate: "June 2026"
 endDate: "July 2026"
 year: "2026"
 ---
 
-### Project Explanation
+#### The problem
 
-When a Wi-Fi device looks for a known network, it broadcasts the network name (SSID) in plaintext via Probe Requsts. Anyone nearby passively listening can collect these broadcasts and, by cross-referencing with public geolocation databases, potentially track a device's movement, infer home or work locations, or build up a history of the networks it has visited.
+When a Wi-Fi device looks for a network it already knows, it broadcasts that network's name in plaintext inside a Probe Request. Anyone nearby can collect those broadcasts passively, and cross-referencing them with public geolocation databases can reveal where a device has been — home, work, or anywhere else it has connected before.
 
-This project explores a simple alternative. Rather than broadcasting the real network name, a device cna instead use a private pseuudo-SSID - a stable, per-device alias - to identify itself to an access point, without ever revealing the network name in the air.
+My final year project asked whether discovery could work on an obfuscated alias instead, without changing the shape of the 802.11 protocol.
 
-The approach works by deriving a 16-byte token for each device from a SHA-256 hash of the access point's MAC address and the device's MAC address. The token is unique per device, consistent across reconnects, and requires no additional key management infrastructure.
+#### The approach
 
-### What Happened
+Each access point derives a 16-byte token per station:
 
-The prototype was implemented as modifications to two open-source tools: hostapd (the access point daemon) and wpa_supplicant (the client daemon), running on a Raspberry Pi 4 with SoftMAC Wi-Fi adapters.
+```text
+token = SHA256(BSSID || STA_MAC)[0..15]
+```
 
-The flow works in two stages:
+Only MAC addresses are needed, so the token is available before association. It's different for every device, identical across reconnects, and needs no key management — no PMK, no additional infrastructure.
 
-On first connection, the device connects normally using the real network name. The access point derives a token for that device, stores it, and hands it back to the device inside the Association Response in a vendor-specific Information Element.
+The flow runs in two passes. On first connection the station associates normally using the real SSID, and the access point derives a token and hands it back in the Association Response inside a vendor-specific Information Element. On every connection after that, the station scans with a wildcard SSID and attaches the stored token to its Probe Request instead. The access point matches the token and continues with the normal association flow.
 
-On subsequent connections, the device skips the directed network name probe entirely. Instead, it sends a wildcard Probe Request carrying its token in a vendor-specific IE. The access point recognises the token and proceeds with the normal association flow.
+Element ID 221 is an existing extension point in the standard, so nothing about the over-the-air structure changes — the IE carries a demo OUI, a subtype byte, and the 16-byte token.
 
-No changes to the over-the-air protocol structure were required beyond the addition of a vendor-specific IE, which is an existing and legal extension point in the 802.11 standard.
+#### Implementation
 
-### The Results
+The prototype modifies both daemons, running on SoftMAC adapters. FullMAC hardware won't work, since management frames are generated in firmware there rather than in software.
 
-The prototype successfully demonstrated the full end-to-end flow:
+On the access point side, hostapd gained token derivation during station state creation, storage in the per-station WPA state machine, a lookup table, an IE builder for the Association Response, and Probe Request parsing to match incoming tokens. On the station side, wpa_supplicant gained token extraction from the Association Response, persistence into the network config so it survives restarts, wildcard scanning when a token exists, and IE insertion into outgoing Probe Requests.
 
-<list
-  items={[
-    "On first association, the access point correctly derived and provisioned a unique token to the client, embedding it within the association response in a custom Information Element.",
-    "The client parsed and stored this token, persisting it to disk so that it survived process restarts and power cycles without requiring re-provisioning.",
-    "On reconnect, the client sent a wildcard Probe Request — carrying no plaintext SSID — with the token attached as a vendor-specific IE.",
-    "The access point scanned incoming Probe Requests for matching tokens, and upon finding a valid one, completed the association handshake normally without any fallback to SSID-based matching.",
-  ]}
-/>
+#### Results
 
-This was validated through runtime logs from both daemons and packet captures analysed with tcpdump, tshark, and Wireshark.
+Second-pass reconnects behaved as intended: wildcard SSID probing, the token IE present in the Probe Request, and the same token value the access point had provisioned earlier.
 
-The plaintext SSID was absent from the reconnect Probe Request — the primary goal of the project. The token itself is sent in plaintext and is not a cryptographic secret; it acts as a stable discovery alias rather than a confidential credential. Full privacy guarantees, token rotation, and production hardening were explicitly out of scope and remain areas for future work.
+<Callout>
+The plaintext SSID was absent from the reconnect Probe Request — the goal of the project.
+</Callout>
+
+Verification came from hostapd and wpa_supplicant runtime logs, inspection of the persisted config, and packet captures analysed with tcpdump, tshark and Wireshark.
+
+```text
+DEMO TOKEN (derived: SHA256(BSSID||STA_MAC)) - hexdump(len=16): 4b a6 51 73 ...
+DEMO: token registered for 90:de:80:88:ce:60
+DEMO: using wildcard SSID for token-based scan
+DEMO: adding token IE to Probe Request
+```
+
+#### Scope
+
+The token is sent in plaintext deliberately. It's a discovery alias, not a credential — it obfuscates rather than encrypts, and the design makes no claim to cryptographic confidentiality or strong anti-tracking guarantees. A passive listener still sees a stable per-device value; what they no longer see is the network name.
+
+Token rotation, production hardening and a fuller privacy analysis were out of scope. This is an academic research prototype, not something to run on a real network.
