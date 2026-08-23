@@ -17,9 +17,6 @@ export default async function Contact() {
           <Link href="mailto:mdtilley04@gmail.com" className={linkClass}>
             <MdEmail /> Email
           </Link>
-          <Link href="mailto:mdtilley04@gmail.com" className={linkClass}>
-            <MdEmail /> Book a call
-          </Link>
         </div>
       </div>
       <ContactForm />
