@@ -1,0 +1,70 @@
+import path from "node:path";
+import getAllContent from "@/lib/content";
+import { getReads } from "@/lib/reads";
+import { getSocials } from "@/lib/socials";
+import type { Blog } from "@/types/blogs";
+import type { Project } from "@/types/projects";
+
+export type SearchGroup = "Pages" | "Blog" | "Projects" | "Reads" | "Social";
+
+export type SearchItem = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  href: string;
+  group: SearchGroup;
+  external?: boolean;
+};
+
+const blogDirectory = path.join(process.cwd(), "content/blogs");
+const projectDirectory = path.join(process.cwd(), "content/projects");
+
+export function getSearchItems(): SearchItem[] {
+  const blogs = getAllContent<Blog>(blogDirectory, {
+    sort: (a, b) => b.publishedAt.localeCompare(a.publishedAt),
+  }).map(
+    (blog): SearchItem => ({
+      id: `blog-${blog.slug}`,
+      title: blog.title,
+      subtitle: blog.description,
+      href: `/blog/${blog.slug}`,
+      group: "Blog",
+    }),
+  );
+
+  const projects = getAllContent<Project>(projectDirectory).map(
+    (project): SearchItem => ({
+      id: `project-${project.slug}`,
+      title: project.title,
+      subtitle: project.subtitle,
+      href: `/projects/${project.slug}`,
+      group: "Projects",
+    }),
+  );
+
+  const reads = getReads().map(
+    (read, i): SearchItem => ({
+      id: `read-${i}`,
+      title: read.title,
+      subtitle: read.author ?? read.source,
+      href: read.url,
+      group: "Reads",
+      external: true,
+    }),
+  );
+
+  const socials = getSocials().map(
+    (social): SearchItem => ({
+      id: `social-${social.platform}`,
+      title: social.platform === "x" ? "X" : social.platform,
+      subtitle: `@${social.handle}`,
+      href: social.href,
+      group: "Social",
+      external: true,
+    }),
+  );
+
+  const pages: SearchItem[] = [{ id: "page-home", title: "Home", href: "/", group: "Pages" }];
+
+  return [...pages, ...blogs, ...projects, ...reads, ...socials];
+}
