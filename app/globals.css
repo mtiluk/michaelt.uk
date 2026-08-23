@@ -32,17 +32,3 @@ body {
     background: var(--highlight);
     color: white;
 }
-
-.blog-content > h3 {
-    margin-top: 20px;
-    margin-bottom: 12px;
-    font-size: 12px;
-    color: var(--foreground);
-    opacity: 60%;
-    text-transform: uppercase;
-}
-
-.blog-content > p {
-    margin-top: 1rem;
-    line-height: 160%;
-}

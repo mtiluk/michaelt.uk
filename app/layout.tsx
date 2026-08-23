@@ -20,7 +20,7 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://mtil.uk/"),
+  metadataBase: process.env.NEXT_PUBLIC_SITE_URL,
   title: {
     default: "Michael Tilley",
     template: "%s · Michael Tilley",
