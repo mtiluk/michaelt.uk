@@ -36,6 +36,7 @@ export default function ContactForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visited, setVisited] = useState(false);
+  const [website, setWebsite] = useState("");
 
   const playKey = useSound(retro.keyPress);
   const playSelect = useSound(retro.select);
@@ -56,6 +57,7 @@ export default function ContactForm() {
     const timer = setTimeout(() => {
       setMessage("");
       setEmail("");
+      setWebsite("");
       setVisited(false);
       setStep("message");
     }, SUCCESS_RESET_DELAY);
@@ -88,12 +90,14 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message.trim(), email: email.trim() }),
+        body: JSON.stringify({ message: message.trim(), email: email.trim(), website }),
       });
 
       if (!res.ok) {
         playError();
-        setError("Something went wrong. Please try again.");
+        const data = (await res.json().catch(() => null)) as { error?: unknown } | null;
+        const detail = typeof data?.error === "string" ? data.error : null;
+        setError(detail ?? "Something went wrong. Please try again.");
         return;
       }
 
@@ -229,6 +233,19 @@ export default function ContactForm() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div aria-hidden className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="contact-website">Leave this field empty</label>
+        <input
+          id="contact-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
 
       {error && (
         <p role="alert" className="mt-2 text-[11px] text-red-400/80">

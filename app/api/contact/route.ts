@@ -8,10 +8,15 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { message, email } = (body ?? {}) as {
+  const { message, email, website } = (body ?? {}) as {
     message?: unknown;
     email?: unknown;
+    website?: unknown;
   };
+
+  if (typeof website === "string" && website.trim()) {
+    return Response.json({ success: true });
+  }
 
   if (typeof message !== "string" || typeof email !== "string") {
     return Response.json({ error: "Invalid payload" }, { status: 400 });
