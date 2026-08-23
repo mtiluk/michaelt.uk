@@ -17,8 +17,15 @@ const PLACEHOLDERS = [
 const CYCLE_INTERVAL = 3000;
 const SUCCESS_RESET_DELAY = 2200;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_TEXTAREA_HEIGHT = 120;
 
 type Step = "message" | "email" | "success";
+
+function autoSize(node: HTMLTextAreaElement | null) {
+  if (!node) return;
+  node.style.height = "0px";
+  node.style.height = `${Math.min(node.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+}
 
 export default function ContactForm() {
   const [message, setMessage] = useState("");
@@ -123,12 +130,14 @@ export default function ContactForm() {
 
             <textarea
               id="contact-message"
+              ref={autoSize}
               autoFocus={visited}
-              className="block w-full resize-none border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-hidden"
+              className="block max-h-30 w-full resize-none overflow-y-auto border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-hidden"
               rows={1}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
+                autoSize(e.currentTarget);
                 playKey();
               }}
               onKeyDown={(e) => {
