@@ -27,7 +27,7 @@ export default function AnimatedBadge() {
     <motion.div
       layout
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
-      className="inline-flex overflow-hidden rounded bg-text-highlight/[0.04] px-2 py-0.5 text-[11px] text-text-highlight/40 whitespace-nowrap"
+      className="inline-flex overflow-hidden rounded bg-text-highlight/4 px-2 py-0.5 text-[11px] text-text-highlight/40 whitespace-nowrap"
     >
       <AnimatePresence mode="wait">
         <motion.span

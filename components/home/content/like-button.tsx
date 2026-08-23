@@ -175,7 +175,7 @@ export default function LikeButton({ slug }: { slug: string }) {
             !maxed &&
               "group-hover:border-text-highlight/20 group-hover:bg-text-highlight/10",
 
-            maxed && "border-[color:var(--highlight)]/20",
+            maxed && "border-(--highlight)/20",
           )}
         >
           <span
@@ -189,7 +189,7 @@ export default function LikeButton({ slug }: { slug: string }) {
               <span
                 key={p.id}
                 aria-hidden
-                className="pointer-events-none absolute left-1/2 top-1/2 -ml-1.5 -mt-1.5 text-[color:var(--highlight)]"
+                className="pointer-events-none absolute left-1/2 top-1/2 -ml-1.5 -mt-1.5 text-highlight"
                 style={
                   {
                     "--x": `${p.x}px`,
@@ -219,7 +219,7 @@ export default function LikeButton({ slug }: { slug: string }) {
               className={cn(
                 "absolute inset-0 h-full w-full transition-colors duration-300",
                 maxed
-                  ? "text-[color:var(--highlight)]"
+                  ? "text-highlight"
                   : "text-foreground/40 group-hover:text-foreground/70",
               )}
             >
@@ -229,13 +229,11 @@ export default function LikeButton({ slug }: { slug: string }) {
               viewBox="0 0 24 24"
               fill="currentColor"
               className={cn(
-                "absolute inset-0 h-full w-full text-[color:var(--highlight)]",
+                "absolute inset-0 h-full w-full text-highlight",
                 "motion-safe:transition-[clip-path] motion-safe:duration-500 motion-safe:ease-out",
-                // At 5/5, a faint red glow (rgba of #ff003c at 50%).
                 maxed && "drop-shadow-[0_0_5px_rgba(255,0,60,0.5)]",
               )}
               style={{
-                // fill = 0 → inset(100% …) = hidden; fill = 1 → inset(0) = full
                 clipPath: `inset(${(1 - fill) * 100}% 0 0 0)`,
               }}
             >
@@ -248,20 +246,18 @@ export default function LikeButton({ slug }: { slug: string }) {
           className={cn(
             "text-[11px] transition-colors duration-300",
             maxed
-              ? "text-[color:var(--highlight)]"
+              ? "text-highlight"
               : "text-foreground/45 group-hover:text-foreground/70",
           )}
         >
           {maxed ? "Liked" : "Like"}
         </span>
 
-        {/* Total count — "…" while loading, then live tally. */}
         <span className="text-[11px] tabular-nums text-foreground/30">
           {total === null ? "…" : total.toLocaleString()}
         </span>
       </button>
 
-      {/* ── Right: scroll to top ── */}
       <button
         type="button"
         onClick={scrollToTop}

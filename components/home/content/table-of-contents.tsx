@@ -46,7 +46,6 @@ export default function TableOfContents({ items }: { items: TocItem[] }) {
     };
   }, [items]);
 
-  // Move the rail indicator to the active link
   useEffect(() => {
     if (!activeId) return;
     const measure = () => {
@@ -77,21 +76,18 @@ export default function TableOfContents({ items }: { items: TocItem[] }) {
         On this page
       </p>
       <ul ref={listRef} className="relative mt-3 space-y-2 text-[11px]">
-        {/* Rail: the full document */}
         <div
           aria-hidden
           className="absolute inset-y-0 left-0 w-px bg-foreground/10"
         />
-        {/* Fill: what you've read so far */}
         <div
           aria-hidden
           className="absolute left-0 top-0 w-px bg-text-highlight/25 motion-safe:transition-[height] motion-safe:duration-500 motion-safe:ease-out"
           style={{ height: readProgress }}
         />
-        {/* Indicator: where you are now */}
         <div
           aria-hidden
-          className="absolute left-0 w-0.5 -translate-x-[0.5px] rounded-full bg-text-highlight shadow-[0_0_8px_theme(colors.text-highlight/40)] motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
+          className="absolute left-0 w-0.5 translate-x-[-0.5px] rounded-full bg-text-highlight shadow-[0_0_8px_--theme(--color-text-highlight/40)] motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
           style={{ top: indicator.top, height: indicator.height }}
         />
         {items.map((item) => {
