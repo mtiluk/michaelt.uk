@@ -10,11 +10,11 @@
   name: Michael Tilley
   handle: mtiluk
   avatar: /me.png
-  watched: 100+
+  watched: 100
   films:
-    - title: Before Sunset
+    - title: Before Sunrise
       year: 1995
-      slug: before-sunset
+      slug: before-sunrise
       rating: 5
       poster: https://a.ltrbxd.com/resized/film-poster/5/1/9/7/4/51974-before-sunrise-0-1000-0-1500-crop.jpg?v=006e8fedea
     - title: Project Hail Mary
@@ -36,10 +36,10 @@
 - platform: x
   href: https://x.com/michaelt_uk
   name: Michael Tilley
-  handle: mtiluk
+  handle: michaelt_uk
   avatar: /me.png
   bio: Software engineer & researcher
-  verified: false
+  verified: true
 
 - platform: linkedin
   href: https://www.linkedin.com/in/mtilleyuk/
@@ -48,3 +48,4 @@
   avatar: /me.png
   title: Software Engineer & Researcher
   location: United Kingdom
+  verified: true

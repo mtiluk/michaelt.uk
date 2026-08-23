@@ -2,12 +2,12 @@ import Link from "next/link";
 import { MdEmail } from "@/components/icons/brand";
 import SocialLinks from "./socials";
 import ContactForm from "./contact-form";
-import { getSocials } from "@/lib/socials";
+import { getSocialsWithData } from "@/lib/socials";
 
 const linkClass = "inline-flex items-center gap-1 text-[11px] text-foreground/75 transition-all hover:text-text-highlight/75";
 
-export default function Contact() {
-  const socials = getSocials();
+export default async function Contact() {
+  const socials = await getSocialsWithData();
 
   return (
     <div className="mt-5 flex flex-col rounded-xl bg-text-highlight/2 transition-colors duration-300">

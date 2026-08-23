@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { XVerified } from "@/components/icons/badges";
 import type { XSocial } from "@/types/socials";
 
 export default function XCard({ social }: { social: XSocial }) {
@@ -41,7 +42,7 @@ export default function XCard({ social }: { social: XSocial }) {
           className="mt-1 flex items-center gap-1 font-medium text-text-highlight transition-opacity hover:opacity-70"
         >
           @{social.handle}
-          {social.verified && <span className="text-[#1d9bf0]">✓</span>}
+          {social.verified && <XVerified className="size-3.5 text-[#1d9bf0]" />}
         </Link>
         {social.bio && <p className="mt-1 text-[11px] text-foreground/60">{social.bio}</p>}
       </div>

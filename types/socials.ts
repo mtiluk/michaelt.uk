@@ -9,10 +9,16 @@ type SocialBase = {
   avatar?: string;
 };
 
+export type ContributionDay = {
+  date: string;
+  count: number;
+  level: number;
+};
+
 export type GithubSocial = SocialBase & {
   platform: "github";
   contributions?: number;
-  weeks?: number[][];
+  weeks?: ContributionDay[][];
 };
 
 export type LetterboxdFilm = {
