@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
+import Confetti from "./confetti";
 
 const PLACEHOLDERS = [
   "Say hello...",
@@ -16,7 +17,7 @@ const PLACEHOLDERS = [
 ];
 
 const CYCLE_INTERVAL = 3000;
-const SUCCESS_RESET_DELAY = 2200;
+const SUCCESS_RESET_DELAY = 3400;
 const MAX_TEXTAREA_HEIGHT = 120;
 const COUNTER_THRESHOLD = 100;
 
@@ -238,11 +239,16 @@ export default function ContactForm() {
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-            className="flex flex-col items-start gap-1"
+            transition={{ duration: 0.2 }}
+            className="relative flex items-center gap-2.5 py-1"
           >
-            <div role="status" className="text-[12px] text-green-300">
-              Message sent!
+            <Confetti />
+
+            <div role="status" className="min-w-0">
+              <p className="text-[12px] text-text-highlight">Message sent</p>
+              <p className="truncate text-[11px] text-foreground/40">
+                I&apos;ll reply to {email.trim()} soon.
+              </p>
             </div>
           </motion.div>
         )}
