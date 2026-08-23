@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronUp } from "lucide-react";
+import { ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
@@ -280,17 +280,23 @@ export default function ContactForm() {
               aria-label={isEmailStep ? "Send message" : "Continue to email"}
               aria-busy={sending}
               disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
-              className="flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors disabled:bg-text-highlight/10 disabled:text-background"
+              className={`flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors ${
+                sending ? "" : "disabled:bg-text-highlight/10 disabled:text-background"
+              }`}
             >
               <AnimatePresence mode="wait">
                 <motion.span
-                  key={isEmailStep ? "send" : "next"}
+                  key={sending ? "sending" : isEmailStep ? "send" : "next"}
                   initial={{ opacity: 0, scale: 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.7 }}
                   transition={{ duration: 0.1 }}
                 >
-                  <ChevronUp className="h-4 w-4" aria-hidden />
+                  {sending ? (
+                    <Loader2 className="h-4 w-4 motion-safe:animate-spin" aria-hidden />
+                  ) : (
+                    <ChevronUp className="h-4 w-4" aria-hidden />
+                  )}
                 </motion.span>
               </AnimatePresence>
             </button>
