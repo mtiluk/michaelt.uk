@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import Wave from "@/components/ui/wave";
 import Providers from "@/app/providers";
 import "./globals.css";
+import CommandPalette from "@/components/ui/command-palette";
+import { getSearchItems } from "@/lib/search";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,6 +57,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         <Providers>
           {children}
+          <CommandPalette items={getSearchItems()} />
         </Providers>
       </body>
     </html>
