@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
@@ -37,12 +37,25 @@ export default function ContactForm() {
   const [error, setError] = useState<string | null>(null);
   const [visited, setVisited] = useState(false);
   const [website, setWebsite] = useState("");
+  const messageRef = useRef<HTMLTextAreaElement | null>(null);
 
   const playKey = useSound(retro.keyPress);
   const playSelect = useSound(retro.select);
   const playSend = useSound(retro.send);
   const playSuccess = useSound(retro.success);
   const playError = useSound(retro.error);
+
+  const setMessageRef = useCallback((node: HTMLTextAreaElement | null) => {
+    messageRef.current = node;
+    autoSize(node);
+  }, []);
+
+  useEffect(() => {
+    const node = messageRef.current;
+    if (!node || !node.value) return;
+    node.value = "";
+    autoSize(node);
+  }, []);
 
   useEffect(() => {
     if (message) return;
@@ -137,8 +150,9 @@ export default function ContactForm() {
 
             <textarea
               id="contact-message"
-              ref={autoSize}
+              ref={setMessageRef}
               autoFocus={visited}
+              autoComplete="off"
               className="block max-h-30 w-full resize-none overflow-y-auto border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-hidden"
               rows={1}
               maxLength={MAX_MESSAGE_LENGTH}
