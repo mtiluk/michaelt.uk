@@ -1,6 +1,4 @@
-const MAX_EMAIL_LENGTH = 320;
-const MAX_MESSAGE_LENGTH = 1024;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { MAX_MESSAGE_LENGTH, isValidEmail, isValidMessage } from "@/lib/validation";
 
 export async function POST(req: Request) {
   let body: unknown;
@@ -10,10 +8,15 @@ export async function POST(req: Request) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { message, email } = (body ?? {}) as {
+  const { message, email, website } = (body ?? {}) as {
     message?: unknown;
     email?: unknown;
+    website?: unknown;
   };
+
+  if (typeof website === "string" && website.trim()) {
+    return Response.json({ success: true });
+  }
 
   if (typeof message !== "string" || typeof email !== "string") {
     return Response.json({ error: "Invalid payload" }, { status: 400 });
@@ -25,8 +28,14 @@ export async function POST(req: Request) {
   if (!trimmedMessage || !trimmedEmail) {
     return Response.json({ error: "Missing message or email" }, { status: 400 });
   }
-  if (!EMAIL_REGEX.test(trimmedEmail) || trimmedEmail.length > MAX_EMAIL_LENGTH) {
+  if (!isValidEmail(trimmedEmail)) {
     return Response.json({ error: "Invalid email" }, { status: 400 });
+  }
+  if (!isValidMessage(trimmedMessage)) {
+    return Response.json(
+      { error: `Message must be ${MAX_MESSAGE_LENGTH} characters or fewer` },
+      { status: 400 },
+    );
   }
 
   const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
@@ -48,11 +57,7 @@ export async function POST(req: Request) {
             color: 5814783,
             fields: [
               { name: "Email", value: trimmedEmail, inline: false },
-              {
-                name: "Message",
-                value: trimmedMessage.slice(0, MAX_MESSAGE_LENGTH),
-                inline: false,
-              },
+              { name: "Message", value: trimmedMessage, inline: false },
             ],
             timestamp: new Date().toISOString(),
           },

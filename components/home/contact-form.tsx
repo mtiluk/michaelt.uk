@@ -1,10 +1,12 @@
 "use client";
 
-import { ChevronUp } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { Check, ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
+import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
+import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
+import Confetti, { preloadConfetti } from "./confetti";
 
 const PLACEHOLDERS = [
   "Say hello...",
@@ -15,10 +17,17 @@ const PLACEHOLDERS = [
 ];
 
 const CYCLE_INTERVAL = 3000;
-const SUCCESS_RESET_DELAY = 2200;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const SUCCESS_RESET_DELAY = 3400;
+const MAX_TEXTAREA_HEIGHT = 120;
+const COUNTER_THRESHOLD = 100;
 
 type Step = "message" | "email" | "success";
+
+function autoSize(node: HTMLTextAreaElement | null) {
+  if (!node) return;
+  node.style.height = "0px";
+  node.style.height = `${Math.min(node.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+}
 
 export default function ContactForm() {
   const [message, setMessage] = useState("");
@@ -27,12 +36,29 @@ export default function ContactForm() {
   const [index, setIndex] = useState(0);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [visited, setVisited] = useState(false);
+  const [website, setWebsite] = useState("");
+  const [lockedHeight, setLockedHeight] = useState<number | null>(null);
+  const messageRef = useRef<HTMLTextAreaElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
 
   const playKey = useSound(retro.keyPress);
   const playSelect = useSound(retro.select);
   const playSend = useSound(retro.send);
   const playSuccess = useSound(retro.success);
   const playError = useSound(retro.error);
+
+  const setMessageRef = useCallback((node: HTMLTextAreaElement | null) => {
+    messageRef.current = node;
+    autoSize(node);
+  }, []);
+
+  useEffect(() => {
+    const node = messageRef.current;
+    if (!node || !node.value) return;
+    node.value = "";
+    autoSize(node);
+  }, []);
 
   useEffect(() => {
     if (message) return;
@@ -47,18 +73,29 @@ export default function ContactForm() {
     const timer = setTimeout(() => {
       setMessage("");
       setEmail("");
+      setWebsite("");
+      setVisited(false);
+      setLockedHeight(null);
       setStep("message");
     }, SUCCESS_RESET_DELAY);
     return () => clearTimeout(timer);
   }, [step]);
 
-  const emailIsValid = EMAIL_REGEX.test(email.trim());
+  const emailIsValid = isValidEmail(email);
 
   function handleNext() {
     if (!message.trim()) return;
     playSelect();
+    preloadConfetti();
     setError(null);
+    setVisited(true);
     setStep("email");
+  }
+
+  function handleBack() {
+    playSelect();
+    setError(null);
+    setStep("message");
   }
 
   async function handleSend() {
@@ -71,16 +108,19 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: message.trim(), email: email.trim() }),
+        body: JSON.stringify({ message: message.trim(), email: email.trim(), website }),
       });
 
       if (!res.ok) {
         playError();
-        setError("Something went wrong. Please try again.");
+        const data = (await res.json().catch(() => null)) as { error?: unknown } | null;
+        const detail = typeof data?.error === "string" ? data.error : null;
+        setError(detail ?? "Something went wrong. Please try again.");
         return;
       }
 
       playSuccess();
+      setLockedHeight(formRef.current?.offsetHeight ?? null);
       setStep("success");
     } catch {
       playError();
@@ -97,9 +137,12 @@ export default function ContactForm() {
   }
 
   const isEmailStep = step === "email";
+  const remaining = MAX_MESSAGE_LENGTH - message.length;
+  const showCounter = step === "message" && remaining <= COUNTER_THRESHOLD;
 
   return (
-    <motion.form layout onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
+    <MotionConfig reducedMotion="user">
+    <motion.form ref={formRef} layout onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} style={{ height: lockedHeight ?? undefined }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
       <AnimatePresence mode="wait">
         {step === "message" && (
           <motion.div
@@ -114,11 +157,16 @@ export default function ContactForm() {
 
             <textarea
               id="contact-message"
-              className="block w-full resize-none border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-none"
+              ref={setMessageRef}
+              autoFocus={visited}
+              autoComplete="off"
+              className="block max-h-30 w-full resize-none overflow-y-auto border-0 bg-transparent text-[12px] leading-5 text-text-highlight outline-hidden"
               rows={1}
+              maxLength={MAX_MESSAGE_LENGTH}
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
+                autoSize(e.currentTarget);
                 playKey();
               }}
               onKeyDown={(e) => {
@@ -156,9 +204,14 @@ export default function ContactForm() {
             transition={{ duration: 0.1 }}
             className="space-y-3"
           >
-            <div className="border-l border-foreground/10 pl-2 text-[11px] text-foreground/40">
+            <button
+              type="button"
+              onClick={handleBack}
+              aria-label="Edit your message"
+              className="block w-full rounded-sm border-l border-foreground/10 pl-2 text-left text-[11px] text-foreground/40 transition-colors hover:border-text-highlight/40 hover:text-foreground/70 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50"
+            >
               {message}
-            </div>
+            </button>
 
             <label htmlFor="contact-email" className="sr-only">
               Your email address
@@ -170,6 +223,7 @@ export default function ContactForm() {
               type="email"
               name="email"
               autoComplete="email"
+              maxLength={MAX_EMAIL_LENGTH}
               placeholder="you@example.com"
               value={email}
               onChange={(e) => {
@@ -177,7 +231,10 @@ export default function ContactForm() {
                 playKey();
                 if (error) setError(null);
               }}
-              className="w-full bg-transparent text-[12px] text-text-highlight outline-none"
+              onKeyDown={(e) => {
+                if (e.key === "Escape") handleBack();
+              }}
+              className="w-full bg-transparent text-[12px] text-text-highlight outline-hidden"
             />
           </motion.div>
         )}
@@ -188,15 +245,33 @@ export default function ContactForm() {
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
-            className="flex flex-col items-start gap-1"
+            transition={{ duration: 0.2 }}
+className="relative flex flex-1 items-center gap-2.5"
           >
-            <div role="status" className="text-[12px] text-green-300">
-              Message sent!
+            <Confetti />
+
+            <div role="status" className="min-w-0">
+              <p className="text-[12px] text-text-highlight">Message sent</p>
+              <p className="truncate text-[11px] text-foreground/40">
+                I&apos;ll reply to {email.trim()} soon.
+              </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <div aria-hidden className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
+        <label htmlFor="contact-website">Leave this field empty</label>
+        <input
+          id="contact-website"
+          name="website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
 
       {error && (
         <p role="alert" className="mt-2 text-[11px] text-red-400/80">
@@ -205,28 +280,85 @@ export default function ContactForm() {
       )}
 
       {step !== "success" && (
-        <div className="mt-4 flex items-center justify-end">
-          <button
-            type="submit"
-            aria-label={isEmailStep ? "Send message" : "Continue to email"}
-            aria-busy={sending}
-            disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
-            className="flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors disabled:bg-text-highlight/10 disabled:text-background"
-          >
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={isEmailStep ? "send" : "next"}
-                initial={{ opacity: 0, scale: 0.7 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.7 }}
-                transition={{ duration: 0.1 }}
+        <div className="mt-4 flex items-center justify-between">
+          <AnimatePresence initial={false} mode="wait">
+            {isEmailStep ? (
+              <motion.button
+                key="back"
+                type="button"
+                onClick={handleBack}
+                initial={{ opacity: 0, x: -4 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -4 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-center gap-0.5 rounded-md px-1 -mx-1 text-[11px] text-foreground/40 transition-colors hover:text-text-highlight focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50"
               >
-                <ChevronUp className="h-4 w-4" aria-hidden />
+                <ChevronLeft className="h-3 w-3" aria-hidden />
+                Back
+              </motion.button>
+            ) : message.trim() ? (
+              <motion.span
+                key="hint"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="text-[10px] text-foreground/25"
+              >
+                <kbd className="font-sans">↵</kbd> continue ·{" "}
+                <kbd className="font-sans">⇧↵</kbd> new line
               </motion.span>
+            ) : (
+              <span key="spacer" />
+            )}
+          </AnimatePresence>
+
+          <div className="flex items-center gap-2">
+            <AnimatePresence initial={false}>
+              {showCounter && (
+                <motion.span
+                  key="counter"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  aria-live="polite"
+                  className={`text-[10px] tabular-nums ${remaining === 0 ? "text-red-400/70" : "text-foreground/30"}`}
+                >
+                  {remaining}
+                </motion.span>
+              )}
             </AnimatePresence>
-          </button>
+
+            <button
+              type="submit"
+              aria-label={isEmailStep ? "Send message" : "Continue to email"}
+              aria-busy={sending}
+              disabled={isEmailStep ? !emailIsValid || sending : !message.trim()}
+              className={`flex h-7 w-7 items-center justify-center rounded-full bg-text-highlight/20 text-text-highlight transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50 ${
+                sending ? "" : "disabled:bg-text-highlight/10 disabled:text-background"
+              }`}
+            >
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={sending ? "sending" : isEmailStep ? "send" : "next"}
+                  initial={{ opacity: 0, scale: 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.7 }}
+                  transition={{ duration: 0.1 }}
+                >
+                  {sending ? (
+                    <Loader2 className="h-4 w-4 motion-safe:animate-spin" aria-hidden />
+                  ) : (
+                    <ChevronUp className="h-4 w-4" aria-hidden />
+                  )}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </div>
         </div>
       )}
     </motion.form>
+    </MotionConfig>
   );
 }

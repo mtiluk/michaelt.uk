@@ -1,60 +1,21 @@
-import { BsGithub, BsLinkedin, BsTwitterX, FaLetterboxd, MdEmail } from "@/components/icons/brand"
-import SocialProfile from "./social-profile";
+import SocialLinks from "./socials";
 import ContactForm from "./contact-form";
-import Link from "next/link";
+import EmailLink from "./email-link";
+import { getSocialsWithData } from "@/lib/socials";
+
+const EMAIL = "mdtilley04@gmail.com";
 
 export default async function Contact() {
+  const socials = await getSocialsWithData();
+
   return (
     <div className="mt-5 flex flex-col rounded-xl bg-text-highlight/2 transition-colors duration-300">
-      <div className="flex px-2 py-1 justify-between">
-        <div className="flex gap-1">
-          {/*<SocialProfile
-            icon={<BsTwitterX />}
-            href="https://x.com/yourhandle"
-            name="Your Name"
-            handle="yourhandle"
-            avatar="/avatars/twitter.jpg"
-            bio="Your bio here"
-            followers={1200}
-          />*/}
-          <SocialProfile
-            icon={<BsGithub />}
-            href="https://github.com/mtiluk"
-            name="Michael Tilley"
-            handle="mtiluk"
-            avatar="/me.png"
-            bio="Software engineer & Researcher"
-          />
-          {/*<SocialProfile
-            icon={<BsLinkedin />}
-            href="https://linkedin.com/in/yourhandle"
-            name="Your Name"
-            handle="yourhandle"
-            avatar="/avatars/linkedin.jpg"
-            bio="Your bio here"
-            followers={500}
-          />*/}
-          <SocialProfile
-            icon={<FaLetterboxd />}
-            href="https://letterboxd.com/mtiluk/"
-            name="Michael Tilley"
-            handle="mtiluk"
-            avatar="/me.png"
-            bio="I enjoy movies."
-          />
-        </div>
-
+      <div className="flex justify-between px-2 py-1">
+        <SocialLinks socials={socials} />
         <div className="flex items-center gap-4">
-          <Link href="mailto:mdtilley04@gmail.com" className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]">
-            <MdEmail /> Email
-          </Link>
-
-          <Link href="mailto:mdtilley04@gmail.com" className="text-foreground/75 hover:text-text-highlight/75 transition-all inline-flex items-center gap-1 text-[11px]">
-            <MdEmail /> Book a call
-          </Link>
+          <EmailLink email={EMAIL} />
         </div>
       </div>
-
       <ContactForm />
     </div>
   );
