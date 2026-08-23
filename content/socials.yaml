@@ -1,0 +1,50 @@
+- platform: github
+  href: https://github.com/mtiluk
+  name: Michael Tilley
+  handle: mtiluk
+  avatar: /me.png
+  contributions: 1760
+
+- platform: letterboxd
+  href: https://letterboxd.com/mtiluk/
+  name: Michael Tilley
+  handle: mtiluk
+  avatar: /me.png
+  watched: 100+
+  films:
+    - title: Before Sunset
+      year: 1995
+      slug: before-sunset
+      rating: 5
+      poster: https://a.ltrbxd.com/resized/film-poster/5/1/9/7/4/51974-before-sunrise-0-1000-0-1500-crop.jpg?v=006e8fedea
+    - title: Project Hail Mary
+      year: 2026
+      slug: project-hail-mary
+      rating: 5
+      poster: https://a.ltrbxd.com/resized/film-poster/6/1/1/2/8/8/611288-project-hail-mary-0-1000-0-1500-crop.jpg?v=ac31b6ec03
+    - title: Spirited Away
+      year: 2001
+      slug: spirited-away
+      rating: 5
+      poster: https://a.ltrbxd.com/resized/film-poster/5/1/9/2/1/51921-spirited-away-0-1000-0-1500-crop.jpg?v=a3ad463c55
+    - title: Vanilla Sky
+      year: 2001
+      slug: vanilla-sky
+      rating: 5
+      poster: https://a.ltrbxd.com/resized/film-poster/5/0/7/0/2/50702-vanilla-sky-0-1000-0-1500-crop.jpg?v=fbd4b97e55
+
+- platform: x
+  href: https://x.com/michaelt_uk
+  name: Michael Tilley
+  handle: mtiluk
+  avatar: /me.png
+  bio: Software engineer & researcher
+  verified: false
+
+- platform: linkedin
+  href: https://www.linkedin.com/in/mtilleyuk/
+  name: Michael Tilley
+  handle: mtiluk
+  avatar: /me.png
+  title: Software Engineer & Researcher
+  location: United Kingdom
