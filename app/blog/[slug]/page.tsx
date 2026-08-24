@@ -10,15 +10,15 @@ import getAllContent, {
   getSeriesContext,
 } from "@/lib/content";
 import { extractToc } from "@/lib/toc";
-import { mdxComponents } from "@/components/home/content/mdx-components";
-import TableOfContents from "@/components/home/content/table-of-contents";
+import { mdxComponents } from "@/components/article/mdx-components";
+import TableOfContents from "@/components/article/table-of-contents";
 import Badge from "@/components/home/badge";
 import type { Blog } from "@/types/blogs";
-import SeriesCard from "@/components/home/content/series-card";
-import LikeButton from "@/components/home/content/like-button";
-import MobileToc from "@/components/home/content/mobile-toc";
-import ShareMenu from "@/components/home/content/share-menu";
-import References from "@/components/home/content/references";
+import SeriesCard from "@/components/article/series-card";
+import LikeButton from "@/components/article/like-button";
+import MobileToc from "@/components/article/mobile-toc";
+import ShareMenu from "@/components/article/share-menu";
+import References from "@/components/article/references";
 import { Reveal } from "@/components/ui/reveal";
 import rehypePrettyCode from "rehype-pretty-code";
 
