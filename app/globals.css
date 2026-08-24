@@ -20,6 +20,59 @@
     --font-serif: var(--font-instrument-serif);
 }
 
+@property --background {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #0c0504;
+}
+
+@property --foreground {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #d1c5ad99;
+}
+
+@property --foreground-div {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #1c0b09;
+}
+
+@property --text-highlight {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #d1c5ad;
+}
+
+@property --highlight {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #ff003c;
+}
+
+@property --active-status {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #5e6c32;
+}
+
+html {
+    transition:
+        --background 400ms ease,
+        --foreground 400ms ease,
+        --foreground-div 400ms ease,
+        --text-highlight 400ms ease,
+        --highlight 400ms ease,
+        --active-status 400ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        transition: none;
+    }
+}
+
+
 body {
     background: var(--background);
     color: var(--foreground);

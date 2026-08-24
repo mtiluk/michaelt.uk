@@ -6,11 +6,27 @@ import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import { ArrowUpRight, Search, X } from "lucide-react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
-import type { SearchGroup, SearchItem } from "@/lib/search";
+import type { SearchItem } from "@/lib/search";
+import { usePalette } from "@/components/ui/palette-provider";
+import { useSoundSettings } from "@/components/ui/sound-settings";
+import { PALETTES, PALETTE_ORDER } from "@/lib/palettes";
 
-const GROUP_ORDER: SearchGroup[] = ["Pages", "Blog", "Projects", "Reads", "Social"];
+const GROUP_ORDER = ["Preferences", "Pages", "Blog", "Projects", "Social"] as const;
 
-function score(item: SearchItem, query: string) {
+type Group = (typeof GROUP_ORDER)[number];
+
+type Item = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  group: Group;
+  href?: string;
+  external?: boolean;
+  action?: () => void;
+  swatch?: string;
+};
+
+function score(item: Item, query: string) {
   const haystack = `${item.title} ${item.subtitle ?? ""} ${item.group}`.toLowerCase();
   const index = haystack.indexOf(query);
   if (index === -1) return -1;
@@ -26,6 +42,8 @@ function Key({ children }: { children: React.ReactNode }) {
 }
 
 export default function CommandPalette({ items }: { items: SearchItem[] }) {
+  const { name: paletteName, setPalette } = usePalette();
+  const { enabled: soundEnabled, setEnabled: setSoundEnabled } = useSoundSettings();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -35,21 +53,45 @@ export default function CommandPalette({ items }: { items: SearchItem[] }) {
   const playOpen = useSound(retro.expand);
   const playMove = useSound(retro.select);
 
+  const commands = useMemo<Item[]>(() => {
+    const themes = PALETTE_ORDER.map((key) => ({
+      id: `theme-${key}`,
+      title: `${PALETTES[key].label} theme`,
+      subtitle: key === paletteName ? "Current" : undefined,
+      group: "Preferences" as const,
+      swatch: PALETTES[key].highlight,
+      action: () => setPalette(key),
+    }));
+
+    return [
+      ...themes,
+      {
+        id: "sound-toggle",
+        title: soundEnabled ? "Turn sound off" : "Turn sound on",
+        subtitle: soundEnabled ? "Currently on" : "Currently off",
+        group: "Preferences" as const,
+        action: () => setSoundEnabled(!soundEnabled),
+      },
+    ];
+  }, [paletteName, setPalette, soundEnabled, setSoundEnabled]);
+
+  const all = useMemo<Item[]>(() => [...commands, ...(items as Item[])], [commands, items]);
+
   const results = useMemo(() => {
     const trimmed = query.trim().toLowerCase();
     const matched = trimmed
-      ? items
+      ? all
           .map((item) => ({ item, rank: score(item, trimmed) }))
           .filter((entry) => entry.rank >= 0)
           .sort((a, b) => a.rank - b.rank)
           .map((entry) => entry.item)
-      : items;
+      : all;
 
     return matched.slice(0, 30);
-  }, [items, query]);
+  }, [all, query]);
 
   const grouped = useMemo(() => {
-    const buckets = new Map<SearchGroup, SearchItem[]>();
+    const buckets = new Map<Group, Item[]>();
     for (const item of results) {
       const bucket = buckets.get(item.group) ?? [];
       bucket.push(item);
@@ -57,15 +99,20 @@ export default function CommandPalette({ items }: { items: SearchItem[] }) {
     }
     return GROUP_ORDER.filter((group) => buckets.has(group)).map((group) => ({
       group,
-      items: buckets.get(group) as SearchItem[],
+      items: buckets.get(group) as Item[],
     }));
   }, [results]);
 
   const flat = useMemo(() => grouped.flatMap((section) => section.items), [grouped]);
 
   const select = useCallback(
-    (item: SearchItem) => {
+    (item: Item) => {
+      if (item.action) {
+        item.action();
+        return;
+      }
       setOpen(false);
+      if (!item.href) return;
       if (item.external) {
         window.open(item.href, "_blank", "noopener,noreferrer");
         return;
@@ -76,35 +123,31 @@ export default function CommandPalette({ items }: { items: SearchItem[] }) {
   );
 
   useEffect(() => {
+    const isTyping = () => {
+      const el = document.activeElement as HTMLElement | null;
+      return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setOpen((value) => {
-          if (!value) playOpen();
-          return !value;
-        });
-      }
+      const chord = (e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === "k";
+      const slash = e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !isTyping();
+      if (!chord && !slash) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      setOpen((value) => {
+        if (value) return false;
+        setQuery("");
+        setActive(0);
+        playOpen();
+        return true;
+      });
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+
+    window.addEventListener("keydown", onKeyDown, { capture: true });
+    return () => window.removeEventListener("keydown", onKeyDown, { capture: true });
   }, [playOpen]);
-
-  useEffect(() => {
-    if (!open) return;
-    setQuery("");
-    setActive(0);
-    const previous = document.activeElement as HTMLElement | null;
-    const overflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = overflow;
-      previous?.focus();
-    };
-  }, [open]);
-
-  useEffect(() => {
-    setActive(0);
-  }, [query]);
 
   useEffect(() => {
     listRef.current
@@ -216,6 +259,13 @@ export default function CommandPalette({ items }: { items: SearchItem[] }) {
                               isActive ? "bg-text-highlight/6" : ""
                             }`}
                           >
+                            {item.swatch && (
+                              <span
+                                aria-hidden
+                                className="size-2.5 shrink-0 rounded-full"
+                                style={{ backgroundColor: item.swatch }}
+                              />
+                            )}
                             <span className="min-w-0 flex-1">
                               <span
                                 className={`block truncate text-[12px] leading-5 transition-colors ${
@@ -251,7 +301,11 @@ export default function CommandPalette({ items }: { items: SearchItem[] }) {
                 </span>
                 <span className="flex items-center gap-1">
                   <Key>↵</Key>
-                  {activeItem?.external ? "open in new tab" : "go to page"}
+                  {activeItem?.action
+                    ? "apply"
+                    : activeItem?.external
+                      ? "open in new tab"
+                      : "go to page"}
                 </span>
                 <span className="ml-auto flex items-center gap-1">
                   <Key>esc</Key> close
