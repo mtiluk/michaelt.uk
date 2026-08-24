@@ -1,11 +1,10 @@
 import path from "node:path";
 import getAllContent from "@/lib/content";
-import { getReads } from "@/lib/reads";
 import { getSocials } from "@/lib/socials";
 import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
 
-export type SearchGroup = "Pages" | "Blog" | "Projects" | "Reads" | "Social";
+export type SearchGroup = "Pages" | "Blog" | "Projects" | "Social";
 
 export type SearchItem = {
   id: string;
@@ -42,17 +41,6 @@ export function getSearchItems(): SearchItem[] {
     }),
   );
 
-  const reads = getReads().map(
-    (read, i): SearchItem => ({
-      id: `read-${i}`,
-      title: read.title,
-      subtitle: read.author ?? read.source,
-      href: read.url,
-      group: "Reads",
-      external: true,
-    }),
-  );
-
   const socials = getSocials().map(
     (social): SearchItem => ({
       id: `social-${social.platform}`,
@@ -66,5 +54,5 @@ export function getSearchItems(): SearchItem[] {
 
   const pages: SearchItem[] = [{ id: "page-home", title: "Home", href: "/", group: "Pages" }];
 
-  return [...pages, ...blogs, ...projects, ...reads, ...socials];
+  return [...pages, ...blogs, ...projects, ...socials];
 }

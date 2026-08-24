@@ -7,6 +7,9 @@ import Providers from "@/app/providers";
 import "./globals.css";
 import CommandPalette from "@/components/ui/command-palette";
 import { getSearchItems } from "@/lib/search";
+import PaletteScript from "@/components/ui/palette-script";
+import PaletteProvider from "@/components/ui/palette-provider";
+import PreferencesBar from "@/components/ui/preferences-bar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -50,15 +53,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={cn( "h-full antialiased font-sans", inter.variable, instrumentSerif.variable, )} >
+    <html lang="en" className={cn("h-full antialiased font-sans", inter.variable, instrumentSerif.variable)}>
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
-        <Wave className="w-screen h-[39vh]" aria-hidden />
-        <div aria-hidden className="absolute inset-x-0 h-[39vh] bg-linear-to-t from-background via-background/85 to-background/30 pointer-events-none z-10" />
-
-        <Providers>
-          {children}
-          <CommandPalette items={getSearchItems()} />
-        </Providers>
+        <PaletteScript />
+        <PaletteProvider>
+          <Wave className="w-screen h-[39vh]" aria-hidden />
+          <div aria-hidden className="..." />
+          <Providers>
+            {children}
+            <CommandPalette items={getSearchItems()} />
+            <PreferencesBar />
+          </Providers>
+        </PaletteProvider>
       </body>
     </html>
   );

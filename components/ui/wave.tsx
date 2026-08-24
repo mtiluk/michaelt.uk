@@ -1,6 +1,8 @@
 "use client";
 import { DitheredWaves } from "ditherwave";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { usePalette } from "@/components/ui/palette-provider";
 
 type WaveProps = {
   color?: string;
@@ -13,16 +15,45 @@ const VARIANTS = {
   logo: { pixelSize: 0.5, colorNum: 3, waveSpeed: 0.04, waveFrequency: 4 },
 } as const;
 
-export default function Wave({ color = "#ff003c", className, variant = "hero", }: WaveProps) {
+export default function Wave({ color, className, variant = "hero" }: WaveProps) {
+  const { name, palette } = usePalette();
+  const reduced = useReducedMotion();
+
+  const canvas = (waveColor: string) => (
+    <DitheredWaves
+      waveColor={waveColor}
+      baseColor={palette.background}
+      waveAmplitude={0.5}
+      enableMouseInteraction={false}
+      {...VARIANTS[variant]}
+    />
+  );
+
+  if (color) {
+    return <div className={cn("absolute", className)}>{canvas(color)}</div>;
+  }
+
   return (
-    <div className={cn("absolute", className)}>
-      <DitheredWaves
-        waveColor={color}
-        baseColor="#0B0504"
-        waveAmplitude={0.5}
-        enableMouseInteraction={false}
-        {...VARIANTS[variant]}
-      />
+    <div className={cn("absolute overflow-hidden", className)}>
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={name}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reduced ? 0 : 0.4, ease: "easeInOut" }}
+          className="absolute inset-0 z-0"
+        >
+          {canvas(palette.highlight)}
+        </motion.div>
+      </AnimatePresence>
+
+      {variant === "hero" && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-10 bg-linear-to-t from-background via-background/85 to-background/30"
+        />
+      )}
     </div>
   );
 }
