@@ -2,7 +2,7 @@
 import { DitheredWaves } from "ditherwave";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
-import { usePalette } from "@/components/ui/palette-provider";
+import { usePalette } from "@/components/providers/palette-provider";
 
 type WaveProps = {
   color?: string;

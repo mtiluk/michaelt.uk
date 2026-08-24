@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import Wave from "@/components/ui/wave";
 import Providers from "@/app/providers";
 import "./globals.css";
-import CommandPalette from "@/components/ui/command-palette";
+import CommandPalette from "@/components/layout/command-palette";
 import { getSearchItems } from "@/lib/search";
-import PaletteScript from "@/components/ui/palette-script";
-import PaletteProvider from "@/components/ui/palette-provider";
-import PreferencesBar from "@/components/ui/preferences-bar";
+import PaletteScript from "@/components/providers/palette-script";
+import PaletteProvider from "@/components/providers/palette-provider";
+import PreferencesBar from "@/components/layout/preferences-bar";
 
 const inter = Inter({
   variable: "--font-inter",

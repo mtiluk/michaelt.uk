@@ -1,8 +1,8 @@
 import type { ComponentPropsWithoutRef } from "react";
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
-import Callout from "@/components/home/content/blog/callout";
-import CodeBlock from "@/components/home/content/blog/code-block";
+import Callout from "./callout";
+import CodeBlock from "./code-block";
 
 export const mdxComponents = {
   Callout: Callout,
