@@ -1,6 +1,6 @@
 ## mtil.uk - personal website
 
-This is my personal website where I write, share and read my projects and thoughts. This is primarily a static site built with Next.js and is self-hosted on a VPS behind Docker.
+This is my personal website where I write and share my projects and thoughts. This is primarily a static site built with Next.js and is self-hosted on a VPS behind Docker.
 
 The design was inspired by dithered and retro themed media out there - which is some of my favourite. 
 
