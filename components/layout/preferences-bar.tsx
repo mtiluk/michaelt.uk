@@ -1,7 +1,7 @@
 "use client";
 import { Volume2, VolumeX } from "lucide-react";
-import { useSoundSettings } from "@/components/ui/sound-settings";
-import { usePalette } from "@/components/ui/palette-provider";
+import { useSoundSettings } from "@/components/providers/sound-settings";
+import { usePalette } from "@/components/providers/palette-provider";
 import { PALETTES, PALETTE_ORDER } from "@/lib/palettes";
 
 const focusRing = "cursor-pointer focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50";

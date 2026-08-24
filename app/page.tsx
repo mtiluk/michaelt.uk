@@ -3,7 +3,7 @@ import getAllContent from "@/lib/content";
 import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
 import Contact from "@/components/home/contact";
-import AnimatedBadge from "@/components/home/animated-badge";
+import AnimatedBadge from "@/components/ui/animated-badge";
 import Navigation from "@/components/home/navigation";
 import { Reveal } from "@/components/ui/reveal";
 import { getReads } from "@/lib/reads";

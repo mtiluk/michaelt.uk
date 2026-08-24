@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
-import Confetti, { preloadConfetti } from "./confetti";
+import Confetti, { preloadConfetti } from "@/components/ui/confetti";
 
 const PLACEHOLDERS = [
   "Say hello...",

@@ -12,7 +12,7 @@ import getAllContent, {
 import { extractToc } from "@/lib/toc";
 import { mdxComponents } from "@/components/article/mdx-components";
 import TableOfContents from "@/components/article/table-of-contents";
-import Badge from "@/components/home/badge";
+import Badge from "@/components/ui/badge";
 import type { Blog } from "@/types/blogs";
 import SeriesCard from "@/components/article/series-card";
 import LikeButton from "@/components/article/like-button";

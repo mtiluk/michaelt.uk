@@ -7,8 +7,8 @@ import { ArrowUpRight, Search, X } from "lucide-react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import type { SearchItem } from "@/lib/search";
-import { usePalette } from "@/components/ui/palette-provider";
-import { useSoundSettings } from "@/components/ui/sound-settings";
+import { usePalette } from "@/components/providers/palette-provider";
+import { useSoundSettings } from "@/components/providers/sound-settings";
 import { PALETTES, PALETTE_ORDER } from "@/lib/palettes";
 
 const GROUP_ORDER = ["Preferences", "Pages", "Blog", "Projects", "Social"] as const;
