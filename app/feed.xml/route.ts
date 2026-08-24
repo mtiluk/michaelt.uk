@@ -2,7 +2,7 @@ import path from "node:path";
 import type { Blog } from "@/types/blogs";
 import { Feed } from "feed";
 import { NextResponse } from "next/server";
-import { siteConfig } from "@/lib/site.config";
+import { siteConfig } from "@/lib/site";
 import getAllContent from "@/lib/content";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
