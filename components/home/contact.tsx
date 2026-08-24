@@ -1,4 +1,4 @@
-import SocialLinks from "./socials";
+import SocialLinks from "@/components/socials/index";
 import ContactForm from "./contact-form";
 import EmailLink from "./email-link";
 import { getSocialsWithData } from "@/lib/socials";
