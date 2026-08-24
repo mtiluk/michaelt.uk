@@ -1,4 +1,4 @@
-export type PaletteName = "ember" | "frost" | "moss" | "plum";
+export type PaletteName = "ember" | "frost" | "acka" | "moss" | "plum";
 
 export type Palette = {
   label: string;
@@ -31,6 +31,15 @@ export const PALETTES: Record<PaletteName, Palette> = {
     textHighlight: "#c6d8e8",
     highlight: "#3ba9ff",
     activeStatus: "#2f6c6a",
+  },
+  acka: {
+    label: "Acka",
+    background: "#0e0307",
+    foreground: "#e4a2bc99",
+    foregroundDiv: "#240611",
+    textHighlight: "#f0bed2",
+    highlight: "#ff3ba4",
+    activeStatus: "#7c1f5d",
   },
   moss: {
     label: "Moss",
