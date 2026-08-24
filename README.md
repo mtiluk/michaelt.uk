@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## mtil.uk - personal website
 
-## Getting Started
+This is my personal website where I write, share and read my projects and thoughts. This is primarily a static site built with Next.js and is self-hosted on a VPS behind Docker.
 
-First, run the development server:
+The design was inspired by dithered and retro themed media out there - which is some of my favourite. 
+
+
+| | |
+|---|---|
+| Framework | Next.js (App Router, React 19) |
+| Styling | Tailwind CSS v4 |
+| Content | MDX files on disk, rendered with `next-mdx-remote` |
+| Animation | Motion |
+| Storage | Redis (post likes, rate limiting) |
+| Deploy | Docker Compose, `output: "standalone"` |
+
+
+## Running locally
 
 ```bash
+npm install
+cp .env.example .env    # fill in the values below
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Redis is only needed for likes. Without it the like button degrades to a disabled 0 rather than erroring.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+docker run -d -p 6379:6379 redis:7-alpine
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Then set `REDIS_URL=redis://localhost:6379`.
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Required | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_SITE_URL` | yes | Absolute site URL. Read at build time — baked into the image. |
+| `REDIS_URL` | yes | `redis://redis:6379` in Compose, `redis://localhost:6379` outside it. |
+| `LIKES_SALT` | yes | Long random string. Visitor IDs are `SHA256(ip + salt)`, so no raw IPs are stored. **Changing it resets everyone's like allowance.** |
+| `DISCORD_WEBHOOK_URL` | yes | Where contact form submissions are delivered. |
+| `GITHUB_TOKEN` | no | Classic PAT, no scopes needed. Used for the contribution graph on the GitHub social card. Without it, a public proxy is used instead. |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Content
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+All content for the site is done using markdown or yaml - there is no database or CMS to keep the site as simple as possible. 
+```
+content/
+├── blogs/*.mdx        posts — frontmatter + body
+├── projects/*.mdx     project write-ups
+├── reads.yaml         links I've found worth keeping
+└── socials.yaml       profile data for the social hover cards
+```
 
-## Deploy on Vercel
+**Slugs are derived from filenames**, not frontmatter. If you name a blog post 
+`content/blogs/my-post.mdx` then the path for the post will be `/blog/my-post`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Posts support a `series` field to group them; the series card and prev/next navigation appear automatically. Footnote-style references at the bottom of a post are parsed out of the body.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Layout
+
+```
+app/            routes, API handlers, feed/sitemap/robots
+components/
+├── article/    long-form rendering: MDX components, TOC, references, share
+├── home/       home page sections
+├── layout/     site chrome: command palette, preferences bar
+├── providers/  theme and sound context
+├── socials/    per-platform hover cards
+├── icons/      hand-rolled brand marks
+└── ui/         primitives
+lib/            content loading, search index, palettes, validation
+```
+
+## Notable bits
+
+**Command palette** (`⌘K` or `/`) searches posts, projects and socials, and carries the theme and sound controls.
+
+**Themes** (`⌘B`) swap a set of CSS custom properties registered with `@property`, so every colour on the page cross-fades rather than snapping. The choice is applied by an inline script before first paint to avoid a flash.
+
+**Social cards** are per-platform widgets that mimicks each platforms UI. The GitHub widget has a contribution graph, Letterboxd has a poster row and LinkedIn has the LinkedIn colours and banner.
+
+**Sounds** are off by default and toggleable from the preferences bar.
+
+## Deploying
+
+```bash
+docker compose up -d --build
+```
+
+Serves on port 3001, expecting a reverse proxy in front for TLS. Redis persists to a named volume with AOF enabled.
