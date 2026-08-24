@@ -7,7 +7,12 @@ const nextConfig: NextConfig = {
     "/**": ["./content/**/*"],
   },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-  images: { remotePatterns: [{ protocol: "https", hostname: "a.ltrbxd.com" }] }
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "a.ltrbxd.com" },
+      { protocol: "https", hostname: "raw.githubusercontent.com" },
+    ],
+  },
 };
 
 const withMDX = createMDX({

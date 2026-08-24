@@ -9,13 +9,14 @@ import Image from "next/image";
 import Link from "next/link";
 import getAllContent, { getContentBySlug } from "@/lib/content";
 import { BsGithub } from "@/components/icons/brand";
-import { mdxComponents } from "@/components/home/content/mdx-components";
-import References from "@/components/home/content/references";
-import ShareMenu from "@/components/home/content/share-menu";
-import Badge from "@/components/home/badge";
+import { mdxComponents } from "@/components/article/mdx-components";
+import References from "@/components/article/references";
+import ShareMenu from "@/components/article/share-menu";
+import Badge from "@/components/ui/badge";
 import Wave from "@/components/ui/wave";
 import { Reveal } from "@/components/ui/reveal";
 import type { Project } from "@/types/projects";
+import Gallery from "@/components/article/gallery";
 
 const projectDirectory = path.join(process.cwd(), "content/projects");
 
@@ -160,6 +161,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               {project.why && <SummaryRow label="Why" body={project.why} />}
               {project.result && <SummaryRow label="Result" body={project.result} />}
             </dl>
+          </Reveal>
+        )}
+
+        {project.images && project.images.length > 0 && (
+          <Reveal variant="fade-up" delay={0.2}>
+            <Gallery images={project.images} />
           </Reveal>
         )}
 

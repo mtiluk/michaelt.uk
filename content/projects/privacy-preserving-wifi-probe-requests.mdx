@@ -3,6 +3,13 @@ slug: privacy-preserving-wifi-probe-requests
 title: Privacy Preserving Wi-Fi Probe Requests
 subtitle: "Final year project"
 status: "completed"
+# images:
+#   - src: https://raw.githubusercontent.com/mtiluk/michaelt.uk/master/ultramock-1.png
+#     alt: Client dashboard showing upcoming appointments
+#     caption: The main scheduling view
+#   - src: https://raw.githubusercontent.com/mtiluk/michaelt.uk/master/ultramock-2.png
+#     alt: Client dashboard showing upcoming appointments
+#     caption: The main scheduling view
 
 what: "A modified hostapd and wpa_supplicant that let a device rediscover an access point using a per-device token."
 why: "Plaintext SSIDs in Probe Requests can be collected passively and cross-referenced with geolocation databases to infer where a device has been."
@@ -18,23 +25,21 @@ year: "2026"
 
 #### The problem
 
-When a Wi-Fi device looks for a network it already knows, it broadcasts that network's name in plaintext inside a Probe Request. Anyone nearby can collect those broadcasts passively, and cross-referencing them with public geolocation databases can reveal where a device has been — home, work, or anywhere else it has connected before.
+When devices discover a network it already knows, it broadcasts the network's name in plaintext inside a Probe Request. Anyone nearby can collect those broadcasts, and cross-reference them with public geolocation databases to reveal where a device has been - home, work, or anywhere else it has connected before.
 
 My final year project asked whether discovery could work on an obfuscated alias instead, without changing the shape of the 802.11 protocol.
 
 #### The approach
 
-Each access point derives a 16-byte token per station:
+Each access point derives a 16-byte token per station. Only MAC addresses are needed, so the token is available before association. It's unique for each device but identical across reconnects.
 
-```text
+```batch
 token = SHA256(BSSID || STA_MAC)[0..15]
 ```
 
-Only MAC addresses are needed, so the token is available before association. It's different for every device, identical across reconnects, and needs no key management — no PMK, no additional infrastructure.
+On first connection, the station associates using the real SSID and the access point derives a token which is sent back in the Association Response inside a vendor-specific Information Element. On every connection after that, the station scans with a wildcard SSID and attaches the stored token to its Probe Request instead. The access point matches the token and continues with the normal association flow.
 
-The flow runs in two passes. On first connection the station associates normally using the real SSID, and the access point derives a token and hands it back in the Association Response inside a vendor-specific Information Element. On every connection after that, the station scans with a wildcard SSID and attaches the stored token to its Probe Request instead. The access point matches the token and continues with the normal association flow.
-
-Element ID 221 is an existing extension point in the standard, so nothing about the over-the-air structure changes — the IE carries a demo OUI, a subtype byte, and the 16-byte token.
+Element ID 221 is an existing extension point in the standard, so nothing about the over-the-air structuure change.
 
 #### Implementation
 
@@ -61,6 +66,6 @@ DEMO: adding token IE to Probe Request
 
 #### Scope
 
-The token is sent in plaintext deliberately. It's a discovery alias, not a credential — it obfuscates rather than encrypts, and the design makes no claim to cryptographic confidentiality or strong anti-tracking guarantees. A passive listener still sees a stable per-device value; what they no longer see is the network name.
+The token is sent in plaintext deliberately. It obfuscates rather than encrypts, and the design makes no claim to cryptographic confidentiality or strong anti-tracking guarantees. A passive listener still sees a stable per-device value; what they no longer see is the network name. 
 
 Token rotation, production hardening and a fuller privacy analysis were out of scope. This is an academic research prototype, not something to run on a real network.
