@@ -4,12 +4,15 @@ import { Feed } from "feed";
 import { NextResponse } from "next/server";
 import { siteConfig } from "@/lib/site";
 import getAllContent from "@/lib/content";
+import { Project } from "@/types/projects";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
+const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export async function GET() {
-  const [blogs] = await Promise.all([
+  const [blogs, projects] = await Promise.all([
     getAllContent<Blog>(blogDirectory),
+    getAllContent<Project>(projectDirectory)
   ]);
 
   const feed = new Feed({
@@ -31,6 +34,16 @@ export async function GET() {
       link: `${siteConfig.url}/blog/${post.slug}`,
       description: post.description,
       date: new Date(post.publishedAt),
+    });
+  };
+
+  for (const project of projects) {
+    feed.addItem({
+      title: project.title,
+      description: project.description,
+      id: `${siteConfig.url}/projects/${project.slug}`,
+      link: `${siteConfig.url}/project/${project.slug}`,
+      date: new Date(project.endDate),
     });
   }
 

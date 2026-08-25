@@ -1,3 +1,9 @@
+export interface ProjectImage {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
 export interface Project {
   slug: string;
   title: string;
@@ -15,4 +21,5 @@ export interface Project {
   writeup?: string;
   description: string;
   content: string;
+  images?: ProjectImage[];
 }
