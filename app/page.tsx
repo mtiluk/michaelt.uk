@@ -12,9 +12,9 @@ const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export default async function Home() {
-  const [projects] = await Promise.all([
-    getAllContent<Project>(projectDirectory),
-  ]);
+  const projects = getAllContent<Project>(projectDirectory, {
+    sort: (a, b) => b.year.localeCompare(a.year),
+  });
 
   const blogs = getAllContent<Blog>(blogDirectory, {
     sort: (a, b) => b.publishedAt.localeCompare(a.publishedAt),
