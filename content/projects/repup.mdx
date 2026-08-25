@@ -1,0 +1,35 @@
+---
+slug: repup
+title: Repup
+subtitle: "Reputation & Feedback Platform for Freelancers"
+status: "completed"
+images:
+  - src: /projects/repup/mockup2.png
+    alt: Feedback dashboard
+    caption: Feedback dashboard
+  - src: /projects/repup/mockup1.png
+    alt: Feedback dashboard
+    caption: Feedback dashboard
+  - src: /projects/repup/mockup3.png
+    alt: Feedback dashboard
+    caption: Feedback dashboard
+what: "A SaaS platform that lets freelancers collect, store, and showcase customer feedback pulled directly from Discord and Telegram. Built using Laravel, PostgreSQL, and Apache, with bots built on the Discord and Telegram APIs."
+why: "Freelancers who do most of their client work in Discord and Telegram had no way to turn that praise into something portable. Testimonials were buried in chat logs, easy to lose and impossible to verify, so this project was built to capture that feedback at the source and turn it into a credible public profile."
+result: "The platform launched with working Discord and Telegram bots capturing feedback in real time and rendering it on public freelancer profiles. It acquired over 50 users."
+github: ""
+writeup: ""
+description: "A SaaS platform that lets freelancers collect, store, and showcase customer feedback pulled directly from Discord and Telegram. Built using Laravel, PostgreSQL, and Apache."
+startDate: "Jan 2025"
+endDate: "Feb 2025"
+year: "2025"
+---
+#### The problem
+Freelancers who find and serve clients through Discord and Telegram build up genuine goodwill, but it lives in chat history. There was no straightforward way to collect that feedback, verify it came from a real client, or present it anywhere that mattered. Screenshots are easy to fake and easy to lose, so reputation earned in one server rarely followed a freelancer anywhere else.
+
+#### The approach
+The approach was to meet users where the conversations already happened rather than asking them to migrate. I built bots for both Discord and Telegram that listen for feedback, capture it at the moment it's given, and push it to a Laravel backend backed by PostgreSQL. The platform then renders each freelancer a public profile assembled from that verified feedback. The stack ran on Apache, with the two bots sharing a single ingestion pipeline so new platforms could be added without rewriting the storage layer.
+
+#### The result
+The result was a working end-to-end platform: feedback submitted in a Discord or Telegram channel appeared on the freelancer's profile in real time, with no manual copying or screenshots. The platform acquired over 50 users.
+
+It was successfully launched and acquired over 50 users before it was acquired by another company - this was my first time building a SaaS platform from scratch that took off independently and was bought by a larger company.
