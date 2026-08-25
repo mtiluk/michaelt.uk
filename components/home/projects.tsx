@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSound } from "@web-kits/audio/react";
@@ -12,7 +14,10 @@ import type { Project } from "@/types/projects";
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <div className="group/card block w-full rounded-lg pt-3 transition-colors last:border-b-0 hover:bg-foreground/10">
+    <Link
+      href={`/projects/${project.slug}`}
+      className="group/card block w-full rounded-lg pt-3 transition-colors last:border-b-0 hover:bg-foreground/10 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/40"
+    >
       <div className="mx-auto flex max-w-136 items-center gap-2 border-b border-foreground/10 pb-3 transition-colors group-hover/card:border-transparent group-last/card:border-b-0">
         <div className="relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded border border-foreground/12 p-0.5">
           <Image src={project.logo ?? "/logo-placeholder.svg"} width={24} height={24} alt="" aria-hidden className="relative z-10 block h-6 w-6 rounded-[3px] object-contain" />
@@ -42,7 +47,7 @@ function ProjectCard({ project }: { project: Project }) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
@@ -117,6 +122,14 @@ function ProjectListItem({ project }: { project: Project }) {
                   {project.result}
                 </p>
               )}
+
+              <Link
+                href={`/projects/${project.slug}`}
+                className="inline-flex items-center gap-0.5 pt-1 text-[11px] text-foreground/45 transition-colors hover:text-text-highlight focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/40"
+              >
+                Read more
+                <ArrowUpRight className="h-3 w-3" aria-hidden />
+              </Link>
             </div>
           </motion.div>
         )}

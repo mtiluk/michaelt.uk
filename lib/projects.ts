@@ -1,7 +1,7 @@
 export interface ProjectImage {
   src: string;
   alt: string;
-  caption: string;
+  caption?: string;
 }
 
 export interface Project {
@@ -19,7 +19,7 @@ export interface Project {
   result?: string;
   github?: string;
   writeup?: string;
+  images?: ProjectImage[];
   description: string;
   content: string;
-  images?: ProjectImage[];
 }

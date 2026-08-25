@@ -13,6 +13,9 @@ export const mdxComponents = {
   h3: (props: ComponentPropsWithoutRef<"h3">) => (
     <h3 className="mt-8 mb-2 scroll-mt-24 text-[15px] font-medium text-text-highlight" {...props} />
   ),
+  h4: (props: ComponentPropsWithoutRef<"h4">) => (
+    <h4 className="mt-8 mb-2 scroll-mt-24 text-[14px] font-medium text-text-highlight" {...props} />
+  ),
   p: (props: ComponentPropsWithoutRef<"p">) => (
     <p className="text-[13px] leading-relaxed my-4" {...props} />
   ),
