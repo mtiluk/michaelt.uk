@@ -11,13 +11,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllContent<{ title: string }>(
     path.join(process.cwd(), 'content', 'blogs')
   )
-  // const projects = getAllContent<{ title: string }>(
-  //   path.join(process.cwd(), 'content', 'projects')
-  // )
+  const projects = getAllContent<{ title: string }>(
+    path.join(process.cwd(), 'content', 'projects')
+  )
 
   return [
     { url: base },
     ...posts.map((p) => ({ url: `${base}/blog/${p.slug}` })),
-    // ...projects.map((p) => ({ url: `${base}/projects/${p.slug}` })),
+    ...projects.map((p) => ({ url: `${base}/projects/${p.slug}` })),
   ]
 }
