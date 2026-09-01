@@ -6,6 +6,7 @@ import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import { cn } from "@/lib/utils";
 import type { Blog } from "@/types/blogs";
+import { formatPublishedAt } from "@/lib/dates";
 
 
 const SEARCH_THRESHOLD = 4;
@@ -32,7 +33,7 @@ function BlogItem({ blog }: { blog: Blog }) {
               dateTime={blog.publishedAt}
               className="text-[11px] text-foreground/30 transition-colors group-hover:text-foreground/50"
             >
-              {blog.publishedAt}
+              {formatPublishedAt(blog.publishedAt)}
             </time>
             <span className="text-[10px] text-foreground/25">
               {blog.timeToRead}

@@ -54,8 +54,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={cn("h-full antialiased font-sans", inter.variable, instrumentSerif.variable)}>
-      <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
+      <head>
         <PaletteScript />
+      </head>
+      <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
         <PaletteProvider>
           <Wave className="w-screen h-[39vh]" aria-hidden />
           <div aria-hidden className="..." />

@@ -1,12 +1,19 @@
 import type { ComponentPropsWithoutRef } from "react";
+import Table, { tableComponents } from './table'
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 import Callout from "./callout";
 import CodeBlock from "./code-block";
+import Video from "./video";
+import Figure from "./figure";
 
 export const mdxComponents = {
   Callout: Callout,
+  Table: Table,
+  ...tableComponents,
   pre: CodeBlock,
+  Video: Video,
+  Figure: Figure,
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
       <h2 className="mt-12 mb-3 scroll-mt-24 font-serif text-[19px] text-text-highlight" {...props} />
   ),

@@ -5,6 +5,7 @@ import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
 import { siteConfig } from "@/lib/site";
 import getAllContent from "@/lib/content";
+import { formatPublishedAt } from "@/lib/dates";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
@@ -34,7 +35,7 @@ export async function GET() {
       id: `${siteConfig.url}/blog/${post.slug}`,
       link: `${siteConfig.url}/blog/${post.slug}`,
       description: post.description,
-      date: new Date(post.publishedAt),
+      date: new Date(formatPublishedAt(post.publishedAt)),
     })),
     ...projects.map((project) => ({
       title: project.title,
