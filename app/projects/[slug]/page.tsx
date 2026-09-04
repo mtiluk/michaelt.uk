@@ -192,6 +192,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                   source={body}
                   components={mdxComponents}
                   options={{
+                    blockJS: false,
                     mdxOptions: {
                       rehypePlugins: [
                         rehypeSlug,

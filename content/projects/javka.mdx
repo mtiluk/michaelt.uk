@@ -1,0 +1,30 @@
+---
+slug: javka
+title: Javka
+subtitle: "Dithered Toast Library for React & Next.js"
+status: "Completed"
+what: "A lightweight, zero-dependency toast library for React and Next.js with a dithered block countdown that drains as each toast's timer runs out."
+why: "Wanted a toast library with a distinct look, themeable down to the pixel with plain CSS variables, without needing Tailwind, ShadCN or Motion as dependencies."
+result: "A published package with a `<Toaster />` and `toast()` API, per-toast dismiss, hover-to-fan-out stacking, and full theming through CSS variables."
+github: "https://github.com/mtiluk/javka"
+writeup: ""
+
+description: "A lightweight, zero-dependency toast library for React and Next.js with a dithered block countdown."
+startDate: "2026-07"
+endDate: "2026-07"
+tech: ["TypeScript"]
+---
+
+<Video src="/projects/javka/demo.mp4" caption="Toasts stacking, fanning out on hover, and draining their dithered countdown" autoplay={true} aspect="1038/370" />
+
+#### The problem
+
+Most toast libraries either ship a specific design language you have to fight, or pull in Tailwind, ShadCN or an animation library just to render a notification. I wanted something with zero dependencies that looked distinct out of the box and could still be retheamed completely without touching component code.
+
+#### The approach
+
+Javka is plain TypeScript, CSS and React - no Tailwind, no ShadCN, no Motion. Every visual detail routes through a CSS variable, from colours and radius down to the block countdown's height and fade. The countdown itself is a grid of dithered blocks that drains as a toast's timer runs out, instead of the usual progress bar. Hovering the stack fans the toasts out and pauses every timer at once.
+
+#### The result
+
+A published package: mount `<Toaster />` once and call `toast()`, `toast.success()`, `toast.error()`, `toast.warning()` or `toast.info()` from anywhere. Each toast carries a title, optional description, configurable duration, and returns an id for manual dismissal. Positioning, stack gap, peek height, and the countdown grid's rows and columns are all configurable on the `<Toaster />` itself.
