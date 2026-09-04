@@ -53,7 +53,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={cn("h-full antialiased font-sans", inter.variable, instrumentSerif.variable)}>
+    <html
+      lang="en"
+      className={cn("h-full antialiased font-sans", inter.variable, instrumentSerif.variable)}
+      suppressHydrationWarning
+    >
       <head>
         <PaletteScript />
       </head>
