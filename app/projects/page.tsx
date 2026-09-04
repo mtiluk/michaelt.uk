@@ -6,6 +6,7 @@ import getAllContent from "@/lib/content";
 import { byDateDesc, formatDateRange } from "@/lib/dates";
 import { withStars } from "@/lib/github";
 import { Reveal } from "@/components/ui/reveal";
+import TechBadge from "@/components/ui/tech-badge";
 import type { Project } from "@/types/projects";
 
 const projectDirectory = path.join(process.cwd(), "content/projects");
@@ -63,10 +64,12 @@ export default async function ProjectsPage() {
                     <p className="mt-0.5 truncate text-[12px] text-foreground/55">
                       {project.subtitle}
                     </p>
-                    {project.languages && project.languages.length > 0 && (
-                      <p className="mt-1 truncate text-[10px] text-foreground/35">
-                        {project.languages.join(" · ")}
-                      </p>
+                    {project.tech && project.tech.length > 0 && (
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        {project.tech.map((tech) => (
+                          <TechBadge key={tech} name={tech} />
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div className="flex shrink-0 items-center gap-3">

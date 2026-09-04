@@ -11,6 +11,7 @@ import { retro } from "@/lib/audio";
 import Wave from "@/components/ui/wave";
 import { cn } from "@/lib/utils";
 import { formatDateRange, getYear } from "@/lib/dates";
+import TechBadge from "@/components/ui/tech-badge";
 import type { Project } from "@/types/projects";
 
 function ProjectCard({ project }: { project: Project }) {
@@ -132,18 +133,16 @@ function ProjectListItem({ project }: { project: Project }) {
                 </p>
               )}
 
-              {(project.languages?.length || project.stars !== undefined) && (
-                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5 text-foreground/45">
-                  {project.languages?.length ? (
-                    <span>{project.languages.join(" · ")}</span>
-                  ) : null}
+              {(project.tech?.length || project.stars !== undefined) && (
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  {project.tech?.map((tech) => <TechBadge key={tech} name={tech} />)}
                   {project.stars !== undefined && (
                     <span className="flex items-center gap-1 text-[#e3b341]">
                       <Star className="h-3 w-3" fill="currentColor" aria-hidden />
                       {project.stars.toLocaleString()}
                     </span>
                   )}
-                </p>
+                </div>
               )}
 
               <Link

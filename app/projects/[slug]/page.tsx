@@ -15,6 +15,7 @@ import { mdxComponents } from "@/components/article/mdx-components";
 import References from "@/components/article/references";
 import ShareMenu from "@/components/article/share-menu";
 import Badge from "@/components/ui/badge";
+import TechBadge from "@/components/ui/tech-badge";
 import Wave from "@/components/ui/wave";
 import { Reveal } from "@/components/ui/reveal";
 import type { Project } from "@/types/projects";
@@ -126,8 +127,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <Badge title={dates} />
             {project.status && <Badge title={project.status} />}
-            {project.languages?.map((language) => (
-              <Badge key={language} title={language} />
+            {project.tech?.map((tech) => (
+              <TechBadge key={tech} name={tech} />
             ))}
           </div>
         </Reveal>

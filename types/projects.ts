@@ -23,8 +23,8 @@ export interface Project {
   description: string;
   content: string;
   images?: ProjectImage[];
-  /** Languages used, set manually in frontmatter (e.g. ["TypeScript", "Python"]). */
-  languages?: string[];
+  /** Tech stack tags, set manually in frontmatter (e.g. ["TypeScript", "Next.js"]). Rendered with a logo where recognised, see lib/tech.ts. */
+  tech?: string[];
   /** Star count for `github`, fetched at request time - not set in frontmatter. */
   stars?: number;
 }

@@ -5,7 +5,7 @@ export type IconProps = SVGProps<SVGSVGElement> & {
   title?: string;
 };
 
-function Icon({
+export function Icon({
   size = "1em",
   title,
   viewBox,
