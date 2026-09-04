@@ -4,11 +4,12 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import getAllContent, { getContentBySlug } from "@/lib/content";
 import { formatDateRange } from "@/lib/dates";
+import { getRepoStars } from "@/lib/github";
 import { BsGithub } from "@/components/icons/brand";
 import { mdxComponents } from "@/components/article/mdx-components";
 import References from "@/components/article/references";
@@ -71,6 +72,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     project.description && project.description.trim() !== project.what?.trim();
   const hasSummary = project.what || project.why || project.result;
   const dates = formatDateRange(project.startDate, project.endDate);
+  const stars = project.github ? await getRepoStars(project.github) : null;
 
   return (
     <main className="container relative z-20 mx-auto max-w-xl px-5 pt-[14vh] pb-24 md:px-0">
@@ -124,6 +126,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <Badge title={dates} />
             {project.status && <Badge title={project.status} />}
+            {project.languages?.map((language) => (
+              <Badge key={language} title={language} />
+            ))}
           </div>
         </Reveal>
 
@@ -137,10 +142,18 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {(project.github || project.writeup) && (
             <div className="mt-3 flex flex-wrap items-center gap-4">
               {project.github && (
-                <Link href={project.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                  <BsGithub className="h-3 w-3" aria-hidden />
-                  Source
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link href={project.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                    <BsGithub className="h-3 w-3" aria-hidden />
+                    Source
+                  </Link>
+                  {stars !== null && (
+                    <span className="flex items-center gap-1 text-[11px] text-[#e3b341]">
+                      <Star className="h-3 w-3" fill="currentColor" aria-hidden />
+                      {stars.toLocaleString()}
+                    </span>
+                  )}
+                </div>
               )}
               {project.writeup && (
                 <Link href={project.writeup} target="_blank" rel="noopener noreferrer" className={linkClass}>

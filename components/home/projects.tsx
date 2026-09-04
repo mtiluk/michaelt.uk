@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Star } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSound } from "@web-kits/audio/react";
@@ -31,7 +31,7 @@ function ProjectCard({ project }: { project: Project }) {
           </div>
         </div>
 
-        <div className="flex w-full min-w-0 items-center justify-between gap-3">
+        <div className="flex w-full min-w-0 items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex min-w-0 items-center gap-2">
               <h3 className="min-w-0 truncate text-[14px] font-medium leading-tight text-text-highlight">
@@ -43,9 +43,17 @@ function ProjectCard({ project }: { project: Project }) {
             </p>
           </div>
 
-          <span className="hidden shrink-0 text-[12px] text-foreground/30 transition-colors group-hover/card:text-foreground/50 sm:block">
-            {formatDateRange(project.startDate, project.endDate)}
-          </span>
+          <div className="hidden shrink-0 flex-col items-end sm:flex">
+            {project.stars !== undefined && (
+              <span className="flex items-center gap-1 text-[12px] text-[#e3b341]">
+                <Star className="h-3 w-3" fill="currentColor" aria-hidden />
+                {project.stars.toLocaleString()}
+              </span>
+            )}
+            <span className="mt-0.5 text-[12px] text-foreground/30 transition-colors group-hover/card:text-foreground/50">
+              {formatDateRange(project.startDate, project.endDate)}
+            </span>
+          </div>
         </div>
       </div>
     </Link>
@@ -121,6 +129,20 @@ function ProjectListItem({ project }: { project: Project }) {
                 <p>
                   <span className="text-foreground/40 underline">Result:</span>{" "}
                   {project.result}
+                </p>
+              )}
+
+              {(project.languages?.length || project.stars !== undefined) && (
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-0.5 text-foreground/45">
+                  {project.languages?.length ? (
+                    <span>{project.languages.join(" · ")}</span>
+                  ) : null}
+                  {project.stars !== undefined && (
+                    <span className="flex items-center gap-1 text-[#e3b341]">
+                      <Star className="h-3 w-3" fill="currentColor" aria-hidden />
+                      {project.stars.toLocaleString()}
+                    </span>
+                  )}
                 </p>
               )}
 

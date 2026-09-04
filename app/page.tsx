@@ -1,6 +1,7 @@
 import path from "node:path";
 import getAllContent from "@/lib/content";
 import { byDateDesc } from "@/lib/dates";
+import { withStars } from "@/lib/github";
 import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
 import Contact from "@/components/home/contact";
@@ -13,9 +14,11 @@ const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export default async function Home() {
-  const projects = getAllContent<Project>(projectDirectory, {
-    sort: byDateDesc((project) => project.endDate),
-  });
+  const projects = await withStars(
+    getAllContent<Project>(projectDirectory, {
+      sort: byDateDesc((project) => project.endDate),
+    }),
+  );
 
   const blogs = getAllContent<Blog>(blogDirectory, {
     sort: byDateDesc((blog) => blog.publishedAt),

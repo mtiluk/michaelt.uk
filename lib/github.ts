@@ -1,4 +1,5 @@
 import type { ContributionDay } from "@/types/socials";
+import type { Project } from "@/types/projects";
 
 const GRAPHQL = "https://api.github.com/graphql";
 const PUBLIC_API = "https://github-contributions-api.jogruber.de/v4";
@@ -109,4 +110,77 @@ export async function getContributions(login: string): Promise<Contributions | n
     console.warn(`[socials] contribution fetch failed for ${login}`, error);
     return null;
   }
+}
+
+const REPO_STARS_QUERY = `query($owner: String!, $name: String!) {
+  repository(owner: $owner, name: $name) {
+    stargazerCount
+  }
+}`;
+
+function parseGithubRepo(url: string): { owner: string; name: string } | null {
+  try {
+    const { hostname, pathname } = new URL(url);
+    if (hostname !== "github.com") return null;
+
+    const [owner, name] = pathname.replace(/^\/|\.git$/g, "").split("/");
+    return owner && name ? { owner, name } : null;
+  } catch {
+    return null;
+  }
+}
+
+async function starsFromGraphql(owner: string, name: string, token: string): Promise<number | null> {
+  const response = await fetch(GRAPHQL, {
+    method: "POST",
+    headers: { Authorization: `bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ query: REPO_STARS_QUERY, variables: { owner, name } }),
+    next: { revalidate: REVALIDATE },
+  });
+
+  if (!response.ok) return null;
+
+  const payload = await response.json();
+  const stars = payload?.data?.repository?.stargazerCount;
+  return typeof stars === "number" ? stars : null;
+}
+
+async function starsFromPublicApi(owner: string, name: string): Promise<number | null> {
+  const response = await fetch(`https://api.github.com/repos/${owner}/${name}`, {
+    next: { revalidate: REVALIDATE },
+  });
+
+  if (!response.ok) return null;
+
+  const payload = await response.json();
+  const stars = payload?.stargazers_count;
+  return typeof stars === "number" ? stars : null;
+}
+
+export async function getRepoStars(url: string): Promise<number | null> {
+  const repo = parseGithubRepo(url);
+  if (!repo) return null;
+
+  const token = process.env.GITHUB_TOKEN;
+
+  try {
+    const result = token
+      ? await starsFromGraphql(repo.owner, repo.name, token)
+      : await starsFromPublicApi(repo.owner, repo.name);
+    if (result === null) console.warn(`[projects] no star count for ${url}`);
+    return result;
+  } catch (error) {
+    console.warn(`[projects] star fetch failed for ${url}`, error);
+    return null;
+  }
+}
+
+export async function withStars<T extends Project>(projects: T[]): Promise<T[]> {
+  return Promise.all(
+    projects.map(async (project) => {
+      if (!project.github) return project;
+      const stars = await getRepoStars(project.github);
+      return stars === null ? project : { ...project, stars };
+    }),
+  );
 }

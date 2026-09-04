@@ -42,7 +42,7 @@ Then set `REDIS_URL=redis://localhost:6379`.
 | `REDIS_URL` | yes | `redis://redis:6379` in Compose, `redis://localhost:6379` outside it. |
 | `LIKES_SALT` | yes | Long random string. Visitor IDs are `SHA256(ip + salt)`, so no raw IPs are stored. **Changing it resets everyone's like allowance.** |
 | `DISCORD_WEBHOOK_URL` | yes | Where contact form submissions are delivered. |
-| `GITHUB_TOKEN` | no | Classic PAT, no scopes needed. Used for the contribution graph on the GitHub social card. Without it, a public proxy is used instead. |
+| `GITHUB_TOKEN` | no | Classic PAT, no scopes needed. Used for the contribution graph on the GitHub social card and star counts on project cards. Without it, public (rate-limited) APIs are used instead. |
 
 ## Content
 
