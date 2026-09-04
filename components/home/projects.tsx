@@ -10,6 +10,7 @@ import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import Wave from "@/components/ui/wave";
 import { cn } from "@/lib/utils";
+import { formatDateRange, getYear } from "@/lib/dates";
 import type { Project } from "@/types/projects";
 
 function ProjectCard({ project }: { project: Project }) {
@@ -43,7 +44,7 @@ function ProjectCard({ project }: { project: Project }) {
           </div>
 
           <span className="hidden shrink-0 text-[12px] text-foreground/30 transition-colors group-hover/card:text-foreground/50 sm:block">
-            {project.startDate} – {project.endDate}
+            {formatDateRange(project.startDate, project.endDate)}
           </span>
         </div>
       </div>
@@ -70,7 +71,7 @@ function ProjectListItem({ project }: { project: Project }) {
         <div className="mx-auto flex max-w-136 items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
             <span className="shrink-0 text-[12px] leading-none text-foreground/30 transition-colors group-hover:text-foreground/50">
-              {project.year}
+              {getYear(project.startDate)}
             </span>
             <h3 className="min-w-0 truncate text-[13px] font-medium leading-none text-text-highlight">
               {project.title}

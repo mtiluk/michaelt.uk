@@ -26,7 +26,10 @@ export interface SeriesContext<T> {
   posts: ContentItem<T>[];
 }
 
-function getAllContent<T extends { title: string }>(  directory: string, options: GetAllContentOptions<T> = {}, ): ContentItem<T>[] {
+function getAllContent<T extends { title: string }>(
+  directory: string,
+  options: GetAllContentOptions<T> = {},
+): ContentItem<T>[] {
   const { sort, extension = ".mdx" } = options;
 
   let fileNames: string[];

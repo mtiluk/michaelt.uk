@@ -12,7 +12,6 @@ export interface Project {
   subtitle: string;
   startDate: string;
   endDate: string;
-  year: string;
   status?: string;
   logo?: string;
   color?: string;

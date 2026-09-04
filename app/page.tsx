@@ -1,5 +1,6 @@
 import path from "node:path";
 import getAllContent from "@/lib/content";
+import { byDateDesc } from "@/lib/dates";
 import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
 import Contact from "@/components/home/contact";
@@ -13,11 +14,11 @@ const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export default async function Home() {
   const projects = getAllContent<Project>(projectDirectory, {
-    sort: (a, b) => b.year.localeCompare(a.year),
+    sort: byDateDesc((project) => project.endDate),
   });
 
   const blogs = getAllContent<Blog>(blogDirectory, {
-    sort: (a, b) => b.publishedAt.localeCompare(a.publishedAt),
+    sort: byDateDesc((blog) => blog.publishedAt),
   });
 
   const reads = getReads();

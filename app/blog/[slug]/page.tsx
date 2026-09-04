@@ -22,7 +22,7 @@ import References from "@/components/article/references";
 import { Reveal } from "@/components/ui/reveal";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
-import { formatPublishedAt } from "@/lib/dates";
+import { formatDate } from "@/lib/dates";
 
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
@@ -76,7 +76,7 @@ export default async function BlogPost({ params }: BlogPageProps) {
           <Reveal variant="fade" delay={0.1}>
             <p className="text-xs leading-6 my-2">{blog.description}</p>
             <div className="mt-2 flex items-center gap-2 text-[11px] text-foreground/60">
-              <Badge title={formatPublishedAt(blog.publishedAt)} />
+              <Badge title={formatDate(blog.publishedAt)} />
               <Badge title={`${blog.timeToRead}`} />
             </div>
           </Reveal>

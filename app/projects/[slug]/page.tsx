@@ -8,6 +8,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import getAllContent, { getContentBySlug } from "@/lib/content";
+import { formatDateRange } from "@/lib/dates";
 import { BsGithub } from "@/components/icons/brand";
 import { mdxComponents } from "@/components/article/mdx-components";
 import References from "@/components/article/references";
@@ -69,10 +70,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const showDescription =
     project.description && project.description.trim() !== project.what?.trim();
   const hasSummary = project.what || project.why || project.result;
-  const dates =
-    project.startDate === project.endDate
-      ? project.startDate
-      : `${project.startDate} – ${project.endDate}`;
+  const dates = formatDateRange(project.startDate, project.endDate);
 
   return (
     <main className="container relative z-20 mx-auto max-w-xl px-5 pt-[14vh] pb-24 md:px-0">

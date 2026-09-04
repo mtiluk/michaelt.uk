@@ -1,5 +1,6 @@
 import path from "node:path";
 import getAllContent from "@/lib/content";
+import { byDateDesc } from "@/lib/dates";
 import { getSocials } from "@/lib/socials";
 import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
@@ -20,7 +21,7 @@ const projectDirectory = path.join(process.cwd(), "content/projects");
 
 export function getSearchItems(): SearchItem[] {
   const blogs = getAllContent<Blog>(blogDirectory, {
-    sort: (a, b) => b.publishedAt.localeCompare(a.publishedAt),
+    sort: byDateDesc((blog) => blog.publishedAt),
   }).map(
     (blog): SearchItem => ({
       id: `blog-${blog.slug}`,
@@ -31,7 +32,9 @@ export function getSearchItems(): SearchItem[] {
     }),
   );
 
-  const projects = getAllContent<Project>(projectDirectory).map(
+  const projects = getAllContent<Project>(projectDirectory, {
+    sort: byDateDesc((project) => project.endDate),
+  }).map(
     (project): SearchItem => ({
       id: `project-${project.slug}`,
       title: project.title,
