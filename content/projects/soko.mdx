@@ -1,0 +1,37 @@
+---
+slug: soko
+title: Soko
+subtitle: "IoT Real-Time Flight Tracker and Radar for RGB LED Matrix Panels"
+status: "completed"
+images:
+  - src: /projects/soko/flight-tracking.jpg
+    alt: Flight Tracking Screen
+    caption: Flight Mode showing route, aircraft type and progress for a single callsign
+  - src: /projects/soko/radar-two.jpg
+    alt: Radar Screen
+    caption: Radar Mode cycling through nearby aircraft with bearing and range
+  - src: /projects/soko/loading.jpg
+    alt: Boot Screen
+    caption: Boot screen while the panel connects to Wi-Fi and fetches ADS-B data
+what: "A CircuitPython flight tracker for RGB LED matrix panels, running on a MatrixPortal S3 and pulling live ADS-B data to show either a single aircraft's route and progress or a radar view of nearby traffic."
+why: "This was a hobby project to explore IoT devices and RGB LED Matrix Panels, mixing that with another hobby of planes."
+result: "A complete end-to-end setup of both the hardware and software: a 128x64 HUB75 panel driven by an ESP32-S3 board running Flight Mode and Radar Mode off live ADS-B data."
+github: "https://github.com/mtiluk/soko"
+writeup: ""
+
+description: "IoT Real-Time Flight Tracker and Radar for RGB LED Matrix Panels"
+startDate: "2026-08"
+endDate: "2026-09"
+---
+
+#### The problem
+
+I'd already been playing with RGB LED matrix panels and wanted a reason to use one for something other than a clock or a scrolling ticker. Separately, I've always liked planespotting, and existing flight trackers are either browser tabs or apps - nothing sits on a shelf and just shows you what's overhead in real time.
+
+#### The approach
+
+Soko runs on CircuitPython on a MatrixPortal S3 (ESP32-S3) driving a 128x64 HUB75 panel over Wi-Fi. It polls ADS-B data for two modes: Flight Mode tracks a single aircraft by callsign, rendering its airline logo, route, aircraft type, ground/in-flight status, departure and arrival times, and a progress bar for distance covered. Radar Mode instead cycles through every aircraft within a configurable radius every ten seconds, showing city pairs and the bearing and range from the device's own location. Wi-Fi credentials, mode, and location are all set through `settings.toml`, and dependencies are managed with `circup` so the whole thing can be flashed to a CIRCUITPY drive without a build step.
+
+#### The result
+
+The result is a complete end-to-end build - hardware and firmware - that sits on a shelf and tracks real aircraft. Flight Mode and Radar Mode both work off live data, and the panel switches between showing me a specific flight I'm curious about and just ambiently displaying whatever's flying nearby.
