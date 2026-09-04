@@ -4,7 +4,9 @@ import {
   SiApache,
   SiC,
   SiDiscord,
+  SiElectron,
   SiFigma,
+  SiGo,
   SiLaravel,
   SiNextdotjs,
   SiPhp,
@@ -35,6 +37,8 @@ const TECH: Record<string, TechEntry> = {
   discord: { label: "Discord", icon: SiDiscord, color: "#5865F2" },
   telegram: { label: "Telegram", icon: SiTelegram, color: "#26A5E4" },
   figma: { label: "Figma", icon: SiFigma, color: "#F24E1E" },
+  go: { label: "Go", icon: SiGo, color: "#00ADD8" },
+  electron: { label: "Electron", icon: SiElectron, color: "#47848F" },
 };
 
 export function getTech(name: string): TechEntry | undefined {

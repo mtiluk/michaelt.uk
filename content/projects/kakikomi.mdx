@@ -1,0 +1,28 @@
+---
+slug: kakikomi
+title: Kakikomi
+subtitle: "Native Desktop Note-Taking App"
+status: "Completed"
+what: "A note-taking desktop app built with NativePHP, compiling a Laravel/PHP app into a native Electron shell."
+why: "Wanted an excuse to try NativePHP - building a desktop app in PHP instead of reaching for Electron and JS directly."
+result: "A working desktop note app with starring, and password-protected, encrypted locked notes."
+github: "https://github.com/mtiluk/Kakikomi"
+writeup: ""
+
+description: "A native desktop note-taking app built with NativePHP and Laravel, compiled into an Electron shell."
+startDate: "2024-05"
+endDate: "2024-06"
+tech: ["PHP", "Electron"]
+---
+
+#### The problem
+
+Wanted a lightweight, native-feeling note-taking app, and an excuse to try NativePHP rather than defaulting to an Electron plus JS stack for a desktop app.
+
+#### The approach
+
+Kakikomi is a Laravel app running on NativePHP, which compiles it into a native Electron shell. That kept the whole app in PHP - routing, models, views - while still shipping as a native desktop binary rather than a web app in a browser tab.
+
+#### The result
+
+A working desktop note-taking app: basic note-taking, note starring, and password-protected notes with encryption for locked entries.

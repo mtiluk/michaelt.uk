@@ -1,0 +1,34 @@
+---
+slug: vestnik
+title: Vestnik
+subtitle: "Terminal RSS Feed Reader"
+status: "Completed"
+images:
+  - src: /projects/vestnik/preview.png
+    alt: Vestnik feed list
+    caption: Browsing a feed in Vestnik's terminal UI, paginated with categories highlighted
+    width: 768
+    height: 576
+what: "A terminal-based RSS feed reader built with Bubble Tea and Lip Gloss, for browsing and reading feeds without leaving the terminal."
+why: "One of my 2025 goals was to read more, so I built this as part of a daily reading habit - and wanted an excuse to build a proper terminal UI in Go."
+result: "A working TUI with menu navigation, feed browsing, pagination, and opening articles directly in the browser from the terminal."
+github: "https://github.com/mtiluk/Vestnik"
+writeup: ""
+
+description: "A terminal-based RSS feed reader built with Bubble Tea and Lip Gloss for browsing and reading feeds without leaving the terminal."
+startDate: "2025-02"
+endDate: "2025-02"
+tech: ["Go"]
+---
+
+#### The problem
+
+I wanted to read more in 2025, and browser-based RSS readers made it too easy to get distracted into other tabs. I wanted something that lived in the terminal, where I already spend most of my day.
+
+#### The approach
+
+Vestnik is built with Bubble Tea for the application and state model, and Lip Gloss for styling, following the Elm-style architecture those libraries use. It fetches and combines RSS feeds, renders them in a navigable list with categories, and hands off to the system browser via pkg/browser when it's time to actually read an article.
+
+#### The result
+
+A working terminal RSS reader: menu navigation between feeds and settings, paginated feed browsing, and opening any selected item straight into the default browser.

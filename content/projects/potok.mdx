@@ -1,0 +1,28 @@
+---
+slug: potok
+title: Potok
+subtitle: "End-to-End Encrypted Obsidian Vault Sync"
+status: "In Progress"
+what: "A self-hosted CLI tool for backing up and syncing Obsidian vaults across devices with end-to-end encryption, so the server never sees plaintext notes."
+why: "Existing Obsidian sync options are either paid, cloud-locked, or don't encrypt client-side. Wanted a self-hosted alternative with no size limits, running on my own server."
+result: "A working CLI that registers vaults, pushes and pulls encrypted backups to a self-hosted server, and watches folders for automatic sync, with keys stored in the OS keyring."
+github: "https://github.com/mtiluk/potok"
+writeup: "https://potok-docs.vercel.app/"
+
+description: "A self-hosted, end-to-end encrypted CLI tool for backing up and syncing Obsidian vaults across devices."
+startDate: "2025-07"
+endDate: "2026-08"
+tech: ["Go"]
+---
+
+#### The problem
+
+Syncing an Obsidian vault across machines usually means Obsidian Sync (paid, closed), a generic cloud drive (no client-side encryption), or a git repo (never really designed for a vault's binary attachments). None of them combine self-hosting with real end-to-end encryption.
+
+#### The approach
+
+Potok encrypts a vault locally with AES before anything leaves the device, so the server only ever stores encrypted blobs - it never sees a password or plaintext content. Encryption passwords and API keys live in the OS keyring (Secret Service, Keychain, or Credential Manager) rather than in a config file. The CLI can register multiple vaults, push and pull them individually, and run a long-lived sync command that watches a folder and pushes changes automatically.
+
+#### The result
+
+A working end-to-end encrypted sync tool: vault registration, encrypted push and pull, folder watching for automatic sync, and a `doctor` command for diagnosing setup issues. It's still under active development - conflict detection, version history, and a web dashboard are on the roadmap.
