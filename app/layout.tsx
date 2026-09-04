@@ -7,6 +7,10 @@ import Providers from "@/app/providers";
 import "./globals.css";
 import CommandPalette from "@/components/layout/command-palette";
 import { getSearchItems } from "@/lib/search";
+import { getSocials } from "@/lib/socials";
+import { rssAlternate } from "@/lib/site";
+import { personSchema, websiteSchema } from "@/lib/schema";
+import JsonLd from "@/components/seo/json-ld";
 import PaletteScript from "@/components/providers/palette-script";
 import PaletteProvider from "@/components/providers/palette-provider";
 import PreferencesBar from "@/components/layout/preferences-bar";
@@ -31,6 +35,9 @@ export const metadata: Metadata = {
     template: "%s · Michael Tilley",
   },
   description: "Michael Tilley is a Computer Science graduate and research assistant whose current research interests centre on privacy redesigns of common systems, secure cloud and networks engineering, and embedded and IOT Systems.",
+  alternates: {
+    types: rssAlternate,
+  },
   openGraph: {
     type: "website",
     url: "/",
@@ -60,6 +67,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         <PaletteScript />
+        <JsonLd data={personSchema(getSocials().map((social) => social.href))} />
+        <JsonLd data={websiteSchema()} />
       </head>
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
         <PaletteProvider>

@@ -1,7 +1,9 @@
 import path from "node:path";
+import type { Metadata } from "next";
 import getAllContent from "@/lib/content";
 import { byDateDesc } from "@/lib/dates";
 import { withStars } from "@/lib/github";
+import { rssAlternate } from "@/lib/site";
 import type { Blog } from "@/types/blogs";
 import type { Project } from "@/types/projects";
 import Contact from "@/components/home/contact";
@@ -12,6 +14,10 @@ import { getReads } from "@/lib/reads";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/", types: rssAlternate },
+};
 
 export default async function Home() {
   const projects = await withStars(

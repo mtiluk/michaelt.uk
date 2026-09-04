@@ -5,3 +5,11 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL,
   language: "en",
 };
+
+/**
+ * Next.js doesn't deep-merge `alternates` between layout and page metadata -
+ * a page's own `alternates` fully replaces the layout's, so every page that
+ * sets `alternates.canonical` must also spread this in to keep RSS
+ * autodiscovery.
+ */
+export const rssAlternate = { "application/rss+xml": "/feed.xml" };

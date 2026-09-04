@@ -23,6 +23,9 @@ import { Reveal } from "@/components/ui/reveal";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 import { formatDate } from "@/lib/dates";
+import { rssAlternate } from "@/lib/site";
+import { blogPostingSchema } from "@/lib/schema";
+import JsonLd from "@/components/seo/json-ld";
 
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
@@ -41,7 +44,11 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const { slug } = await params;
   const blog = getContentBySlug<Blog>(blogDirectory, slug);
   if (!blog) return {};
-  return { title: blog.title, description: blog.description };
+  return {
+    title: blog.title,
+    description: blog.description,
+    alternates: { canonical: `/blog/${slug}`, types: rssAlternate },
+  };
 }
 
 export default async function BlogPost({ params }: BlogPageProps) {
@@ -52,6 +59,14 @@ export default async function BlogPost({ params }: BlogPageProps) {
   const seriesCtx = getSeriesContext<Blog>(blogDirectory, slug);
   return (
     <div className="mx-auto grid max-w-5xl grid-cols-1 gap-x-12 px-6 pb-20 sm:px-8 lg:grid-cols-[minmax(0,1fr)_220px]">
+      <JsonLd
+        data={blogPostingSchema({
+          title: blog.title,
+          description: blog.description,
+          path: `/blog/${slug}`,
+          datePublished: blog.publishedAt,
+        })}
+      />
       <main className="w-full max-w-2xl pt-[14vh] z-10">
         <header className="mb-8 border-b border-foreground/10 pb-6">
           <Reveal variant="fade-down">

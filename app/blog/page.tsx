@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import getAllContent from "@/lib/content";
 import { byDateDesc, formatDate } from "@/lib/dates";
+import { rssAlternate } from "@/lib/site";
 import { Reveal } from "@/components/ui/reveal";
 import type { Blog } from "@/types/blogs";
 
@@ -12,6 +13,7 @@ const blogDirectory = path.join(process.cwd(), "content/blogs");
 export const metadata: Metadata = {
   title: "Blog",
   description: "Notes on self-hosting, security, and whatever Michael Tilley is building.",
+  alternates: { canonical: "/blog", types: rssAlternate },
 };
 
 export default function BlogIndexPage() {

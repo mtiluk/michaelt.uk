@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight, Star } from "lucide-react";
 import getAllContent from "@/lib/content";
 import { byDateDesc, formatDateRange } from "@/lib/dates";
 import { withStars } from "@/lib/github";
+import { rssAlternate } from "@/lib/site";
 import { Reveal } from "@/components/ui/reveal";
 import TechBadge from "@/components/ui/tech-badge";
 import type { Project } from "@/types/projects";
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
   title: "Projects",
   description:
     "Every project Michael Tilley has built, from research prototypes to shipped products.",
+  alternates: { canonical: "/projects", types: rssAlternate },
 };
 
 export default async function ProjectsPage() {

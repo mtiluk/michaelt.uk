@@ -10,6 +10,7 @@ import Link from "next/link";
 import getAllContent, { getContentBySlug } from "@/lib/content";
 import { formatDateRange } from "@/lib/dates";
 import { getRepoStars } from "@/lib/github";
+import { rssAlternate } from "@/lib/site";
 import { BsGithub } from "@/components/icons/brand";
 import { mdxComponents } from "@/components/article/mdx-components";
 import References from "@/components/article/references";
@@ -20,6 +21,8 @@ import Wave from "@/components/ui/wave";
 import { Reveal } from "@/components/ui/reveal";
 import type { Project } from "@/types/projects";
 import Gallery from "@/components/article/gallery";
+import { projectSchema } from "@/lib/schema";
+import JsonLd from "@/components/seo/json-ld";
 
 const projectDirectory = path.join(process.cwd(), "content/projects");
 
@@ -42,6 +45,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   return {
     title: project.title,
     description: project.description,
+    alternates: { canonical: `/projects/${slug}`, types: rssAlternate },
     openGraph: {
       title: project.title,
       description: project.description,
@@ -77,6 +81,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <main className="container relative z-20 mx-auto max-w-xl px-5 pt-[14vh] pb-24 md:px-0">
+      <JsonLd
+        data={projectSchema({
+          name: project.title,
+          description: project.description,
+          path: `/projects/${slug}`,
+          dateCreated: project.startDate,
+          codeRepository: project.github || undefined,
+          tech: project.tech,
+        })}
+      />
       <div className="mx-auto max-w-136">
         <Reveal variant="fade-down">
           <div className="mb-8 flex items-center justify-between">
