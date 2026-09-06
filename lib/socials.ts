@@ -1,9 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
-import { isPlatform, type Social } from "@/types/socials";
+import { isPlatform, type DiscordSocial, type Social } from "@/types/socials";
 import { getContributions } from "./github";
 import { getLeetcodeStats } from "./leetcode";
+import { getLanyardPresence } from "./lanyard";
 
 const socialsFile = path.join(process.cwd(), "content/socials.yaml");
 
@@ -32,10 +33,12 @@ export async function getSocialsWithData(): Promise<Social[]> {
   const socials = getSocials();
   const github = socials.find((social) => social.platform === "github");
   const leetcode = socials.find((social) => social.platform === "leetcode");
+  const discord = socials.find((social): social is DiscordSocial => social.platform === "discord");
 
-  const [contributions, leetcodeStats] = await Promise.all([
+  const [contributions, leetcodeStats, presence] = await Promise.all([
     github ? getContributions(github.handle) : null,
     leetcode ? getLeetcodeStats(leetcode.handle) : null,
+    discord ? getLanyardPresence(discord.discordId) : null,
   ]);
 
   return socials.map((social) => {
@@ -44,6 +47,15 @@ export async function getSocialsWithData(): Promise<Social[]> {
     }
     if (social.platform === "leetcode" && leetcodeStats) {
       return { ...social, ranking: leetcodeStats.ranking, solved: leetcodeStats.solved };
+    }
+    if (social.platform === "discord" && presence) {
+      return {
+        ...social,
+        status: presence.status,
+        customStatus: presence.customStatus,
+        activity: presence.activity,
+        spotify: presence.spotify,
+      };
     }
     return social;
   });

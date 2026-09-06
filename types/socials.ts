@@ -1,4 +1,4 @@
-export const PLATFORMS = ["github", "letterboxd", "x", "linkedin", "leetcode"] as const;
+export const PLATFORMS = ["github", "letterboxd", "x", "linkedin", "leetcode", "discord"] as const;
 
 export type Platform = (typeof PLATFORMS)[number];
 
@@ -63,7 +63,30 @@ export type LeetcodeSocial = SocialBase & {
   solved?: LeetcodeSolved;
 };
 
-export type Social = GithubSocial | LetterboxdSocial | XSocial | LinkedinSocial | LeetcodeSocial;
+export type DiscordStatus = "online" | "idle" | "dnd" | "offline";
+
+export type SpotifyActivity = {
+  song: string;
+  artist: string;
+  albumArtUrl?: string;
+};
+
+export type DiscordSocial = SocialBase & {
+  platform: "discord";
+  discordId: string;
+  status?: DiscordStatus;
+  customStatus?: string;
+  activity?: string;
+  spotify?: SpotifyActivity;
+};
+
+export type Social =
+  | GithubSocial
+  | LetterboxdSocial
+  | XSocial
+  | LinkedinSocial
+  | LeetcodeSocial
+  | DiscordSocial;
 
 export function isPlatform(value: unknown): value is Platform {
   return typeof value === "string" && (PLATFORMS as readonly string[]).includes(value);

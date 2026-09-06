@@ -1,4 +1,5 @@
 import { BsGithub, BsLinkedin, BsTwitterX, FaLetterboxd, SiLeetcode } from "@/components/icons/brand";
+import { SiDiscord } from "@/components/icons/tech";
 import type { Platform } from "@/types/socials";
 
 type PlatformMeta = {
@@ -12,4 +13,5 @@ export const REGISTRY: Record<Platform, PlatformMeta> = {
   x: { icon: BsTwitterX, label: "X" },
   linkedin: { icon: BsLinkedin, label: "LinkedIn" },
   leetcode: { icon: SiLeetcode, label: "LeetCode" },
+  discord: { icon: SiDiscord, label: "Discord" },
 };

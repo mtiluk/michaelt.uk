@@ -61,3 +61,12 @@
     easy: 13
     medium: 4
     hard: 0
+
+- platform: discord
+  href: https://discord.com/users/988574701980897351
+  name: Michael Tilley
+  handle: michaelt.uk
+  avatar: /me.png
+  discordId: "988574701980897351"
+  status: dnd
+  customStatus: Chase Your Curiosity
