@@ -3,6 +3,7 @@ import path from "node:path";
 import { parse } from "yaml";
 import { isPlatform, type Social } from "@/types/socials";
 import { getContributions } from "./github";
+import { getLeetcodeStats } from "./leetcode";
 
 const socialsFile = path.join(process.cwd(), "content/socials.yaml");
 
@@ -30,14 +31,20 @@ export function getSocials(): Social[] {
 export async function getSocialsWithData(): Promise<Social[]> {
   const socials = getSocials();
   const github = socials.find((social) => social.platform === "github");
-  if (!github) return socials;
+  const leetcode = socials.find((social) => social.platform === "leetcode");
 
-  const contributions = await getContributions(github.handle);
-  if (!contributions) return socials;
+  const [contributions, leetcodeStats] = await Promise.all([
+    github ? getContributions(github.handle) : null,
+    leetcode ? getLeetcodeStats(leetcode.handle) : null,
+  ]);
 
-  return socials.map((social) =>
-    social.platform === "github"
-      ? { ...social, contributions: contributions.total, weeks: contributions.weeks }
-      : social,
-  );
+  return socials.map((social) => {
+    if (social.platform === "github" && contributions) {
+      return { ...social, contributions: contributions.total, weeks: contributions.weeks };
+    }
+    if (social.platform === "leetcode" && leetcodeStats) {
+      return { ...social, ranking: leetcodeStats.ranking, solved: leetcodeStats.solved };
+    }
+    return social;
+  });
 }

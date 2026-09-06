@@ -49,3 +49,15 @@
   title: Software Engineer & Researcher
   location: United Kingdom
   verified: true
+
+- platform: leetcode
+  href: https://leetcode.com/u/mtiluk/
+  name: Michael Tilley
+  handle: mtiluk
+  avatar: /me.png
+  ranking: 5000001
+  solved:
+    total: 17
+    easy: 13
+    medium: 4
+    hard: 0
