@@ -56,16 +56,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 }
 
 const linkClass =
-  "inline-flex items-center gap-1 text-[11px] text-foreground/75 transition-all hover:text-text-highlight/75";
-
-function SummaryRow({ label, body }: { label: string; body: string }) {
-  return (
-    <div className="grid gap-1 px-3 py-2.5 sm:grid-cols-[70px_1fr] sm:gap-3">
-      <dt className="text-[11px] leading-5 text-foreground/35">{label}</dt>
-      <dd className="text-[12px] leading-5 text-foreground/70">{body}</dd>
-    </div>
-  );
-}
+  "inline-flex items-center gap-1 text-[11px] text-foreground/75 transition-colors hover:text-text-highlight/75";
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
@@ -73,9 +64,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   if (!project) notFound();
 
   const body = project.content.trim();
-  const showDescription =
-    project.description && project.description.trim() !== project.what?.trim();
-  const hasSummary = project.what || project.why || project.result;
+  const description = project.description.trim();
   const dates = formatDateRange(project.startDate, project.endDate);
   const stars = project.github ? await getRepoStars(project.github) : null;
 
@@ -144,51 +133,34 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             {project.tech?.map((tech) => (
               <TechBadge key={tech} name={tech} />
             ))}
+            {project.github && (
+              <Link href={project.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <BsGithub className="h-3 w-3" aria-hidden />
+                Source
+              </Link>
+            )}
+            {stars !== null && (
+              <span className="flex items-center gap-1 text-[11px] text-[#e3b341]">
+                <Star className="h-3 w-3" fill="currentColor" aria-hidden />
+                {stars.toLocaleString()}
+              </span>
+            )}
+            {project.writeup && (
+              <Link href={project.writeup} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                <ExternalLink className="h-3 w-3" aria-hidden />
+                Write-up
+              </Link>
+            )}
           </div>
         </Reveal>
 
         <Reveal variant="fade-up" delay={0.14}>
-          {showDescription && (
+          {description && (
             <p className="mt-3 text-[13px] leading-snug text-pretty text-text-highlight">
-              {project.description}
+              {description}
             </p>
           )}
-
-          {(project.github || project.writeup) && (
-            <div className="mt-3 flex flex-wrap items-center gap-4">
-              {project.github && (
-                <div className="flex items-center gap-2">
-                  <Link href={project.github} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                    <BsGithub className="h-3 w-3" aria-hidden />
-                    Source
-                  </Link>
-                  {stars !== null && (
-                    <span className="flex items-center gap-1 text-[11px] text-[#e3b341]">
-                      <Star className="h-3 w-3" fill="currentColor" aria-hidden />
-                      {stars.toLocaleString()}
-                    </span>
-                  )}
-                </div>
-              )}
-              {project.writeup && (
-                <Link href={project.writeup} target="_blank" rel="noopener noreferrer" className={linkClass}>
-                  <ExternalLink className="h-3 w-3" aria-hidden />
-                  Write-up
-                </Link>
-              )}
-            </div>
-          )}
         </Reveal>
-
-        {hasSummary && (
-          <Reveal variant="fade-up" delay={0.18}>
-            <dl className="mt-3 divide-y divide-foreground/10 rounded-xl bg-text-highlight/2 transition-colors duration-300">
-              {project.what && <SummaryRow label="What" body={project.what} />}
-              {project.why && <SummaryRow label="Why" body={project.why} />}
-              {project.result && <SummaryRow label="Result" body={project.result} />}
-            </dl>
-          </Reveal>
-        )}
 
         {project.images && project.images.length > 0 && (
           <Reveal variant="fade-up" delay={0.2}>
