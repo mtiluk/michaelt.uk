@@ -7,6 +7,11 @@
 #   favorite  true → red heart               (optional, use sparingly)
 #   status    reading → pinned to the top with a live dot (optional)
 
+- type: article
+  title: UUID vs Auto-Increment Which to Choose for Database?
+  url: https://thejord.it/en/blog/uuid-vs-autoincrement-which-to-choose
+  note: Simple comparison of UUID and auto-increment as primary key strategies for databases.
+
 - type: blog
   title: Data Lake
   url: https://www.martinfowler.com/bliki/DataLake.html
