@@ -105,11 +105,11 @@ export default function Navigation({ projects, blogs, reads }: { projects: Proje
           </button>
           <button
             type="button"
-            onClick={() => selectView(false)}
+            disabled
             aria-label="Card view"
             aria-pressed={!isList}
-            tabIndex={activeTab === "work" ? 0 : -1}
-            className={cn(viewButton, !isList && "bg-text-highlight/10")}
+            tabIndex={-1}
+            className={cn(viewButton, "cursor-not-allowed opacity-30 hover:bg-transparent hover:text-foreground")}
           >
             <Columns3 className="h-3 w-3" aria-hidden />
           </button>

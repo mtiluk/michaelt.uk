@@ -30,14 +30,15 @@ export default function Projects({ isList = false, projects }: { isList?: boolea
     );
   }
 
-  const visibleProjects = !isList && !showAll ? projects.slice(0, 3) : projects;
+  const limit = isList ? 5 : 3;
+  const visibleProjects = !showAll ? projects.slice(0, limit) : projects;
 
   return (
     <div>
       {visibleProjects.map((project) => (
         <Component key={project.slug} project={project} />
       ))}
-      {!isList && projects.length > 3 && (
+      {projects.length > limit && (
         <button
           type="button"
           onClick={toggleShowAll}

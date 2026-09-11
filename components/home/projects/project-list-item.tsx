@@ -25,7 +25,7 @@ export function ProjectListItem({ project }: { project: Project }) {
       >
         <div className="mx-auto flex max-w-136 items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-2">
-            <span className="shrink-0 text-[12px] leading-none text-foreground/30 transition-colors group-hover:text-foreground/50">
+            <span className="w-8 shrink-0 text-[12px] leading-none tabular-nums text-foreground/30 transition-colors group-hover:text-foreground/50">
               {getYear(project.startDate)}
             </span>
             <h3 className="min-w-0 truncate text-[13px] font-medium leading-none text-text-highlight">
@@ -53,31 +53,20 @@ export function ProjectListItem({ project }: { project: Project }) {
           <motion.div
             key="panel"
             id={panelId}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <div className="mx-auto max-w-136 space-y-1 pb-3 text-[11px] leading-snug text-foreground/70">
-              {project.what && (
-                <p>
-                  <span className="text-foreground/40 underline">What:</span>{" "}
-                  {project.what}
-                </p>
-              )}
-              {project.why && (
-                <p>
-                  <span className="text-foreground/40 underline">Why:</span>{" "}
-                  {project.why}
-                </p>
-              )}
-              {project.result && (
-                <p>
-                  <span className="text-foreground/40 underline">Result:</span>{" "}
-                  {project.result}
-                </p>
-              )}
+            <motion.div
+              initial={{ y: -8, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -8, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="mx-auto max-w-136 space-y-1 pb-3 pl-10 text-[11px] leading-snug text-foreground/70"
+            >
+              <p>{project.description}</p>
 
               {(project.tech?.length || project.stars !== undefined) && (
                 <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
@@ -93,7 +82,7 @@ export function ProjectListItem({ project }: { project: Project }) {
                 Read more
                 <ArrowUpRight className="h-3 w-3" aria-hidden />
               </Link>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
