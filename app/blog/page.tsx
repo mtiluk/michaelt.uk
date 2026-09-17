@@ -22,7 +22,7 @@ export default function BlogIndexPage() {
   });
 
   return (
-    <main className="container relative z-20 mx-auto max-w-xl px-5 pt-[14vh] pb-24 md:px-0">
+    <main className="relative z-20 w-full max-w-xl px-5 pt-10 pb-24 md:ml-6 md:px-0">
       <div className="mx-auto max-w-136">
         <Reveal variant="fade-down">
           <Link

@@ -72,7 +72,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
         <Providers>
           <PaletteProvider>
-            <Wave className="w-screen h-[39vh]" aria-hidden />
+            <Wave className="w-screen h-[39vh] opacity-30" aria-hidden />
             {children}
             <PreferencesBar />
           </PaletteProvider>

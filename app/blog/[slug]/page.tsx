@@ -59,7 +59,7 @@ export default async function BlogPost({ params }: BlogPageProps) {
   const toc = extractToc(blog.content);
   const seriesCtx = getSeriesContext<Blog>(blogDirectory, slug);
   return (
-    <div className="mx-auto grid max-w-5xl grid-cols-1 gap-x-12 px-6 pb-20 sm:px-8 lg:grid-cols-[minmax(0,1fr)_220px]">
+    <div className="grid max-w-5xl grid-cols-1 gap-x-12 px-5 pb-20 md:px-10 lg:grid-cols-[minmax(0,1fr)_220px]">
       <JsonLd
         data={blogPostingSchema({
           title: blog.title,
@@ -68,7 +68,7 @@ export default async function BlogPost({ params }: BlogPageProps) {
           datePublished: blog.publishedAt,
         })}
       />
-      <main className="w-full max-w-2xl pt-[14vh] z-10">
+      <main className="w-full max-w-2xl pt-10 z-10">
         <header className="mb-8 border-b border-foreground/10 pb-6">
           <Reveal variant="fade-down">
             <div className="mb-6 flex items-center justify-between">
@@ -141,7 +141,7 @@ export default async function BlogPost({ params }: BlogPageProps) {
 
       </main>
 
-      <aside className="hidden pt-[14vh] lg:block z-10">
+      <aside className="hidden pt-10 lg:block z-10">
         <Reveal variant="fade" delay={0.25} className="sticky top-24 max-w-55 text-[11px]" >
           {seriesCtx && (
             <SeriesCard

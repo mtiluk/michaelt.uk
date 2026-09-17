@@ -30,7 +30,7 @@ export default async function Home() {
   });
 
   return (
-    <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">
+    <main className="relative z-20 w-full max-w-xl px-5 pt-10 md:ml-6 md:px-0">
       <div className="mx-auto max-w-136">
         <Reveal variant="blur-up">
           <header className="flex items-baseline gap-2.5">
