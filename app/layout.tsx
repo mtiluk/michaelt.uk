@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Manrope, Instrument_Serif } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Wave from "@/components/ui/wave";
 import Providers from "@/app/providers";
 import "./globals.css";
-import CommandPalette from "@/components/layout/command-palette";
-import { getSearchItems } from "@/lib/search";
 import { getSocials } from "@/lib/socials";
 import { rssAlternate } from "@/lib/site";
 import { personSchema, websiteSchema } from "@/lib/schema";
@@ -15,8 +13,8 @@ import PaletteScript from "@/components/providers/palette-script";
 import PaletteProvider from "@/components/providers/palette-provider";
 import PreferencesBar from "@/components/layout/preferences-bar";
 
-const inter = Inter({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
 });
@@ -62,24 +60,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn("h-full antialiased font-sans", inter.variable, instrumentSerif.variable)}
+      className={cn("h-full antialiased font-sans", manrope.variable, instrumentSerif.variable)}
       suppressHydrationWarning
     >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <PaletteScript />
         <JsonLd data={personSchema(getSocials().map((social) => social.href))} />
         <JsonLd data={websiteSchema()} />
       </head>
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
-        <PaletteProvider>
-          <Wave className="w-screen h-[39vh]" aria-hidden />
-          <div aria-hidden className="..." />
-          <Providers>
+        <Providers>
+          <PaletteProvider>
+            <Wave className="w-screen h-[39vh]" aria-hidden />
             {children}
-            <CommandPalette items={getSearchItems()} />
             <PreferencesBar />
-          </Providers>
-        </PaletteProvider>
+          </PaletteProvider>
+        </Providers>
       </body>
     </html>
   );

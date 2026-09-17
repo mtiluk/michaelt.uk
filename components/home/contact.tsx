@@ -1,12 +1,12 @@
 import SocialLinks from "@/components/socials/index";
 import ContactForm from "./contact-form";
 import EmailLink from "./email-link";
-import { getSocialsWithData } from "@/lib/socials";
+import { getSocials } from "@/lib/socials";
 
 const EMAIL = "mdtilley04@gmail.com";
 
-export default async function Contact() {
-  const socials = await getSocialsWithData();
+export default function Contact() {
+  const socials = getSocials();
 
   return (
     <div className="mt-5 flex flex-col rounded-xl bg-text-highlight/2 transition-colors duration-300">

@@ -1,16 +1,17 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, m, MotionConfig } from "motion/react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import SocialCard from "./card";
 import { REGISTRY } from "./registry";
-import type { Social } from "@/types/socials";
+import type { Social, SocialsLiveData } from "@/types/socials";
 
 const DURATION = 300;
 const EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
 const TRAVEL = 200;
+const LIVE_TTL = 60_000;
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -26,14 +27,32 @@ export default function SocialLinks({ socials }: { socials: Social[] }) {
   const [direction, setDirection] = useState(0);
   const [renderId, setRenderId] = useState(0);
   const [box, setBox] = useState({ left: 0, width: 0, height: 0, animated: false });
+  const [live, setLive] = useState<SocialsLiveData>({});
 
   const instant = useRef(true);
   const previous = useRef(0);
   const pendingLeft = useRef(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
+  const liveFresh = useRef(false);
   const play = useSound(retro.hover);
 
+  function loadLive() {
+    if (liveFresh.current) return;
+    liveFresh.current = true;
+    setTimeout(() => {
+      liveFresh.current = false;
+    }, LIVE_TTL);
+    fetch("/api/socials")
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: SocialsLiveData) => setLive(data))
+      .catch(() => {
+        liveFresh.current = false;
+      });
+  }
+
   function show(node: HTMLAnchorElement, next: number) {
+    loadLive();
+    if (open && next === previous.current) return;
     instant.current = !open;
     pendingLeft.current = node.offsetLeft + node.offsetWidth / 2;
 
@@ -53,9 +72,14 @@ export default function SocialLinks({ socials }: { socials: Social[] }) {
     if (!width || !height) return;
 
     setBox({ left: pendingLeft.current, width, height, animated: !instant.current });
-  }, [renderId]);
+    instant.current = false;
+  }, [renderId, live]);
 
-  const active = socials[index];
+  const base = socials[index];
+  const active = useMemo(
+    () => (base ? ({ ...base, ...live[base.platform as keyof SocialsLiveData] } as Social) : undefined),
+    [base, live],
+  );
 
   return (
     <MotionConfig reducedMotion="user">
@@ -105,7 +129,7 @@ export default function SocialLinks({ socials }: { socials: Social[] }) {
             className="absolute bottom-[calc(100%+0.5rem)] z-30 overflow-hidden rounded-xl border border-foreground/20 bg-background shadow-2xl shadow-black/40"
           >
             <AnimatePresence custom={direction} initial={false}>
-              <motion.div
+              <m.div
                 key={renderId}
                 ref={(node) => {
                   if (node) contentRef.current = node;
@@ -119,7 +143,7 @@ export default function SocialLinks({ socials }: { socials: Social[] }) {
                 className="absolute bottom-0 left-0"
               >
                 <SocialCard social={active} />
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
         )}

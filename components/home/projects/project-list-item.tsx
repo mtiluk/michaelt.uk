@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -50,7 +50,7 @@ export function ProjectListItem({ project }: { project: Project }) {
 
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div
+          <m.div
             key="panel"
             id={panelId}
             initial={{ height: 0 }}
@@ -59,7 +59,7 @@ export function ProjectListItem({ project }: { project: Project }) {
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="overflow-hidden"
           >
-            <motion.div
+            <m.div
               initial={{ y: -8, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -8, opacity: 0 }}
@@ -82,8 +82,8 @@ export function ProjectListItem({ project }: { project: Project }) {
                 Read more
                 <ArrowUpRight className="h-3 w-3" aria-hidden />
               </Link>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </div>

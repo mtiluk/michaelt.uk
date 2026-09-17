@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { AnimatePresence, m, MotionConfig } from "motion/react";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight, Check, Link2, MoreHorizontal, Share2 } from "lucide-react";
 
@@ -112,7 +112,7 @@ export default function ShareMenu({ title }: { title: string }) {
 
         <AnimatePresence>
           {open && (
-            <motion.div
+            <m.div
               key="menu"
               role="menu"
               initial={{ opacity: 0, scale: 0.95, y: -4 }}
@@ -127,7 +127,7 @@ export default function ShareMenu({ title }: { title: string }) {
             >
               <button type="button" role="menuitem" onClick={copyLink} className={itemClass}>
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
+                  <m.span
                     key={copied ? "copied" : "copy"}
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -137,7 +137,7 @@ export default function ShareMenu({ title }: { title: string }) {
                   >
                     {copied ? <Check className="h-3 w-3" aria-hidden /> : <Link2 className="h-3 w-3" aria-hidden />}
                     {copied ? "Copied" : "Copy link"}
-                  </motion.span>
+                  </m.span>
                 </AnimatePresence>
               </button>
 
@@ -156,7 +156,7 @@ export default function ShareMenu({ title }: { title: string }) {
                   {label}
                 </button>
               ))}
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

@@ -1,7 +1,12 @@
 "use client";
 import type { ReactNode } from "react";
-import SoundSettingsProvider from "@/components/providers/sound-settings";
+import { domAnimation, LazyMotion } from "motion/react";
+import { SoundProvider } from "@web-kits/audio/react";
 
 export default function Providers({ children }: { children: ReactNode }) {
-  return <SoundSettingsProvider>{children}</SoundSettingsProvider>;
+  return (
+    <LazyMotion features={domAnimation} strict>
+      <SoundProvider volume={0.8}>{children}</SoundProvider>
+    </LazyMotion>
+  );
 }

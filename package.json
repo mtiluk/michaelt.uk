@@ -14,7 +14,6 @@
     "@web-kits/audio": "^0.1.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
-    "ditherwave": "^0.1.0",
     "feed": "^5.2.1",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",

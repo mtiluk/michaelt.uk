@@ -5,22 +5,19 @@ import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import Projects from "@/components/home/projects";
 import Blogs from "@/components/home/blogs";
-import Reads from "@/components/home/reads";
 import { cn } from "@/lib/utils";
 import type { Project } from "@/types/projects";
 import type { Blog } from "@/types/blogs";
-import type { Read } from "@/lib/reads";
 
 const TABS = [
   { id: "work", label: "Work" },
   { id: "blogs", label: "Blogs" },
-  { id: "reads", label: "Reads" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
-export default function Navigation({ projects, blogs, reads }: { projects: Project[]; blogs: Blog[]; reads: Read[] }) {
-  const [isList, setIsList] = useState(true);
+export default function Navigation({ projects, blogs }: { projects: Project[]; blogs: Blog[] }) {
+  const [isList, setIsList] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("work");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -105,11 +102,11 @@ export default function Navigation({ projects, blogs, reads }: { projects: Proje
           </button>
           <button
             type="button"
-            disabled
+            onClick={() => selectView(false)}
             aria-label="Card view"
             aria-pressed={!isList}
-            tabIndex={-1}
-            className={cn(viewButton, "cursor-not-allowed opacity-30 hover:bg-transparent hover:text-foreground")}
+            tabIndex={activeTab === "work" ? 0 : -1}
+            className={cn(viewButton, !isList && "bg-text-highlight/10")}
           >
             <Columns3 className="h-3 w-3" aria-hidden />
           </button>
@@ -122,9 +119,6 @@ export default function Navigation({ projects, blogs, reads }: { projects: Proje
         </div>
         <div role="tabpanel" id="panel-blogs" aria-labelledby="tab-blogs" hidden={activeTab !== "blogs"}>
           <Blogs blogs={blogs} />
-        </div>
-        <div role="tabpanel" id="panel-reads" aria-labelledby="tab-reads" hidden={activeTab !== "reads"}>
-          <Reads reads={reads} />
         </div>
       </div>
     </div>

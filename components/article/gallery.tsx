@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { AnimatePresence, m, MotionConfig } from "motion/react";
 import type { ProjectImage } from "@/types/projects";
 
 const DEFAULT_RATIO = 16 / 9;
@@ -19,14 +19,14 @@ export default function Gallery({ images }: { images: ProjectImage[] }) {
   return (
     <MotionConfig reducedMotion="user">
       <figure className="mt-6">
-        <motion.div
+        <m.div
           initial={false}
           animate={{ aspectRatio: ratio }}
           transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
           className="relative w-full overflow-hidden rounded-xl bg-background ring-1 ring-foreground/10"
         >
           <AnimatePresence initial={false}>
-            <motion.div
+            <m.div
               key={active.src}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -41,11 +41,10 @@ export default function Gallery({ images }: { images: ProjectImage[] }) {
                 sizes="(min-width: 768px) 42rem, 100vw"
                 className="object-contain"
                 priority
-                unoptimized
               />
-            </motion.div>
+            </m.div>
           </AnimatePresence>
-        </motion.div>
+        </m.div>
 
         {images.length > 1 && (
           <div className="mt-2 flex gap-2">
@@ -68,7 +67,6 @@ export default function Gallery({ images }: { images: ProjectImage[] }) {
                   fill
                   sizes="64px"
                   className="object-cover"
-                  unoptimized
                 />
               </button>
             ))}

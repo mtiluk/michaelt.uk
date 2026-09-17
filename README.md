@@ -51,7 +51,6 @@ All content for the site is done using markdown or yaml - there is no database o
 content/
 ├── blogs/*.mdx        posts — frontmatter + body
 ├── projects/*.mdx     project write-ups
-├── reads.yaml         links I've found worth keeping
 └── socials.yaml       profile data for the social hover cards
 ```
 
@@ -67,23 +66,21 @@ app/            routes, API handlers, feed/sitemap/robots
 components/
 ├── article/    long-form rendering: MDX components, TOC, references, share
 ├── home/       home page sections
-├── layout/     site chrome: command palette, preferences bar
-├── providers/  theme and sound context
+├── layout/     site chrome: preferences bar
+├── providers/  theme context
 ├── socials/    per-platform hover cards
 ├── icons/      hand-rolled brand marks
 └── ui/         primitives
-lib/            content loading, search index, palettes, validation
+lib/            content loading, palettes, validation
 ```
 
 ## Notable bits
-
-**Command palette** (`⌘K` or `/`) searches posts, projects and socials, and carries the theme and sound controls.
 
 **Themes** (`⌘B`) swap a set of CSS custom properties registered with `@property`, so every colour on the page cross-fades rather than snapping. The choice is applied by an inline script before first paint to avoid a flash.
 
 **Social cards** are per-platform widgets that mimicks each platforms UI. The GitHub widget has a contribution graph, Letterboxd has a poster row and LinkedIn has the LinkedIn colours and banner.
 
-**Sounds** are off by default and toggleable from the preferences bar.
+**Sounds** play on interactions and are always on.
 
 ## Deploying
 

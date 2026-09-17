@@ -16,7 +16,7 @@
     --color-text-highlight: var(--text-highlight);
     --color-highlight: var(--highlight);
     --color-active-status: var(--active-status);
-    --font-sans: "Inter", sans-serif;
+    --font-sans: var(--font-body), sans-serif;
     --font-serif: var(--font-instrument-serif);
 }
 
@@ -72,12 +72,53 @@ html {
     }
 }
 
+@keyframes reveal-fade {
+    from { opacity: 0; }
+}
+
+@keyframes reveal-fade-up {
+    from { opacity: 0; translate: 0 10px; }
+}
+
+@keyframes reveal-fade-down {
+    from { opacity: 0; translate: 0 -10px; }
+}
+
+@keyframes reveal-blur-up {
+    from { opacity: 0; translate: 0 10px; filter: blur(4px); }
+}
+
+@keyframes reveal-scale {
+    from { opacity: 0; scale: 0.97; }
+}
+
+.reveal,
+.js .reveal-in-view[data-visible] {
+    animation: var(--reveal-name) var(--reveal-duration) cubic-bezier(0.21, 0.47, 0.32, 0.98) var(--reveal-delay) backwards;
+}
+
+.js .reveal-in-view:not([data-visible]) {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .js .reveal-in-view[data-visible] {
+        animation-name: reveal-fade;
+    }
+}
+
 
 body {
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-inter), sans-serif;
+    font-family: var(--font-body), sans-serif;
     font-size: 14px;
+    font-weight: 450;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
     padding-bottom: 3rem;
 }
 

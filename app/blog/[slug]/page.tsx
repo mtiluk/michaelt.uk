@@ -17,6 +17,7 @@ import type { Blog } from "@/types/blogs";
 import SeriesCard from "@/components/article/series-card";
 import LikeButton from "@/components/article/like-button";
 import MobileToc from "@/components/article/mobile-toc";
+import { DesktopOnly, MobileOnly } from "@/components/article/breakpoint";
 import ShareMenu from "@/components/article/share-menu";
 import References from "@/components/article/references";
 import { Reveal } from "@/components/ui/reveal";
@@ -132,7 +133,9 @@ export default async function BlogPost({ params }: BlogPageProps) {
               />
             )}
             <div className="my-5 border-t border-foreground/10" />
-            <LikeButton slug={slug} />
+            <MobileOnly>
+              <LikeButton slug={slug} />
+            </MobileOnly>
           </Reveal>
         </div>
 
@@ -148,13 +151,17 @@ export default async function BlogPost({ params }: BlogPageProps) {
               parts={seriesCtx.posts}
             />
           )}
-          <TableOfContents items={toc} />
-          <div className="my-5 border-t border-foreground/10" />
-          <LikeButton slug={slug} />
+          <DesktopOnly>
+            <TableOfContents items={toc} />
+            <div className="my-5 border-t border-foreground/10" />
+            <LikeButton slug={slug} />
+          </DesktopOnly>
         </Reveal>
       </aside>
 
-      <MobileToc items={toc} />
+      <MobileOnly>
+        <MobileToc items={toc} />
+      </MobileOnly>
     </div>
   );
 }

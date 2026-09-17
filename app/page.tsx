@@ -10,7 +10,6 @@ import Contact from "@/components/home/contact";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import Navigation from "@/components/home/navigation";
 import { Reveal } from "@/components/ui/reveal";
-import { getReads } from "@/lib/reads";
 
 const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
@@ -29,8 +28,6 @@ export default async function Home() {
   const blogs = getAllContent<Blog>(blogDirectory, {
     sort: byDateDesc((blog) => blog.publishedAt),
   });
-
-  const reads = getReads();
 
   return (
     <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">
@@ -75,7 +72,7 @@ export default async function Home() {
       </div>
 
       <Reveal variant="fade" delay={0.25}>
-        <Navigation projects={projects} blogs={blogs} reads={reads} />
+        <Navigation projects={projects} blogs={blogs} />
       </Reveal>
     </main>
   );

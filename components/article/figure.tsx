@@ -52,10 +52,9 @@ export default function Figure({ images, src, alt, caption, aspect, fit = "cover
                   }
                   className="object-cover"
                   style={{ objectFit: fit, objectPosition: position }}
-                  unoptimized
                 />
               ) : (
-                <Image src={image.src} alt={image.alt} width={1600} height={900} sizes="(min-width: 768px) 42rem, 100vw" className="h-auto w-full" unoptimized />
+                <Image src={image.src} alt={image.alt} width={1600} height={900} sizes="(min-width: 768px) 42rem, 100vw" className="h-auto w-full" />
               )}
             </div>
 

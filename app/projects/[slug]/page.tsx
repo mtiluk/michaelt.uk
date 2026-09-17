@@ -110,7 +110,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               />
               <div className="absolute inset-0 opacity-40">
                 <Wave
-                  color={project.color ?? "#5E6C32"}
+                  color={project.color}
                   variant="logo"
                   className="h-full w-full"
                 />

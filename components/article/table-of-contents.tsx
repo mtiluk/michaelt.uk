@@ -2,49 +2,17 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import type { TocItem } from "@/lib/toc";
+import { useActiveHeading } from "./use-active-heading";
 
 export default function TableOfContents({ items }: { items: TocItem[] }) {
-  const [activeId, setActiveId] = useState<string>("");
+  const activeId = useActiveHeading(items);
+  return <TocList items={items} activeId={activeId} />;
+}
+
+export function TocList({ items, activeId }: { items: TocItem[]; activeId: string }) {
   const listRef = useRef<HTMLUListElement>(null);
   const linkRefs = useRef<Map<string, HTMLAnchorElement>>(new Map());
   const [indicator, setIndicator] = useState({ top: 0, height: 0 });
-
-  useEffect(() => {
-    if (items.length === 0) return;
-    const lastId = items[items.length - 1]?.id;
-    const headings = items
-      .map((item) => document.getElementById(item.id))
-      .filter((el): el is HTMLElement => el !== null);
-    if (headings.length === 0) return;
-
-    function onScroll() {
-      const reachedBottom =
-        window.innerHeight + window.scrollY >=
-        document.documentElement.scrollHeight - 28;
-      if (reachedBottom && lastId) {
-        setActiveId(lastId);
-        return;
-      }
-      const line = window.innerHeight * 0.3;
-      let current = headings[0]?.id ?? "";
-      for (const heading of headings) {
-        if (heading.getBoundingClientRect().top <= line) {
-          current = heading.id;
-        } else {
-          break;
-        }
-      }
-      setActiveId(current);
-    }
-
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [items]);
 
   useEffect(() => {
     if (!activeId) return;

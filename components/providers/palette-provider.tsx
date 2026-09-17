@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { AnimatePresence, m, MotionConfig } from "motion/react";
 import {
   DEFAULT_PALETTE,
   PALETTES,
@@ -16,6 +16,7 @@ const TOAST_MS = 1400;
 type PaletteContextValue = {
   name: PaletteName;
   palette: (typeof PALETTES)[PaletteName];
+  ready: boolean;
   setPalette: (name: PaletteName) => void;
   cyclePalette: () => void;
 };
@@ -23,6 +24,7 @@ type PaletteContextValue = {
 const PaletteContext = createContext<PaletteContextValue>({
   name: DEFAULT_PALETTE,
   palette: PALETTES[DEFAULT_PALETTE],
+  ready: false,
   setPalette: () => {},
   cyclePalette: () => {},
 });
@@ -33,14 +35,19 @@ export function usePalette() {
 
 export default function PaletteProvider({ children }: { children: ReactNode }) {
   const [name, setName] = useState<PaletteName>(DEFAULT_PALETTE);
+  const [ready, setReady] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem(PALETTE_STORAGE_KEY);
-    if (isPaletteName(stored)) setName(stored);
+    try {
+      const stored = localStorage.getItem(PALETTE_STORAGE_KEY);
+      if (isPaletteName(stored)) setName(stored);
+    } catch {}
+    setReady(true);
   }, []);
 
   useEffect(() => {
+    if (!ready) return;
     const root = document.documentElement;
     for (const [key, value] of Object.entries(paletteVars(PALETTES[name]))) {
       root.style.setProperty(key, value);
@@ -48,7 +55,7 @@ export default function PaletteProvider({ children }: { children: ReactNode }) {
     try {
       localStorage.setItem(PALETTE_STORAGE_KEY, name);
     } catch {}
-  }, [name]);
+  }, [name, ready]);
 
   useEffect(() => {
     if (!toast) return;
@@ -80,13 +87,13 @@ export default function PaletteProvider({ children }: { children: ReactNode }) {
   }, [cyclePalette]);
 
   return (
-    <PaletteContext.Provider value={{ name, palette: PALETTES[name], setPalette, cyclePalette }}>
+    <PaletteContext.Provider value={{ name, palette: PALETTES[name], ready, setPalette, cyclePalette }}>
       {children}
 
       <MotionConfig reducedMotion="user">
         <AnimatePresence>
           {toast && (
-            <motion.div
+            <m.div
               key={toast}
               initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -95,7 +102,7 @@ export default function PaletteProvider({ children }: { children: ReactNode }) {
               className="pointer-events-none fixed bottom-16 left-1/2 z-50 -translate-x-1/2 rounded-full bg-background/80 px-3 py-1.5 text-[11px] text-text-highlight shadow-lg shadow-black/30 ring-1 ring-foreground/10 backdrop-blur-md"
             >
               {toast}
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </MotionConfig>

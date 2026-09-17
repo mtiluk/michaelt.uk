@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ContributionDay, GithubSocial } from "@/types/socials";
 
 const WEEKS = 53;
@@ -17,7 +17,7 @@ const formatter = new Intl.DateTimeFormat("en-GB", {
   year: "numeric",
 });
 
-type Hovered = ContributionDay & { column: number; row: number };
+type Hovered = { column: number; row: number };
 
 function fallbackWeeks(seed: string): ContributionDay[][] {
   let state = 0;
@@ -46,7 +46,36 @@ function label(day: ContributionDay) {
 
 export default function GithubCard({ social }: { social: GithubSocial }) {
   const [hovered, setHovered] = useState<Hovered | null>(null);
-  const weeks = social.weeks ?? fallbackWeeks(social.handle);
+  const weeks = useMemo(() => social.weeks ?? fallbackWeeks(social.handle), [social]);
+  const hoveredDay = hovered ? weeks[hovered.column]?.[hovered.row] : undefined;
+
+  const grid = useMemo(
+    () =>
+      weeks.map((week, column) =>
+        week.map((day, row) => (
+          <rect
+            key={day.date}
+            data-column={column}
+            data-row={row}
+            x={column * (CELL + GAP)}
+            y={row * (CELL + GAP)}
+            width={CELL}
+            height={CELL}
+            rx={2}
+            fill="currentColor"
+            opacity={LEVEL_OPACITY[day.level] ?? 0.08}
+          />
+        )),
+      ),
+    [weeks],
+  );
+
+  function handlePointerMove(e: React.PointerEvent<SVGSVGElement>) {
+    const { column, row } = (e.target as SVGElement).dataset;
+    if (column === undefined || row === undefined) return;
+    const next = { column: Number(column), row: Number(row) };
+    setHovered((prev) => (prev?.column === next.column && prev.row === next.row ? prev : next));
+  }
 
   const x = hovered
     ? Math.min(Math.max(((hovered.column * (CELL + GAP) + CELL / 2) / VIEW_WIDTH) * 100, 18), 82)
@@ -82,36 +111,23 @@ export default function GithubCard({ social }: { social: GithubSocial }) {
         <svg
           viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
           className="w-full text-[#2ea043]"
+          onPointerMove={handlePointerMove}
           onPointerLeave={() => setHovered(null)}
         >
-          {weeks.map((week, column) =>
-            week.map((day, row) => (
-              <rect
-                key={day.date}
-                x={column * (CELL + GAP)}
-                y={row * (CELL + GAP)}
-                width={CELL}
-                height={CELL}
-                rx={2}
-                fill="currentColor"
-                opacity={LEVEL_OPACITY[day.level] ?? 0.08}
-                onPointerEnter={() => setHovered({ ...day, column, row })}
-              />
-            )),
-          )}
+          {grid}
         </svg>
 
         <div
-          aria-hidden={!hovered}
+          aria-hidden={!hoveredDay}
           style={{
             left: `${x}%`,
             top: `${y}%`,
             translate: "-50% calc(-100% - 6px)",
-            opacity: hovered ? 1 : 0,
+            opacity: hoveredDay ? 1 : 0,
           }}
           className="pointer-events-none absolute z-10 whitespace-nowrap rounded-md border border-foreground/20 bg-background px-2 py-1 text-[10px] text-foreground/80 shadow-lg shadow-black/40 transition-opacity duration-100"
         >
-          {hovered ? label(hovered) : null}
+          {hoveredDay ? label(hoveredDay) : null}
         </div>
       </div>
     </div>

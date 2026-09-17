@@ -15,6 +15,22 @@ if (process.env.NODE_ENV !== "production") globalForRedis.redis = redis;
 
 const MAX_LIKES_PER_USER = 5;
 
+const ADD_LIKES = `
+local current = tonumber(redis.call("HGET", KEYS[1], ARGV[1]) or "0")
+local applied = math.min(tonumber(ARGV[2]), tonumber(ARGV[3]) - current)
+if applied > 0 then
+  redis.call("HINCRBY", KEYS[1], ARGV[1], applied)
+  return { current + applied, redis.call("INCRBY", KEYS[2], applied) }
+end
+return { current, tonumber(redis.call("GET", KEYS[2]) or "0") }
+`;
+
+type LikesRedis = Redis & {
+  addLikes(key: string, totalKey: string, userId: string, requested: number, max: number): Promise<[number, number]>;
+};
+
+if (!("addLikes" in redis)) redis.defineCommand("addLikes", { numberOfKeys: 2, lua: ADD_LIKES });
+
 type RouteParams = { params: Promise<{ slug: string }> };
 
 function getUserId(req: NextRequest): string {
@@ -35,10 +51,13 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
   const userId = getUserId(req);
 
   try {
-    const [total, userLikes] = await Promise.all([
-      redis.get(`likes:${slug}:total`),
-      redis.hget(`likes:${slug}`, userId),
-    ]);
+    const results = await redis
+      .pipeline()
+      .get(`likes:${slug}:total`)
+      .hget(`likes:${slug}`, userId)
+      .exec();
+    if (!results || results.some(([err]) => err)) throw new Error("redis unavailable");
+    const [[, total], [, userLikes]] = results;
 
     return NextResponse.json({
       total: Number(total ?? 0),
@@ -58,20 +77,15 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
   const requested = Math.min(Math.max(Math.floor(Number(body?.count) || 1), 1), MAX_LIKES_PER_USER);
 
   try {
-    const current = Number((await redis.hget(`likes:${slug}`, userId)) ?? 0);
-    const applied = Math.min(requested, MAX_LIKES_PER_USER - current);
+    const [userLikes, total] = await (redis as LikesRedis).addLikes(
+      `likes:${slug}`,
+      `likes:${slug}:total`,
+      userId,
+      requested,
+      MAX_LIKES_PER_USER,
+    );
 
-    if (applied > 0) {
-      await redis
-        .multi()
-        .hincrby(`likes:${slug}`, userId, applied)
-        .incrby(`likes:${slug}:total`, applied)
-        .exec();
-    }
-
-    const total = Number((await redis.get(`likes:${slug}:total`)) ?? 0);
-
-    return NextResponse.json({ total, userLikes: current + applied, max: MAX_LIKES_PER_USER });
+    return NextResponse.json({ total, userLikes, max: MAX_LIKES_PER_USER });
   } catch {
     return NextResponse.json({ error: "storage unavailable" }, { status: 503 });
   }

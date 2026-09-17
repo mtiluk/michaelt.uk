@@ -1,52 +1,22 @@
 "use client";
-import { DitheredWaves } from "ditherwave";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
-import { usePalette } from "@/components/providers/palette-provider";
+import type { WaveVariant } from "@/components/ui/wave-canvas";
 
 type WaveProps = {
   color?: string;
   className?: string;
-  variant?: "hero" | "logo";
+  variant?: WaveVariant;
+  animate?: boolean;
+  background?: string;
 };
 
-const VARIANTS = {
-  hero: { pixelSize: 3, colorNum: 8, waveSpeed: 0.02, waveFrequency: 3.2 },
-  logo: { pixelSize: 0.5, colorNum: 3, waveSpeed: 0.04, waveFrequency: 4 },
-} as const;
+const WaveCanvas = dynamic(() => import("@/components/ui/wave-canvas"), { ssr: false });
 
-export default function Wave({ color, className, variant = "hero" }: WaveProps) {
-  const { name, palette } = usePalette();
-  const reduced = useReducedMotion();
-
-  const canvas = (waveColor: string) => (
-    <DitheredWaves
-      waveColor={waveColor}
-      baseColor={palette.background}
-      waveAmplitude={0.5}
-      enableMouseInteraction={false}
-      {...VARIANTS[variant]}
-    />
-  );
-
-  if (color) {
-    return <div className={cn("absolute", className)}>{canvas(color)}</div>;
-  }
-
+export default function Wave({ color, className, variant = "hero", animate, background }: WaveProps) {
   return (
     <div className={cn("absolute overflow-hidden", className)}>
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={name}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: reduced ? 0 : 0.4, ease: "easeInOut" }}
-          className="absolute inset-0 z-0"
-        >
-          {canvas(palette.highlight)}
-        </motion.div>
-      </AnimatePresence>
+      <WaveCanvas color={color} variant={variant} animate={animate} background={background} />
 
       {variant === "hero" && (
         <div

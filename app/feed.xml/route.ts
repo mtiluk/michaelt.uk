@@ -6,6 +6,8 @@ import type { Project } from "@/types/projects";
 import { siteConfig } from "@/lib/site";
 import getAllContent from "@/lib/content";
 
+export const revalidate = 3600;
+
 const blogDirectory = path.join(process.cwd(), "content/blogs");
 const projectDirectory = path.join(process.cwd(), "content/projects");
 

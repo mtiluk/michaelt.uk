@@ -1,16 +1,14 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useSound } from "@web-kits/audio/react";
 import { retro } from "@/lib/audio";
 import { cn } from "@/lib/utils";
 import type { Blog } from "@/types/blogs";
 import { formatDate } from "@/lib/dates";
 
-
-const SEARCH_THRESHOLD = 4;
-const PER_PAGE = 4
+const PER_PAGE = 4;
 
 function BlogItem({ blog }: { blog: Blog }) {
   return (
@@ -63,26 +61,14 @@ function EmptyState({ message }: { message: React.ReactNode }) {
 }
 
 export default function Blogs({ blogs }: { blogs: Blog[] }) {
-  const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
 
-  const playKey = useSound(retro.keyPress);
   const playSelect = useSound(retro.select);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return blogs;
-    return blogs.filter(
-      (blog) =>
-        blog.title.toLowerCase().includes(q) ||
-        blog.description?.toLowerCase().includes(q),
-    );
-  }, [blogs, query]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(blogs.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);
-  const pageItems = filtered.slice(
+  const pageItems = blogs.slice(
     (currentPage - 1) * PER_PAGE,
     currentPage * PER_PAGE,
   );
@@ -97,39 +83,9 @@ export default function Blogs({ blogs }: { blogs: Blog[] }) {
     return <EmptyState message="No blogs yet" />;
   }
 
-  const showSearch = blogs.length >= SEARCH_THRESHOLD;
-
-
   return (
     <div ref={topRef} className="scroll-mt-24">
-      {showSearch && (
-        <div className="mx-auto mb-2 flex max-w-136 items-center gap-2 rounded-lg bg-text-highlight/4 px-3 py-2">
-          <Search className="h-3.5 w-3.5 shrink-0 text-foreground/30" aria-hidden />
-
-          <input type="search" value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setPage(1);
-              playKey();
-            }}
-            placeholder="Search blogs…"
-            aria-label="Search blogs"
-            className="w-full bg-transparent text-[12px] text-text-highlight outline-none placeholder:text-foreground/25"
-          />
-
-          {query && (
-            <span className="shrink-0 font-mono text-[10px] tabular-nums text-foreground/30">
-              {filtered.length}/{blogs.length}
-            </span>
-          )}
-        </div>
-      )}
-
-      {pageItems.length === 0 ? (
-        <EmptyState message={<>Nothing matches &ldquo;{query}&rdquo;</>} />
-      ) : (
-        pageItems.map((blog) => <BlogItem key={blog.slug} blog={blog} />)
-      )}
+      {pageItems.map((blog) => <BlogItem key={blog.slug} blog={blog} />)}
 
       {totalPages > 1 && (
         <div className="mx-auto mt-4 flex max-w-136 items-center justify-between text-[11px]">

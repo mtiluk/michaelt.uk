@@ -35,9 +35,11 @@ export default function Projects({ isList = false, projects }: { isList?: boolea
 
   return (
     <div>
-      {visibleProjects.map((project) => (
-        <Component key={project.slug} project={project} />
-      ))}
+      <div>
+        {visibleProjects.map((project) => (
+          <Component key={project.slug} project={project} />
+        ))}
+      </div>
       {projects.length > limit && (
         <button
           type="button"
