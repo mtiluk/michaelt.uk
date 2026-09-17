@@ -3,8 +3,7 @@
 import { Check, ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
 import { AnimatePresence, m, MotionConfig, LazyMotion, domMax } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSound } from "@web-kits/audio/react";
-import { retro } from "@/lib/audio";
+import { useSound } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
 import Confetti, { preloadConfetti } from "@/components/ui/confetti";
 
@@ -74,11 +73,11 @@ export default function ContactForm() {
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const playKey = useSound(retro.keyPress);
-  const playSelect = useSound(retro.select);
-  const playSend = useSound(retro.send);
-  const playSuccess = useSound(retro.success);
-  const playError = useSound(retro.error);
+  const playKey = useSound("keyPress");
+  const playSelect = useSound("select");
+  const playSend = useSound("send");
+  const playSuccess = useSound("success");
+  const playError = useSound("error");
 
   const setMessageRef = useCallback((node: HTMLTextAreaElement | null) => {
     messageRef.current = node;

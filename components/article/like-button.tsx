@@ -2,8 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSound } from "@web-kits/audio/react";
-import { retro } from "@/lib/audio";
+import { useSound } from "@/lib/audio";
 
 const MAX = 5;
 const FLUSH_DELAY = 600;
@@ -30,8 +29,8 @@ export default function LikeButton({ slug }: { slug: string }) {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [popping, setPopping] = useState(false);
 
-  const playSuccess = useSound(retro.success);
-  const playInteraction = useSound(retro.tap);
+  const playSuccess = useSound("success");
+  const playInteraction = useSound("tap");
 
   const pending = useRef(0);
   const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

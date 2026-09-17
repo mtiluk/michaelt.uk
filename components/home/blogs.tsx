@@ -2,8 +2,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useSound } from "@web-kits/audio/react";
-import { retro } from "@/lib/audio";
+import { useSound } from "@/lib/audio";
 import { cn } from "@/lib/utils";
 import type { Blog } from "@/types/blogs";
 import { formatDate } from "@/lib/dates";
@@ -64,7 +63,7 @@ export default function Blogs({ blogs }: { blogs: Blog[] }) {
   const [page, setPage] = useState(1);
   const topRef = useRef<HTMLDivElement>(null);
 
-  const playSelect = useSound(retro.select);
+  const playSelect = useSound("select");
 
   const totalPages = Math.max(1, Math.ceil(blogs.length / PER_PAGE));
   const currentPage = Math.min(page, totalPages);

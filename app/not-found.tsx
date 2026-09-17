@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="relative z-20 w-full max-w-xl px-5 pt-10 md:ml-6 md:px-0">
+    <main className="container relative z-20 mx-auto max-w-xl pt-[20vh]">
       <div className="mx-auto max-w-136">
         <h1 className="font-serif text-[28px] text-balance text-text-highlight">
           Page not found

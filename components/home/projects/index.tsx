@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useState } from "react";
 import type { Project } from "@/types/projects";
 import { ProjectCard } from "./project-card";
 import { ProjectListItem } from "./project-list-item";
@@ -7,6 +8,23 @@ import { useToggleSound } from "./use-toggle-sound";
 
 export default function Projects({ isList = false, projects }: { isList?: boolean; projects: Project[]; }) {
   const [showAll, toggleShowAll] = useToggleSound();
+  const listRef = useRef<HTMLDivElement>(null);
+  const [highlight, setHighlight] = useState({ top: 0, height: 0, visible: false, moving: false });
+
+  function moveHighlight(target: EventTarget) {
+    const card = (target as HTMLElement).closest<HTMLElement>("[data-project-card]");
+    if (!card || !listRef.current?.contains(card)) return;
+    setHighlight((prev) => ({
+      top: card.offsetTop,
+      height: card.offsetHeight,
+      visible: true,
+      moving: prev.visible,
+    }));
+  }
+
+  function hideHighlight() {
+    setHighlight((prev) => ({ ...prev, visible: false, moving: false }));
+  }
 
   const Component = isList ? ProjectListItem : ProjectCard;
 
@@ -35,7 +53,33 @@ export default function Projects({ isList = false, projects }: { isList?: boolea
 
   return (
     <div>
-      <div>
+      <div
+        ref={listRef}
+        className="relative"
+        onPointerOver={isList ? undefined : (e) => moveHighlight(e.target)}
+        onPointerLeave={isList ? undefined : hideHighlight}
+        onFocus={isList ? undefined : (e) => moveHighlight(e.target)}
+        onBlur={
+          isList
+            ? undefined
+            : (e) => {
+                if (!e.currentTarget.contains(e.relatedTarget as Node)) hideHighlight();
+              }
+        }
+      >
+        {!isList && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 rounded-lg bg-foreground/10 ease-out motion-reduce:transition-none"
+            style={{
+              top: highlight.top,
+              height: highlight.height,
+              opacity: highlight.visible ? 1 : 0,
+              transitionProperty: highlight.moving ? "top, height, opacity" : "opacity",
+              transitionDuration: "200ms",
+            }}
+          />
+        )}
         {visibleProjects.map((project) => (
           <Component key={project.slug} project={project} />
         ))}
@@ -45,7 +89,7 @@ export default function Projects({ isList = false, projects }: { isList?: boolea
           type="button"
           onClick={toggleShowAll}
           aria-expanded={showAll}
-          className="mt-2 w-full text-center text-[11px] text-foreground/40 transition-colors hover:text-foreground/70"
+          className="mt-5 w-full text-center text-[11px] text-foreground/40 transition-colors hover:text-foreground/70"
         >
           {showAll ? "Show less" : "View all"}
         </button>

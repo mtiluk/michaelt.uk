@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Manrope, Instrument_Serif } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import Wave from "@/components/ui/wave";
 import Providers from "@/app/providers";
@@ -13,10 +14,19 @@ import PaletteScript from "@/components/providers/palette-script";
 import PaletteProvider from "@/components/providers/palette-provider";
 import PreferencesBar from "@/components/layout/preferences-bar";
 
-const manrope = Manrope({
+const beausite = localFont({
   variable: "--font-body",
-  subsets: ["latin"],
   display: "swap",
+  src: [
+    { path: "./fonts/beausite-classic/light.otf", weight: "400", style: "normal" },
+    { path: "./fonts/beausite-classic/light-italic.otf", weight: "400", style: "italic" },
+    { path: "./fonts/beausite-classic/regular.otf", weight: "500", style: "normal" },
+    { path: "./fonts/beausite-classic/regular-italic.otf", weight: "500", style: "italic" },
+    { path: "./fonts/beausite-classic/medium.otf", weight: "600", style: "normal" },
+    { path: "./fonts/beausite-classic/medium-italic.otf", weight: "600", style: "italic" },
+    { path: "./fonts/beausite-classic/semibold.otf", weight: "700", style: "normal" },
+    { path: "./fonts/beausite-classic/semibold-italic.otf", weight: "700", style: "italic" },
+  ],
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -60,7 +70,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn("h-full antialiased font-sans", manrope.variable, instrumentSerif.variable)}
+      className={cn("h-full antialiased font-sans", beausite.variable, instrumentSerif.variable)}
       suppressHydrationWarning
     >
       <head>
@@ -72,7 +82,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
         <Providers>
           <PaletteProvider>
-            <Wave className="w-screen h-[39vh] opacity-30" aria-hidden />
+            <Wave className="w-screen h-[39vh]" aria-hidden />
             {children}
             <PreferencesBar />
           </PaletteProvider>

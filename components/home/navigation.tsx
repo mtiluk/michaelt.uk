@@ -1,8 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { Menu, Columns3 } from "lucide-react";
-import { useSound } from "@web-kits/audio/react";
-import { retro } from "@/lib/audio";
+import { useSound } from "@/lib/audio";
 import Projects from "@/components/home/projects";
 import Blogs from "@/components/home/blogs";
 import { cn } from "@/lib/utils";
@@ -21,8 +20,8 @@ export default function Navigation({ projects, blogs }: { projects: Project[]; b
   const [activeTab, setActiveTab] = useState<TabId>("work");
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const playSelect = useSound(retro.select);
-  const playToggle = useSound(retro.toggleOn);
+  const playSelect = useSound("select");
+  const playToggle = useSound("toggle");
 
   function selectTab(id: TabId) {
     if (id === activeTab) return;

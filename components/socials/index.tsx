@@ -2,8 +2,7 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, m, MotionConfig } from "motion/react";
-import { useSound } from "@web-kits/audio/react";
-import { retro } from "@/lib/audio";
+import { useSound } from "@/lib/audio";
 import SocialCard from "./card";
 import { REGISTRY } from "./registry";
 import type { Social, SocialsLiveData } from "@/types/socials";
@@ -34,7 +33,7 @@ export default function SocialLinks({ socials }: { socials: Social[] }) {
   const pendingLeft = useRef(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const liveFresh = useRef(false);
-  const play = useSound(retro.hover);
+  const play = useSound("hover");
 
   function loadLive() {
     if (liveFresh.current) return;

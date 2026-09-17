@@ -69,7 +69,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const stars = project.github ? await getRepoStars(project.github) : null;
 
   return (
-    <main className="relative z-20 w-full max-w-xl px-5 pt-10 pb-24 md:ml-6 md:px-0">
+    <main className="container relative z-20 mx-auto max-w-xl px-5 pt-[14vh] pb-24 md:px-0">
       <JsonLd
         data={projectSchema({
           name: project.title,
