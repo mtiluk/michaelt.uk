@@ -1,11 +1,8 @@
-import path from "node:path";
 import type { Metadata } from "next";
-import getAllContent from "@/lib/content";
-import { byDateDesc } from "@/lib/dates";
+import { getBlogs } from "@/lib/blogs";
 import { withStars } from "@/lib/github";
+import { getProjects } from "@/lib/projects";
 import { rssAlternate } from "@/lib/site";
-import type { Blog } from "@/types/blogs";
-import type { Project } from "@/types/projects";
 import Contact from "@/components/home/contact";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import Navigation from "@/components/home/navigation";
@@ -15,8 +12,6 @@ import Age from "@/components/ui/age";
 import { Boxes } from "lucide-react";
 import { SiGo, SiTypescript } from "@/components/icons/tech";
 
-const blogDirectory = path.join(process.cwd(), "content/blogs");
-const projectDirectory = path.join(process.cwd(), "content/projects");
 
 const hint = "cursor-pointer text-text-highlight";
 const tip = "flex items-center gap-1.5 text-text-highlight hover:underline underline-offset-2";
@@ -26,15 +21,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const projects = await withStars(
-    getAllContent<Project>(projectDirectory, {
-      sort: byDateDesc((project) => project.endDate),
-    }),
-  );
+  const projects = await withStars(getProjects());
 
-  const blogs = getAllContent<Blog>(blogDirectory, {
-    sort: byDateDesc((blog) => blog.publishedAt),
-  });
+  const blogs = getBlogs();
 
   return (
     <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">

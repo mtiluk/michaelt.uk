@@ -52,33 +52,3 @@ export function blogPostingSchema({
   };
 }
 
-export function projectSchema({
-  name,
-  description,
-  path,
-  dateCreated,
-  codeRepository,
-  tech,
-}: {
-  name: string;
-  description: string;
-  path: string;
-  dateCreated: string;
-  codeRepository?: string;
-  tech?: string[];
-}) {
-  const isCode = Boolean(codeRepository);
-  return {
-    "@context": "https://schema.org",
-    "@type": isCode ? "SoftwareSourceCode" : "CreativeWork",
-    name,
-    description,
-    url: absoluteUrl(path),
-    dateCreated,
-    author: person(),
-    ...(codeRepository ? { codeRepository } : {}),
-    // programmingLanguage is a SoftwareSourceCode property; non-code
-    // projects (e.g. design work) surface their tags as keywords instead.
-    ...(tech?.length ? (isCode ? { programmingLanguage: tech } : { keywords: tech }) : {}),
-  };
-}

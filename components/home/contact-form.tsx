@@ -1,11 +1,12 @@
 "use client";
 
-import { Check, ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
 import { AnimatePresence, m, MotionConfig, LazyMotion, domMax } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSound } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
-import Confetti, { preloadConfetti } from "@/components/ui/confetti";
+import { preloadConfetti } from "@/components/ui/confetti";
+import ContactSuccess from "./contact-success";
 
 const PLACEHOLDERS = [
   "Say hello...",
@@ -249,25 +250,7 @@ export default function ContactForm() {
           </m.div>
         )}
 
-        {step === "success" && (
-          <m.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-className="relative flex flex-1 items-center gap-2.5"
-          >
-            <Confetti />
-
-            <div role="status" className="min-w-0">
-              <p className="text-[12px] text-text-highlight">Message sent</p>
-              <p className="truncate text-[11px] text-foreground/40">
-                I&apos;ll reply to {email.trim()} soon.
-              </p>
-            </div>
-          </m.div>
-        )}
+        {step === "success" && <ContactSuccess key="success" email={email} />}
       </AnimatePresence>
 
       <div aria-hidden className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">

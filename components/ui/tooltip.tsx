@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 import { play } from "@/lib/audio";
 
-export type TooltipSide = "top" | "right" | "bottom" | "left";
+type TooltipSide = "top" | "right" | "bottom" | "left";
 
 type TooltipProps = {
   children: ReactNode;
@@ -13,12 +13,10 @@ type TooltipProps = {
   gap?: number;
   delay?: number;
   sound?: boolean;
-  interactive?: boolean;
   className?: string;
 };
 
 const MARGIN = 8;
-const CLOSE_MS = 160;
 const OPPOSITE: Record<TooltipSide, TooltipSide> = {
   top: "bottom",
   bottom: "top",
@@ -51,7 +49,7 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), Math.max(min, max));
 }
 
-export default function Tooltip({ children, content, side = "top", gap = 8, delay = 120, sound = true, interactive = false, className }: TooltipProps) {
+export default function Tooltip({ children, content, side = "top", gap = 8, delay = 120, sound = true, className }: TooltipProps) {
   const id = useId();
   const triggerRef = useRef<HTMLSpanElement>(null);
   const tipRef = useRef<HTMLDivElement>(null);
@@ -62,9 +60,14 @@ export default function Tooltip({ children, content, side = "top", gap = 8, dela
   const [placement, setPlacement] = useState({ top: 0, left: 0, side });
 
   const position = useCallback(() => {
+    const tipNode = tipRef.current;
     const trigger = triggerRef.current?.getBoundingClientRect();
-    const tip = tipRef.current?.getBoundingClientRect();
-    if (!trigger || !tip) return;
+    const tip = tipNode?.getBoundingClientRect();
+    if (!trigger || !tip || !tipNode) return;
+
+    // Rects are in zoom-scaled viewport pixels, but top/left are read back
+    // inside the zoomed page, so convert with the element's own scale.
+    const scale = tipNode.offsetWidth ? tip.width / tipNode.offsetWidth : 1;
 
     let next = side;
     if (!fits(next, trigger, tip, gap) && fits(OPPOSITE[next], trigger, tip, gap)) {
@@ -83,7 +86,11 @@ export default function Tooltip({ children, content, side = "top", gap = 8, dela
         ? trigger.left - tip.width - gap
         : trigger.right + gap;
 
-    setPlacement({ top, left: vertical ? left + tip.width / 2 : left, side: next });
+    setPlacement({
+      top: top / scale,
+      left: (vertical ? left + tip.width / 2 : left) / scale,
+      side: next,
+    });
   }, [gap, side]);
 
   useLayoutEffect(() => {
@@ -122,15 +129,8 @@ export default function Tooltip({ children, content, side = "top", gap = 8, dela
 
   function hide() {
     if (timer.current) clearTimeout(timer.current);
-    if (!interactive) {
-      setShown(false);
-      setOpen(false);
-      return;
-    }
-    timer.current = setTimeout(() => {
-      setShown(false);
-      setOpen(false);
-    }, CLOSE_MS);
+    setShown(false);
+    setOpen(false);
   }
 
   const vertical = placement.side === "top" || placement.side === "bottom";
@@ -140,15 +140,8 @@ export default function Tooltip({ children, content, side = "top", gap = 8, dela
       ref={tipRef}
       id={id}
       role="tooltip"
-      onPointerEnter={() => {
-        if (interactive && timer.current) clearTimeout(timer.current);
-      }}
-      onPointerLeave={() => {
-        if (interactive) hide();
-      }}
       className={cn(
-        interactive ? "pointer-events-auto" : "pointer-events-none",
-        "fixed z-50 max-w-60 rounded-lg border border-foreground/15 bg-background px-2 py-1 text-[11px] leading-snug text-text-highlight shadow-lg shadow-black/30",
+        "pointer-events-none fixed z-50 max-w-60 rounded-lg border border-foreground/15 bg-background px-2 py-1 text-[11px] leading-snug text-text-highlight shadow-lg shadow-black/30",
         "transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none",
         className,
       )}

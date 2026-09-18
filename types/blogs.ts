@@ -1,4 +1,4 @@
-export interface SeriesMeta {
+interface SeriesMeta {
   title: string;
   slug: string;
 }

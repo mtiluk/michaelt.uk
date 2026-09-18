@@ -9,8 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@mdx-js/loader": "^3.1.1",
-    "@next/mdx": "^16.2.7",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "feed": "^5.2.1",
@@ -27,8 +25,7 @@
     "rehype-slug": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "shiki": "^4.3.1",
-    "tailwind-merge": "^3.6.0",
-    "yaml": "^2.9.0"
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

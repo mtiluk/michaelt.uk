@@ -80,10 +80,6 @@ const SOUNDS = {
     tone(ctx, t, d, { freq: 560, dur: 0.06, gain: 0.045 });
     tone(ctx, t, d, { freq: 760, at: 0.04, dur: 0.07, gain: 0.035 });
   },
-  toggle: (ctx: AudioContext, t: number, d: number) => {
-    noise(ctx, t, { dur: 0.018, gain: 0.025, cutoff: 1600 });
-    tone(ctx, t, d, { freq: 520, slideTo: 700, dur: 0.07, gain: 0.04, type: "triangle" });
-  },
   expand: (ctx: AudioContext, t: number, d: number) => {
     tone(ctx, t, d, { freq: 380, slideTo: 620, dur: 0.11, gain: 0.035, type: "triangle" });
   },

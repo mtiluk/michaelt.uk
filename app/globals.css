@@ -6,7 +6,6 @@
     --foreground-div: #1c0b09;
     --text-highlight: #d1c5ad;
     --highlight: #ff003c;
-    --active-status: #5e6c32;
 }
 
 @theme inline {
@@ -15,7 +14,6 @@
     --color-foreground-div: var(--foreground-div);
     --color-text-highlight: var(--text-highlight);
     --color-highlight: var(--highlight);
-    --color-active-status: var(--active-status);
     --font-sans: var(--font-body), sans-serif;
     --font-serif: var(--font-instrument-serif);
 }
@@ -50,25 +48,30 @@
     initial-value: #ff003c;
 }
 
-@property --active-status {
-    syntax: "<color>";
-    inherits: true;
-    initial-value: #5e6c32;
-}
-
 html {
+    zoom: 0.9;
     transition:
         --background 400ms ease,
         --foreground 400ms ease,
         --foreground-div 400ms ease,
         --text-highlight 400ms ease,
-        --highlight 400ms ease,
-        --active-status 400ms ease;
+        --highlight 400ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
     html {
         transition: none;
+    }
+}
+
+@keyframes like-burst {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(var(--s)) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(var(--x), calc(var(--y) * -1)) scale(calc(var(--s) * 0.6)) rotate(var(--r));
     }
 }
 

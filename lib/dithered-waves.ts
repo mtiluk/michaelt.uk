@@ -24,7 +24,7 @@
  * SOFTWARE.
  */
 
-export type DitheredWavesOptions = {
+type DitheredWavesOptions = {
   waveColor: string;
   baseColor: string;
   waveSpeed: number;

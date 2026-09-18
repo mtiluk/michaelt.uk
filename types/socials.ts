@@ -1,4 +1,4 @@
-export const PLATFORMS = ["github", "letterboxd", "x", "linkedin", "leetcode", "discord"] as const;
+const PLATFORMS = ["github", "letterboxd", "x", "linkedin", "leetcode", "discord"] as const;
 
 export type Platform = (typeof PLATFORMS)[number];
 

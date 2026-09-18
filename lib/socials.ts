@@ -1,12 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import { parse } from "yaml";
 import { isPlatform, type DiscordSocial, type Social, type SocialsLiveData } from "@/types/socials";
 import { getContributions } from "./github";
 import { getLeetcodeStats } from "./leetcode";
 import { getLanyardPresence } from "./lanyard";
 
-const socialsFile = path.join(process.cwd(), "content/socials.yaml");
+const socialsFile = path.join(process.cwd(), "content/socials.json");
 
 export function getSocials(): Social[] {
   let raw: string;
@@ -16,7 +15,7 @@ export function getSocials(): Social[] {
     return [];
   }
 
-  const entries = (parse(raw) ?? []) as unknown[];
+  const entries = (JSON.parse(raw) ?? []) as unknown[];
 
   return entries.filter((entry): entry is Social => {
     if (typeof entry !== "object" || entry === null) return false;

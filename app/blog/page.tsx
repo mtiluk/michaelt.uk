@@ -1,14 +1,12 @@
-import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import getAllContent from "@/lib/content";
-import { byDateDesc, formatDate } from "@/lib/dates";
+import { ArrowUpRight } from "lucide-react";
+import { getBlogs } from "@/lib/blogs";
+import { formatDate } from "@/lib/dates";
 import { rssAlternate } from "@/lib/site";
 import { Reveal } from "@/components/ui/reveal";
-import type { Blog } from "@/types/blogs";
+import PageShell, { BackLink } from "@/components/layout/page-shell";
 
-const blogDirectory = path.join(process.cwd(), "content/blogs");
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -17,24 +15,12 @@ export const metadata: Metadata = {
 };
 
 export default function BlogIndexPage() {
-  const blogs = getAllContent<Blog>(blogDirectory, {
-    sort: byDateDesc((blog) => blog.publishedAt),
-  });
+  const blogs = getBlogs();
 
   return (
-    <main className="container relative z-20 mx-auto max-w-xl px-5 pt-[14vh] pb-24 md:px-0">
-      <div className="mx-auto max-w-136">
+    <PageShell>
         <Reveal variant="fade-down">
-          <Link
-            href="/"
-            className="group flex items-center gap-1.5 text-[12px] text-foreground/70 transition-colors hover:text-text-highlight"
-          >
-            <ArrowLeft
-              className="h-3 w-3 transition-transform duration-300 group-hover:-translate-x-0.5"
-              aria-hidden
-            />
-            Home
-          </Link>
+          <BackLink />
         </Reveal>
 
         <Reveal variant="blur-up" delay={0.05}>
@@ -76,7 +62,6 @@ export default function BlogIndexPage() {
             ))}
           </ul>
         </Reveal>
-      </div>
-    </main>
+    </PageShell>
   );
 }

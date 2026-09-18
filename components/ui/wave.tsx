@@ -21,7 +21,7 @@ export default function Wave({ color, className, variant = "hero", animate, back
       {variant === "hero" && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-10 bg-linear-to-t from-background via-background/85 to-background/30"
+          className="pointer-events-none absolute inset-0 z-10 bg-linear-to-t from-background via-background/95 to-background/40"
         />
       )}
     </div>

@@ -1,13 +1,12 @@
 export type PaletteName = "ember" | "frost" | "acka" | "moss" | "plum";
 
-export type Palette = {
+type Palette = {
   label: string;
   background: string;
   foreground: string;
   foregroundDiv: string;
   textHighlight: string;
   highlight: string;
-  activeStatus: string;
 };
 
 export const PALETTE_STORAGE_KEY = "palette";
@@ -21,7 +20,6 @@ export const PALETTES: Record<PaletteName, Palette> = {
     foregroundDiv: "#1c0b09",
     textHighlight: "#d1c5ad",
     highlight: "#ff003c",
-    activeStatus: "#5e6c32",
   },
   frost: {
     label: "Frost",
@@ -30,7 +28,6 @@ export const PALETTES: Record<PaletteName, Palette> = {
     foregroundDiv: "#0b1420",
     textHighlight: "#c6d8e8",
     highlight: "#3ba9ff",
-    activeStatus: "#2f6c6a",
   },
   acka: {
     label: "Acka",
@@ -39,7 +36,6 @@ export const PALETTES: Record<PaletteName, Palette> = {
     foregroundDiv: "#240611",
     textHighlight: "#f0bed2",
     highlight: "#ff3ba4",
-    activeStatus: "#7c1f5d",
   },
   moss: {
     label: "Moss",
@@ -48,7 +44,6 @@ export const PALETTES: Record<PaletteName, Palette> = {
     foregroundDiv: "#0d1a11",
     textHighlight: "#cde0c6",
     highlight: "#57d97f",
-    activeStatus: "#4d6c32",
   },
   plum: {
     label: "Plum",
@@ -57,7 +52,6 @@ export const PALETTES: Record<PaletteName, Palette> = {
     foregroundDiv: "#170c20",
     textHighlight: "#ddd0e6",
     highlight: "#c857ff",
-    activeStatus: "#5c3f7a",
   },
 };
 
@@ -70,7 +64,6 @@ export function paletteVars(palette: Palette): Record<string, string> {
     "--foreground-div": palette.foregroundDiv,
     "--text-highlight": palette.textHighlight,
     "--highlight": palette.highlight,
-    "--active-status": palette.activeStatus,
   };
 }
 

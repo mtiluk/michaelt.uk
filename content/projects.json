@@ -1,0 +1,70 @@
+[
+  {
+    "slug": "soko",
+    "title": "Soko",
+    "subtitle": "IoT Real-Time Flight Tracker and Radar for RGB LED Matrix Panels",
+    "description": "IoT Real-Time Flight Tracker and Radar for RGB LED Matrix Panels",
+    "what": "A CircuitPython flight tracker for RGB LED matrix panels, running on a MatrixPortal S3 and pulling live ADS-B data to show either a single aircraft's route and progress or a radar view of nearby traffic.",
+    "why": "This was a hobby project to explore IoT devices and RGB LED Matrix Panels, mixing that with another hobby of planes.",
+    "result": "A complete end-to-end setup of both the hardware and software: a 128x64 HUB75 panel driven by an ESP32-S3 board running Flight Mode and Radar Mode off live ADS-B data.",
+    "status": "Completed",
+    "startDate": "2026-08",
+    "endDate": "2026-09",
+    "tech": [
+      "Python"
+    ],
+    "github": "https://github.com/mtiluk/soko"
+  },
+  {
+    "slug": "privacy-preserving-wifi-probe-requests",
+    "title": "Privacy Preserving Wi-Fi Probe Requests",
+    "subtitle": "Final year project",
+    "description": "A research prototype showing that Wi-Fi discovery can run on an obfuscated per-device alias rather than a plaintext SSID.",
+    "what": "A modified hostapd and wpa_supplicant that let a device rediscover an access point using a per-device token.",
+    "why": "Plaintext SSIDs in Probe Requests can be collected passively and cross-referenced with geolocation databases to infer where a device has been.",
+    "result": "Working prototype: reconnect scans used a wildcard SSID with the token in a vendor-specific IE, with no directed plaintext probe",
+    "status": "Completed",
+    "startDate": "2026-06",
+    "endDate": "2026-07",
+    "tech": [
+      "C"
+    ],
+    "github": "https://github.com/mtiluk/hostapd-privacy-demo"
+  },
+  {
+    "slug": "potok",
+    "title": "Potok",
+    "subtitle": "End-to-End Encrypted Obsidian Vault Sync",
+    "description": "A self-hosted, end-to-end encrypted CLI tool for backing up and syncing Obsidian vaults across devices.",
+    "what": "A self-hosted CLI tool for backing up and syncing Obsidian vaults across devices with end-to-end encryption, so the server never sees plaintext notes.",
+    "why": "Existing Obsidian sync options are either paid, cloud-locked, or don't encrypt client-side. Wanted a self-hosted alternative with no size limits, running on my own server.",
+    "result": "A working CLI that registers vaults, pushes and pulls encrypted backups to a self-hosted server, and watches folders for automatic sync, with keys stored in the OS keyring.",
+    "status": "In Progress",
+    "startDate": "2025-07",
+    "endDate": "2026-08",
+    "tech": [
+      "Go"
+    ],
+    "github": "https://github.com/mtiluk/potok",
+    "writeup": "https://potok-docs.vercel.app/"
+  },
+  {
+    "slug": "repup",
+    "title": "Repup",
+    "subtitle": "Reputation & Feedback Platform for Freelancers",
+    "description": "A SaaS platform that lets freelancers collect, store, and showcase customer feedback pulled directly from Discord and Telegram. Built using Laravel, PostgreSQL, and Apache.",
+    "what": "A SaaS platform that lets freelancers collect, store, and showcase customer feedback pulled directly from Discord and Telegram. Built using Laravel, PostgreSQL, and Apache, with bots built on the Discord and Telegram APIs.",
+    "why": "Freelancers who do most of their client work in Discord and Telegram had no way to turn that praise into something portable. Testimonials were buried in chat logs, easy to lose and impossible to verify, so this project was built to capture that feedback at the source and turn it into a credible public profile.",
+    "result": "The platform launched with working Discord and Telegram bots capturing feedback in real time and rendering it on public freelancer profiles. It acquired over 50 users.",
+    "status": "Completed",
+    "startDate": "2025-01",
+    "endDate": "2025-02",
+    "tech": [
+      "PHP",
+      "Laravel",
+      "PostgreSQL",
+      "Discord",
+      "Telegram"
+    ]
+  }
+]

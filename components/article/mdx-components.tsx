@@ -1,4 +1,8 @@
 import type { ComponentPropsWithoutRef } from "react";
+import type { MDXRemoteProps } from "next-mdx-remote/rsc";
+import rehypeSlug from "rehype-slug";
+import rehypePrettyCode from "rehype-pretty-code";
+import remarkGfm from "remark-gfm";
 import Table, { tableComponents } from './table'
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
@@ -6,6 +10,14 @@ import Callout from "./callout";
 import CodeBlock from "./code-block";
 import Video from "./video";
 import Figure from "./figure";
+
+export const mdxOptions: MDXRemoteProps["options"] = {
+  blockJS: false,
+  mdxOptions: {
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeSlug, [rehypePrettyCode, { theme: "vesper", keepBackground: false }]],
+  },
+};
 
 export const mdxComponents = {
   Callout: Callout,

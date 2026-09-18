@@ -15,10 +15,6 @@ export function formatDateRange(start: string, end: string) {
     : `${formatDate(start)} – ${formatDate(end)}`;
 }
 
-export function getYear(value: string) {
-  return new Date(value).getFullYear();
-}
-
 export function byDateDesc<T>(dateOf: (item: T) => string) {
   return (a: T, b: T) => dateOf(b).localeCompare(dateOf(a));
 }

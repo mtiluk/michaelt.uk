@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-export type BadgeProps = SVGProps<SVGSVGElement> & {
+type BadgeProps = SVGProps<SVGSVGElement> & {
   size?: number | string;
   title?: string;
 };

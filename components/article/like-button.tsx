@@ -34,6 +34,7 @@ export default function LikeButton({ slug }: { slug: string }) {
 
   const pending = useRef(0);
   const flushTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const burstTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,9 +78,11 @@ export default function LikeButton({ slug }: { slug: string }) {
   }
 
   useEffect(() => {
+    const flushOnUnmount = flush;
     return () => {
       if (flushTimer.current) clearTimeout(flushTimer.current);
-      flush();
+      if (burstTimer.current) clearTimeout(burstTimer.current);
+      flushOnUnmount();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -101,7 +104,8 @@ export default function LikeButton({ slug }: { slug: string }) {
     setParticles(burst);
 
     const longest = Math.max(...burst.map((p) => p.duration + p.delay));
-    setTimeout(() => setParticles([]), longest + 100);
+    if (burstTimer.current) clearTimeout(burstTimer.current);
+    burstTimer.current = setTimeout(() => setParticles([]), longest + 100);
   }
 
   function handleClick() {
@@ -138,20 +142,6 @@ export default function LikeButton({ slug }: { slug: string }) {
       className="flex items-center justify-between"
       style={{ "--highlight": "#ff003c" } as React.CSSProperties}
     >
-      <style>{`
-        @keyframes like-burst {
-          0% {
-            opacity: 1;
-            transform: translate(0, 0) scale(var(--s)) rotate(0deg);
-          }
-          100% {
-            opacity: 0;
-            transform: translate(var(--x), calc(var(--y) * -1))
-              scale(calc(var(--s) * 0.6)) rotate(var(--r));
-          }
-        }
-      `}</style>
-
       <button
         type="button"
         onClick={handleClick}

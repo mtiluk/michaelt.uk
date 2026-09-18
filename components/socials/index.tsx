@@ -6,11 +6,11 @@ import { useSound } from "@/lib/audio";
 import SocialCard from "./card";
 import { REGISTRY } from "./registry";
 import type { Social, SocialsLiveData } from "@/types/socials";
+import { useSocialsLive } from "./use-socials-live";
 
 const DURATION = 300;
 const EASE = "cubic-bezier(0.33, 1, 0.68, 1)";
 const TRAVEL = 200;
-const LIVE_TTL = 60_000;
 
 const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -26,28 +26,13 @@ export default function SocialLinks({ socials }: { socials: Social[] }) {
   const [direction, setDirection] = useState(0);
   const [renderId, setRenderId] = useState(0);
   const [box, setBox] = useState({ left: 0, width: 0, height: 0, animated: false });
-  const [live, setLive] = useState<SocialsLiveData>({});
 
   const instant = useRef(true);
   const previous = useRef(0);
   const pendingLeft = useRef(0);
   const contentRef = useRef<HTMLDivElement | null>(null);
-  const liveFresh = useRef(false);
   const play = useSound("hover");
-
-  function loadLive() {
-    if (liveFresh.current) return;
-    liveFresh.current = true;
-    setTimeout(() => {
-      liveFresh.current = false;
-    }, LIVE_TTL);
-    fetch("/api/socials")
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: SocialsLiveData) => setLive(data))
-      .catch(() => {
-        liveFresh.current = false;
-      });
-  }
+  const { live, load: loadLive } = useSocialsLive();
 
   function show(node: HTMLAnchorElement, next: number) {
     loadLive();
