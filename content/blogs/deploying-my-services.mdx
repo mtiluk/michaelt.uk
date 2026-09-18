@@ -6,16 +6,11 @@ timeToRead: 5 Minutes
 publishedAt: "2026-06-12"
 ---
 
-This blog will briefly explore how I deploy this application and several others both efficiently and affordably. I'll explain a few things in particular: where my applications are deployed to, security measures and how certain applications are deployed.
+### Introduction
 
-This is the first post of many that will explore homelabbing, deployment and other topics related to system administration and cloud computing.
-
-### Where are they deployed to?
 Many months ago, I would say that all my services are self-hosted from within my home - but this has changed. As electricity prices sore to record highs and [memory supply shortages](https://en.wikipedia.org/wiki/2025%E2%80%93present_global_memory_supply_shortage) caused by AI exacerbate the problem further, I had to change where my things are hosted.
 
 All of my public facing services are now hosted on [VPS-3](https://www.ovhcloud.com/en-gb/vps/) from OVH. This is relatively small specs wise at only: 6 vCores, 12 GB RAM, 100 GB NVME SSD and 1 Gbps public bandwidth. However, as these services don't serve customers nor do they have high resource consumption, it is notably more than enough for my needs.
-
-In the future, I will explore my previous homelab and networking setup before the big shift in another blog...
 
 ### Operating System & Security
 There isn't anything entirely special about the setup of the VPS. The operating system is a freshly installed [Ubuntu 26.04 LTS](https://documentation.ubuntu.com/release-notes/26.04/), this was chosen over Debian, which is usually my second choice, simply because of my vast experience with Ubuntu and for stability reasons. 
