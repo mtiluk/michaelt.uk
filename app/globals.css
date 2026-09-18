@@ -64,6 +64,22 @@ html {
     }
 }
 
+@keyframes page-in {
+    from {
+        opacity: 0;
+    }
+}
+
+main {
+    animation: page-in 220ms ease-out backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    main {
+        animation: none;
+    }
+}
+
 @keyframes like-burst {
     0% {
         opacity: 1;
@@ -74,43 +90,6 @@ html {
         transform: translate(var(--x), calc(var(--y) * -1)) scale(calc(var(--s) * 0.6)) rotate(var(--r));
     }
 }
-
-@keyframes reveal-fade {
-    from { opacity: 0; }
-}
-
-@keyframes reveal-fade-up {
-    from { opacity: 0; translate: 0 10px; }
-}
-
-@keyframes reveal-fade-down {
-    from { opacity: 0; translate: 0 -10px; }
-}
-
-@keyframes reveal-blur-up {
-    from { opacity: 0; translate: 0 10px; filter: blur(4px); }
-}
-
-@keyframes reveal-scale {
-    from { opacity: 0; scale: 0.97; }
-}
-
-.reveal,
-.js .reveal-in-view[data-visible] {
-    animation: var(--reveal-name) var(--reveal-duration) cubic-bezier(0.21, 0.47, 0.32, 0.98) var(--reveal-delay) backwards;
-}
-
-.js .reveal-in-view:not([data-visible]) {
-    opacity: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .reveal,
-    .js .reveal-in-view[data-visible] {
-        animation-name: reveal-fade;
-    }
-}
-
 
 body {
     background: var(--background);

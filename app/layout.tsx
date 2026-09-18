@@ -74,7 +74,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <PaletteScript />
         <JsonLd data={personSchema(getSocials().map((social) => social.href))} />
         <JsonLd data={websiteSchema()} />

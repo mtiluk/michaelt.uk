@@ -6,7 +6,6 @@ import { rssAlternate } from "@/lib/site";
 import Contact from "@/components/home/contact";
 import AnimatedBadge from "@/components/ui/animated-badge";
 import Navigation from "@/components/home/navigation";
-import { Reveal } from "@/components/ui/reveal";
 import Tooltip from "@/components/ui/tooltip";
 import Age from "@/components/ui/age";
 import { Boxes } from "lucide-react";
@@ -28,7 +27,6 @@ export default async function Home() {
   return (
     <main className="container relative z-20 mx-auto max-w-xl md:pt-[20vh] pt-[14vh] px-5 md:px-0">
       <div className="mx-auto max-w-136">
-        <Reveal variant="blur-up">
           <header className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
             <h1 className="font-serif text-[30px] leading-none tracking-[-0.01em] text-balance text-text-highlight">
               Michael Tilley
@@ -38,13 +36,11 @@ export default async function Home() {
               /ˈmaɪ·kəl ˈtɪl·i/
             </p>
           </header>
-        </Reveal>
 
-        <Reveal variant="fade" delay={0.08} className="mt-2.5">
+        <div className="mt-2.5">
           <AnimatedBadge />
-        </Reveal>
+        </div>
 
-        <Reveal variant="fade-up" delay={0.12}>
           <div className="mt-4 space-y-2.5 text-[13px] leading-relaxed text-pretty">
             <p>
               I&apos;m{" "}
@@ -122,16 +118,11 @@ export default async function Home() {
 
             <p>Looking for my next thing. Come say hi.</p>
           </div>
-        </Reveal>
 
-        <Reveal variant="fade-up" delay={0.18}>
           <Contact />
-        </Reveal>
       </div>
 
-      <Reveal variant="fade" delay={0.25}>
         <Navigation projects={projects} blogs={blogs} />
-      </Reveal>
     </main>
   );
 }

@@ -4,7 +4,6 @@ import { ArrowUpRight } from "lucide-react";
 import { getBlogs } from "@/lib/blogs";
 import { formatDate } from "@/lib/dates";
 import { rssAlternate } from "@/lib/site";
-import { Reveal } from "@/components/ui/reveal";
 import PageShell, { BackLink } from "@/components/layout/page-shell";
 
 
@@ -19,20 +18,15 @@ export default function BlogIndexPage() {
 
   return (
     <PageShell>
-        <Reveal variant="fade-down">
           <BackLink />
-        </Reveal>
 
-        <Reveal variant="blur-up" delay={0.05}>
           <h1 className="mt-6 font-serif text-[28px] text-balance text-text-highlight">
             Blog
           </h1>
           <p className="mt-2 text-[13px] text-foreground/55">
             Notes on self-hosting, security, and whatever I&apos;m building.
           </p>
-        </Reveal>
 
-        <Reveal variant="fade-up" delay={0.1}>
           <ul className="mt-6 divide-y divide-foreground/10 border-t border-foreground/10">
             {blogs.map((blog) => (
               <li key={blog.slug}>
@@ -61,7 +55,6 @@ export default function BlogIndexPage() {
               </li>
             ))}
           </ul>
-        </Reveal>
     </PageShell>
   );
 }

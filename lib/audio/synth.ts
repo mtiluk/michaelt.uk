@@ -68,10 +68,6 @@ const SOUNDS = {
     tone(ctx, t, d, { freq: 660, dur: 0.05, gain: 0.025 });
     tone(ctx, t, d, { freq: 880, at: 0.03, dur: 0.06, gain: 0.018 });
   },
-  tap: (ctx: AudioContext, t: number, d: number) => {
-    noise(ctx, t, { dur: 0.028, gain: 0.045, cutoff: 1100 });
-    tone(ctx, t, d, { freq: 170, dur: 0.05, gain: 0.05, type: "triangle" });
-  },
   keyPress: (ctx: AudioContext, t: number, d: number) => {
     noise(ctx, t, { dur: 0.012, gain: 0.02, cutoff: 2400 });
     tone(ctx, t, d, { freq: 980, dur: 0.02, gain: 0.012 });

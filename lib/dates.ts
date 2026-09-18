@@ -1,12 +1,6 @@
-const SHORT_MONTHS: Record<string, string> = {
-  August: "Aug",
-  September: "Sep",
-};
-
 export function formatDate(value: string) {
   return new Date(value)
-    .toLocaleDateString("en-GB", { month: "long", year: "numeric" })
-    .replace(/^\p{L}+/u, (month) => SHORT_MONTHS[month] ?? month);
+    .toLocaleDateString("en-GB", { month: "long", year: "numeric" });
 }
 
 export function formatDateRange(start: string, end: string) {

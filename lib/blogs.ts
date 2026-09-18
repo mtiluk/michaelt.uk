@@ -7,13 +7,6 @@ const blogDirectory = path.join(process.cwd(), "content/blogs");
 
 export type BlogPost = Blog & { content: string };
 
-type SeriesContext = {
-  series: { title: string; slug: string };
-  part: number;
-  total: number;
-  posts: BlogPost[];
-};
-
 function read(slug: string): BlogPost | null {
   let file: string;
   try {
@@ -44,20 +37,4 @@ export function getBlogs(): BlogPost[] {
 export function getBlog(slug: string): BlogPost | null {
   if (slug.includes("/") || slug.includes("\\") || slug.includes("..")) return null;
   return read(slug);
-}
-
-export function getSeriesContext(slug: string): SeriesContext | null {
-  const current = getBlog(slug);
-  if (!current?.series) return null;
-
-  const posts = getBlogs()
-    .filter((post) => post.series?.slug === current.series?.slug)
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-
-  return {
-    series: current.series,
-    part: posts.findIndex((post) => post.slug === slug) + 1,
-    total: posts.length,
-    posts,
-  };
 }
