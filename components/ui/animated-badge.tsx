@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m, LazyMotion, domMax } from "motion/react";
 import { useEffect, useState } from "react";
 
 const TITLES = [
@@ -24,13 +24,14 @@ export default function AnimatedBadge() {
   }, []);
 
   return (
-    <motion.div
+    <LazyMotion features={domMax}>
+    <m.div
       layout
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       className="inline-flex overflow-hidden rounded bg-text-highlight/4 px-2 py-0.5 text-[11px] text-text-highlight/40 whitespace-nowrap"
     >
-      <AnimatePresence mode="wait">
-        <motion.span
+      <AnimatePresence mode="wait" initial={false}>
+        <m.span
           key={index}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
@@ -38,8 +39,9 @@ export default function AnimatedBadge() {
           transition={{ duration: 0.25, ease: "easeInOut" }}
         >
           {TITLES[index]}
-        </motion.span>
+        </m.span>
       </AnimatePresence>
-    </motion.div>
+    </m.div>
+    </LazyMotion>
   );
 }

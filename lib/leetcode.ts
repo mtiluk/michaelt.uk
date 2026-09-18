@@ -12,7 +12,7 @@ const QUERY = `query getUserProfile($username: String!) {
   }
 }`;
 
-export type LeetcodeStats = {
+type LeetcodeStats = {
   ranking?: number;
   solved: LeetcodeSolved;
 };

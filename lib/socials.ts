@@ -1,12 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
-import { parse } from "yaml";
-import { isPlatform, type DiscordSocial, type Social } from "@/types/socials";
+import { isPlatform, type DiscordSocial, type Social, type SocialsLiveData } from "@/types/socials";
 import { getContributions } from "./github";
 import { getLeetcodeStats } from "./leetcode";
 import { getLanyardPresence } from "./lanyard";
 
-const socialsFile = path.join(process.cwd(), "content/socials.yaml");
+const socialsFile = path.join(process.cwd(), "content/socials.json");
 
 export function getSocials(): Social[] {
   let raw: string;
@@ -16,7 +15,7 @@ export function getSocials(): Social[] {
     return [];
   }
 
-  const entries = (parse(raw) ?? []) as unknown[];
+  const entries = (JSON.parse(raw) ?? []) as unknown[];
 
   return entries.filter((entry): entry is Social => {
     if (typeof entry !== "object" || entry === null) return false;
@@ -29,7 +28,7 @@ export function getSocials(): Social[] {
   });
 }
 
-export async function getSocialsWithData(): Promise<Social[]> {
+export async function getSocialsLiveData(): Promise<SocialsLiveData> {
   const socials = getSocials();
   const github = socials.find((social) => social.platform === "github");
   const leetcode = socials.find((social) => social.platform === "leetcode");
@@ -41,22 +40,20 @@ export async function getSocialsWithData(): Promise<Social[]> {
     discord ? getLanyardPresence(discord.discordId) : null,
   ]);
 
-  return socials.map((social) => {
-    if (social.platform === "github" && contributions) {
-      return { ...social, contributions: contributions.total, weeks: contributions.weeks };
-    }
-    if (social.platform === "leetcode" && leetcodeStats) {
-      return { ...social, ranking: leetcodeStats.ranking, solved: leetcodeStats.solved };
-    }
-    if (social.platform === "discord" && presence) {
-      return {
-        ...social,
+  return {
+    ...(contributions && {
+      github: { contributions: contributions.total, weeks: contributions.weeks },
+    }),
+    ...(leetcodeStats && {
+      leetcode: { ranking: leetcodeStats.ranking, solved: leetcodeStats.solved },
+    }),
+    ...(presence && {
+      discord: {
         status: presence.status,
         customStatus: presence.customStatus,
         activity: presence.activity,
         spotify: presence.spotify,
-      };
-    }
-    return social;
-  });
+      },
+    }),
+  };
 }

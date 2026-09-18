@@ -1,17 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { AnimatePresence, m, MotionConfig } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useDismiss } from "@/components/ui/use-dismiss";
 import { ArrowUpRight, Check, Link2, MoreHorizontal, Share2 } from "lucide-react";
-
-const TARGETS = [
-  {
-    label: "Post on X",
-    icon: ArrowUpRight,
-    href: (url: string, text: string) => `https://x.com/intent/post?text=${text}&url=${url}`,
-  },
-] as const;
 
 const COPIED_MS = 1000;
 
@@ -21,7 +14,7 @@ export default function ShareMenu({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const canNativeShare = useSyncExternalStore(
     subscribeToNothing,
@@ -29,32 +22,11 @@ export default function ShareMenu({ title }: { title: string }) {
     () => false,
   );
 
-  useEffect(() => {
-    const pending = timers.current;
-    return () => pending.forEach(clearTimeout);
+  useEffect(() => () => {
+    if (timer.current) clearTimeout(timer.current);
   }, []);
 
-  const defer = useCallback((fn: () => void, ms: number) => {
-    timers.current.push(setTimeout(fn, ms));
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-
-    const onPointerDown = (e: PointerEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-
-    window.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
+  useDismiss(rootRef, () => setOpen(false), open);
 
   async function copyLink() {
     try {
@@ -65,9 +37,9 @@ export default function ShareMenu({ title }: { title: string }) {
     }
 
     setCopied(true);
-    defer(() => {
+    timer.current = setTimeout(() => {
       setOpen(false);
-      defer(() => setCopied(false), 200);
+      setCopied(false);
     }, COPIED_MS);
   }
 
@@ -78,10 +50,11 @@ export default function ShareMenu({ title }: { title: string }) {
     } catch {}
   }
 
-  function openTarget(href: (url: string, text: string) => string) {
+  function postOnX() {
     setOpen(false);
-    const url = href(encodeURIComponent(window.location.href), encodeURIComponent(title));
-    window.open(url, "_blank", "noopener,noreferrer");
+    const url = encodeURIComponent(window.location.href);
+    const text = encodeURIComponent(title);
+    window.open(`https://x.com/intent/post?text=${text}&url=${url}`, "_blank", "noopener,noreferrer");
   }
 
   const itemClass = cn(
@@ -112,7 +85,7 @@ export default function ShareMenu({ title }: { title: string }) {
 
         <AnimatePresence>
           {open && (
-            <motion.div
+            <m.div
               key="menu"
               role="menu"
               initial={{ opacity: 0, scale: 0.95, y: -4 }}
@@ -127,7 +100,7 @@ export default function ShareMenu({ title }: { title: string }) {
             >
               <button type="button" role="menuitem" onClick={copyLink} className={itemClass}>
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
+                  <m.span
                     key={copied ? "copied" : "copy"}
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -137,7 +110,7 @@ export default function ShareMenu({ title }: { title: string }) {
                   >
                     {copied ? <Check className="h-3 w-3" aria-hidden /> : <Link2 className="h-3 w-3" aria-hidden />}
                     {copied ? "Copied" : "Copy link"}
-                  </motion.span>
+                  </m.span>
                 </AnimatePresence>
               </button>
 
@@ -150,13 +123,11 @@ export default function ShareMenu({ title }: { title: string }) {
 
               <div className="mx-2.5 my-1 border-t border-foreground/10" />
 
-              {TARGETS.map(({ label, icon: Icon, href }) => (
-                <button key={label} type="button" role="menuitem" onClick={() => openTarget(href)} className={itemClass}>
-                  <Icon className="h-3 w-3" aria-hidden />
-                  {label}
-                </button>
-              ))}
-            </motion.div>
+              <button type="button" role="menuitem" onClick={postOnX} className={itemClass}>
+                <ArrowUpRight className="h-3 w-3" aria-hidden />
+                Post on X
+              </button>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

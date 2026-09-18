@@ -30,7 +30,7 @@ const QUERY = `query($login: String!) {
   }
 }`;
 
-export type Contributions = {
+type Contributions = {
   total: number;
   weeks: ContributionDay[][];
 };
@@ -99,17 +99,29 @@ async function fromPublicApi(login: string): Promise<Contributions | null> {
   return { total, weeks: toWeeks(days) };
 }
 
-export async function getContributions(login: string): Promise<Contributions | null> {
+async function fetchWithFallback<T>(
+  label: string,
+  withToken: (token: string) => Promise<T | null>,
+  withoutToken: () => Promise<T | null>,
+): Promise<T | null> {
   const token = process.env.GITHUB_TOKEN;
 
   try {
-    const result = token ? await fromGraphql(login, token) : await fromPublicApi(login);
-    if (!result) console.warn(`[socials] no contribution data for ${login}`);
+    const result = token ? await withToken(token) : await withoutToken();
+    if (result === null) console.warn(`[github] no data for ${label}`);
     return result;
   } catch (error) {
-    console.warn(`[socials] contribution fetch failed for ${login}`, error);
+    console.warn(`[github] fetch failed for ${label}`, error);
     return null;
   }
+}
+
+export async function getContributions(login: string): Promise<Contributions | null> {
+  return fetchWithFallback(
+    login,
+    (token) => fromGraphql(login, token),
+    () => fromPublicApi(login),
+  );
 }
 
 const REPO_STARS_QUERY = `query($owner: String!, $name: String!) {
@@ -157,22 +169,15 @@ async function starsFromPublicApi(owner: string, name: string): Promise<number |
   return typeof stars === "number" ? stars : null;
 }
 
-export async function getRepoStars(url: string): Promise<number | null> {
+async function getRepoStars(url: string): Promise<number | null> {
   const repo = parseGithubRepo(url);
   if (!repo) return null;
 
-  const token = process.env.GITHUB_TOKEN;
-
-  try {
-    const result = token
-      ? await starsFromGraphql(repo.owner, repo.name, token)
-      : await starsFromPublicApi(repo.owner, repo.name);
-    if (result === null) console.warn(`[projects] no star count for ${url}`);
-    return result;
-  } catch (error) {
-    console.warn(`[projects] star fetch failed for ${url}`, error);
-    return null;
-  }
+  return fetchWithFallback(
+    url,
+    (token) => starsFromGraphql(repo.owner, repo.name, token),
+    () => starsFromPublicApi(repo.owner, repo.name),
+  );
 }
 
 export async function withStars<T extends Project>(projects: T[]): Promise<T[]> {

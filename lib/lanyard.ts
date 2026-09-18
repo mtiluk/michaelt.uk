@@ -2,7 +2,7 @@ import type { DiscordStatus, SpotifyActivity } from "@/types/socials";
 
 const REVALIDATE = 60;
 
-export type LanyardPresence = {
+type LanyardPresence = {
   status: DiscordStatus;
   customStatus?: string;
   activity?: string;

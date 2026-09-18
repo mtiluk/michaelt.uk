@@ -1,6 +1,6 @@
 export const MAX_MESSAGE_LENGTH = 1024;
 export const MAX_EMAIL_LENGTH = 320;
-export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function isValidEmail(value: string) {
   const trimmed = value.trim();

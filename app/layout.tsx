@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Instrument_Serif } from "next/font/google";
+import localFont from "next/font/local";
 import { cn } from "@/lib/utils";
 import Wave from "@/components/ui/wave";
 import Providers from "@/app/providers";
 import "./globals.css";
-import CommandPalette from "@/components/layout/command-palette";
-import { getSearchItems } from "@/lib/search";
 import { getSocials } from "@/lib/socials";
 import { rssAlternate } from "@/lib/site";
 import { personSchema, websiteSchema } from "@/lib/schema";
@@ -15,10 +14,19 @@ import PaletteScript from "@/components/providers/palette-script";
 import PaletteProvider from "@/components/providers/palette-provider";
 import PreferencesBar from "@/components/layout/preferences-bar";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+const beausite = localFont({
+  variable: "--font-body",
   display: "swap",
+  src: [
+    { path: "./fonts/beausite-classic/light.otf", weight: "400", style: "normal" },
+    { path: "./fonts/beausite-classic/light-italic.otf", weight: "400", style: "italic" },
+    { path: "./fonts/beausite-classic/regular.otf", weight: "500", style: "normal" },
+    { path: "./fonts/beausite-classic/regular-italic.otf", weight: "500", style: "italic" },
+    { path: "./fonts/beausite-classic/medium.otf", weight: "600", style: "normal" },
+    { path: "./fonts/beausite-classic/medium-italic.otf", weight: "600", style: "italic" },
+    { path: "./fonts/beausite-classic/semibold.otf", weight: "700", style: "normal" },
+    { path: "./fonts/beausite-classic/semibold-italic.otf", weight: "700", style: "italic" },
+  ],
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -62,7 +70,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en"
-      className={cn("h-full antialiased font-sans", inter.variable, instrumentSerif.variable)}
+      className={cn("h-full antialiased font-sans", beausite.variable, instrumentSerif.variable)}
       suppressHydrationWarning
     >
       <head>
@@ -71,15 +79,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <JsonLd data={websiteSchema()} />
       </head>
       <body className={cn("relative min-h-full flex flex-col")} suppressHydrationWarning>
-        <PaletteProvider>
-          <Wave className="w-screen h-[39vh]" aria-hidden />
-          <div aria-hidden className="..." />
-          <Providers>
+        <Providers>
+          <PaletteProvider>
+            <Wave className="w-full h-[39vh]" aria-hidden />
             {children}
-            <CommandPalette items={getSearchItems()} />
             <PreferencesBar />
-          </Providers>
-        </PaletteProvider>
+          </PaletteProvider>
+        </Providers>
       </body>
     </html>
   );

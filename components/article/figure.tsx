@@ -13,11 +13,10 @@ const LAYOUTS: Record<number, string> = {
   4: "grid-cols-2",
 };
 
-export default function Figure({ images, src, alt, caption, aspect, fit = "cover", position = "center", }: {
+export default function Figure({ images, src, alt, aspect, fit = "cover", position = "center", }: {
   images?: FigureImage[];
   src?: string;
   alt?: string;
-  caption?: string;
   aspect?: string;
   fit?: "cover" | "contain";
   position?: string;
@@ -37,7 +36,7 @@ export default function Figure({ images, src, alt, caption, aspect, fit = "cover
         {items.slice(0, 4).map((image) => (
           <div key={image.src} className="flex flex-col gap-1.5">
             <div
-              className="relative overflow-hidden rounded-xl border border-foreground/10 bg-foreground/3"
+              className="relative overflow-hidden rounded-xl bg-foreground/3"
               style={ratio ? { aspectRatio: ratio } : undefined}
             >
               {ratio ? (
@@ -52,27 +51,15 @@ export default function Figure({ images, src, alt, caption, aspect, fit = "cover
                   }
                   className="object-cover"
                   style={{ objectFit: fit, objectPosition: position }}
-                  unoptimized
                 />
               ) : (
-                <Image src={image.src} alt={image.alt} width={1600} height={900} sizes="(min-width: 768px) 42rem, 100vw" className="h-auto w-full" unoptimized />
+                <Image src={image.src} alt={image.alt} width={1600} height={900} sizes="(min-width: 768px) 42rem, 100vw" className="h-auto w-full" />
               )}
             </div>
 
-            {image.label && (
-              <span className="px-1 text-[10px] tracking-wide text-foreground/40">
-                {image.label}
-              </span>
-            )}
           </div>
         ))}
       </div>
-
-      {caption && (
-        <figcaption className="mt-2 px-1 text-[10px] tracking-wide text-foreground/40">
-          {caption}
-        </figcaption>
-      )}
     </figure>
   );
 }

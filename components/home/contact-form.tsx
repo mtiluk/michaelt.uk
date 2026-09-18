@@ -1,12 +1,12 @@
 "use client";
 
-import { Check, ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { ChevronLeft, ChevronUp, Loader2 } from "lucide-react";
+import { AnimatePresence, m, MotionConfig, LazyMotion, domMax } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSound } from "@web-kits/audio/react";
-import { retro } from "@/lib/audio";
+import { useSound } from "@/lib/audio";
 import { MAX_EMAIL_LENGTH, MAX_MESSAGE_LENGTH, isValidEmail } from "@/lib/validation";
-import Confetti, { preloadConfetti } from "@/components/ui/confetti";
+import { preloadConfetti } from "@/components/ui/confetti";
+import ContactSuccess from "./contact-success";
 
 const PLACEHOLDERS = [
   "Say hello...",
@@ -24,16 +24,48 @@ const COUNTER_THRESHOLD = 100;
 type Step = "message" | "email" | "success";
 
 function autoSize(node: HTMLTextAreaElement | null) {
-  if (!node) return;
+  if (!node) return 0;
   node.style.height = "0px";
-  node.style.height = `${Math.min(node.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+  const height = Math.min(node.scrollHeight, MAX_TEXTAREA_HEIGHT);
+  node.style.height = `${height}px`;
+  return height;
+}
+
+function RotatingPlaceholder({ hidden }: { hidden: boolean }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (hidden) return;
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % PLACEHOLDERS.length);
+    }, CYCLE_INTERVAL);
+    return () => clearInterval(interval);
+  }, [hidden]);
+
+  return (
+    <AnimatePresence mode="wait" initial={false}>
+      {!hidden && (
+        <m.span
+          key={index}
+          aria-hidden
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.3 }}
+          className="pointer-events-none absolute top-0 left-0 text-[12px] leading-5 text-foreground/25"
+        >
+          {PLACEHOLDERS[index]}
+        </m.span>
+      )}
+    </AnimatePresence>
+  );
 }
 
 export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<Step>("message");
-  const [index, setIndex] = useState(0);
+  const [textHeight, setTextHeight] = useState(0);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [visited, setVisited] = useState(false);
@@ -42,11 +74,11 @@ export default function ContactForm() {
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
 
-  const playKey = useSound(retro.keyPress);
-  const playSelect = useSound(retro.select);
-  const playSend = useSound(retro.send);
-  const playSuccess = useSound(retro.success);
-  const playError = useSound(retro.error);
+  const playKey = useSound("keyPress");
+  const playSelect = useSound("select");
+  const playSend = useSound("send");
+  const playSuccess = useSound("success");
+  const playError = useSound("error");
 
   const setMessageRef = useCallback((node: HTMLTextAreaElement | null) => {
     messageRef.current = node;
@@ -59,14 +91,6 @@ export default function ContactForm() {
     node.value = "";
     autoSize(node);
   }, []);
-
-  useEffect(() => {
-    if (message) return;
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % PLACEHOLDERS.length);
-    }, CYCLE_INTERVAL);
-    return () => clearInterval(interval);
-  }, [message]);
 
   useEffect(() => {
     if (step !== "success") return;
@@ -141,11 +165,12 @@ export default function ContactForm() {
   const showCounter = step === "message" && remaining <= COUNTER_THRESHOLD;
 
   return (
+    <LazyMotion features={domMax}>
     <MotionConfig reducedMotion="user">
-    <motion.form ref={formRef} layout onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} style={{ height: lockedHeight ?? undefined }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
-      <AnimatePresence mode="wait">
+    <m.form ref={formRef} layout layoutDependency={`${step}:${textHeight}:${error ?? ""}`} onSubmit={handleSubmit} transition={{ layout: { duration: 0.3, ease: "easeInOut" } }} style={{ height: lockedHeight ?? undefined }} className="relative mx-1 mb-1 flex min-h-20.5 flex-col rounded-xl bg-text-highlight/4 px-3 pt-2.5 pb-2" >
+      <AnimatePresence mode="wait" initial={false}>
         {step === "message" && (
-          <motion.div
+          <m.div
             key="message"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -166,7 +191,7 @@ export default function ContactForm() {
               value={message}
               onChange={(e) => {
                 setMessage(e.target.value);
-                autoSize(e.currentTarget);
+                setTextHeight(autoSize(e.currentTarget));
                 playKey();
               }}
               onKeyDown={(e) => {
@@ -177,26 +202,12 @@ export default function ContactForm() {
               }}
             />
 
-            <AnimatePresence mode="wait">
-              {!message && (
-                <motion.span
-                  key={index}
-                  aria-hidden
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -4 }}
-                  transition={{ duration: 0.3 }}
-                  className="pointer-events-none absolute top-0 left-0 text-[12px] leading-5 text-foreground/25"
-                >
-                  {PLACEHOLDERS[index]}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            <RotatingPlaceholder hidden={Boolean(message)} />
+          </m.div>
         )}
 
         {step === "email" && (
-          <motion.div
+          <m.div
             key="email"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -236,28 +247,10 @@ export default function ContactForm() {
               }}
               className="w-full bg-transparent text-[12px] text-text-highlight outline-hidden"
             />
-          </motion.div>
+          </m.div>
         )}
 
-        {step === "success" && (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-className="relative flex flex-1 items-center gap-2.5"
-          >
-            <Confetti />
-
-            <div role="status" className="min-w-0">
-              <p className="text-[12px] text-text-highlight">Message sent</p>
-              <p className="truncate text-[11px] text-foreground/40">
-                I&apos;ll reply to {email.trim()} soon.
-              </p>
-            </div>
-          </motion.div>
-        )}
+        {step === "success" && <ContactSuccess key="success" email={email} />}
       </AnimatePresence>
 
       <div aria-hidden className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden">
@@ -283,7 +276,7 @@ className="relative flex flex-1 items-center gap-2.5"
         <div className="mt-4 flex items-center justify-between">
           <AnimatePresence initial={false} mode="wait">
             {isEmailStep ? (
-              <motion.button
+              <m.button
                 key="back"
                 type="button"
                 onClick={handleBack}
@@ -295,9 +288,9 @@ className="relative flex flex-1 items-center gap-2.5"
               >
                 <ChevronLeft className="h-3 w-3" aria-hidden />
                 Back
-              </motion.button>
+              </m.button>
             ) : message.trim() ? (
-              <motion.span
+              <m.span
                 key="hint"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -307,7 +300,7 @@ className="relative flex flex-1 items-center gap-2.5"
               >
                 <kbd className="font-sans">↵</kbd> continue ·{" "}
                 <kbd className="font-sans">⇧↵</kbd> new line
-              </motion.span>
+              </m.span>
             ) : (
               <span key="spacer" />
             )}
@@ -316,7 +309,7 @@ className="relative flex flex-1 items-center gap-2.5"
           <div className="flex items-center gap-2">
             <AnimatePresence initial={false}>
               {showCounter && (
-                <motion.span
+                <m.span
                   key="counter"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -326,7 +319,7 @@ className="relative flex flex-1 items-center gap-2.5"
                   className={`text-[10px] tabular-nums ${remaining === 0 ? "text-red-400/70" : "text-foreground/30"}`}
                 >
                   {remaining}
-                </motion.span>
+                </m.span>
               )}
             </AnimatePresence>
 
@@ -339,8 +332,8 @@ className="relative flex flex-1 items-center gap-2.5"
                 sending ? "" : "disabled:bg-text-highlight/10 disabled:text-background"
               }`}
             >
-              <AnimatePresence mode="wait">
-                <motion.span
+              <AnimatePresence mode="wait" initial={false}>
+                <m.span
                   key={sending ? "sending" : isEmailStep ? "send" : "next"}
                   initial={{ opacity: 0, scale: 0.7 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -352,13 +345,14 @@ className="relative flex flex-1 items-center gap-2.5"
                   ) : (
                     <ChevronUp className="h-4 w-4" aria-hidden />
                   )}
-                </motion.span>
+                </m.span>
               </AnimatePresence>
             </button>
           </div>
         </div>
       )}
-    </motion.form>
+    </m.form>
     </MotionConfig>
+    </LazyMotion>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import { AnimatePresence, m, MotionConfig } from "motion/react";
 import { Check } from "lucide-react";
 import { MdEmail } from "@/components/icons/brand";
 
@@ -39,7 +39,7 @@ export default function EmailLink({ email }: { email: string }) {
         className="inline-flex items-center gap-1 rounded-md text-[11px] text-foreground/75 transition-all hover:text-text-highlight/75 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-text-highlight/50"
       >
         <AnimatePresence mode="wait" initial={false}>
-          <motion.span
+          <m.span
             key={copied ? "copied" : "idle"}
             initial={{ opacity: 0, y: 3 }}
             animate={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export default function EmailLink({ email }: { email: string }) {
           >
             {copied ? <Check className="h-3 w-3" aria-hidden /> : <MdEmail aria-hidden />}
             {copied ? "Copied" : "Email"}
-          </motion.span>
+          </m.span>
         </AnimatePresence>
       </button>
     </MotionConfig>

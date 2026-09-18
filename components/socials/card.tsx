@@ -1,3 +1,4 @@
+import { memo } from "react";
 import GithubCard from "./cards/github";
 import LetterboxdCard from "./cards/letterboxd";
 import XCard from "./cards/x";
@@ -6,7 +7,7 @@ import LeetcodeCard from "./cards/leetcode";
 import DiscordCard from "./cards/discord";
 import type { Social } from "@/types/socials";
 
-export default function SocialCard({ social }: { social: Social }) {
+function SocialCard({ social }: { social: Social }) {
   switch (social.platform) {
     case "github":
       return <GithubCard social={social} />;
@@ -22,3 +23,5 @@ export default function SocialCard({ social }: { social: Social }) {
       return <DiscordCard social={social} />;
   }
 }
+
+export default memo(SocialCard);

@@ -17,7 +17,7 @@ import {
   SiTypescript,
 } from "@/components/icons/tech";
 
-export type TechEntry = {
+type TechEntry = {
   label: string;
   icon: ComponentType<IconProps>;
   /** Brand hex. Omitted where the brand mark is black/white and should follow badge text color instead. */

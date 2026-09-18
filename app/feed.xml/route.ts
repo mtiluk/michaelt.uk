@@ -1,19 +1,15 @@
-import path from "node:path";
 import { Feed } from "feed";
 import { NextResponse } from "next/server";
-import type { Blog } from "@/types/blogs";
-import type { Project } from "@/types/projects";
 import { siteConfig } from "@/lib/site";
-import getAllContent from "@/lib/content";
+import { getBlogs } from "@/lib/blogs";
+import { getProjects } from "@/lib/projects";
 
-const blogDirectory = path.join(process.cwd(), "content/blogs");
-const projectDirectory = path.join(process.cwd(), "content/projects");
+export const revalidate = 3600;
+
 
 export async function GET() {
-  const [blogs, projects] = await Promise.all([
-    getAllContent<Blog>(blogDirectory),
-    getAllContent<Project>(projectDirectory),
-  ]);
+  const blogs = getBlogs();
+  const projects = getProjects();
 
   const feed = new Feed({
     title: siteConfig.name,
@@ -38,8 +34,8 @@ export async function GET() {
     })),
     ...projects.map((project) => ({
       title: project.title,
-      id: `${siteConfig.url}/projects/${project.slug}`,
-      link: `${siteConfig.url}/projects/${project.slug}`,
+      id: `${siteConfig.url}/projects#${project.slug}`,
+      link: `${siteConfig.url}/projects`,
       description: project.description,
       date: new Date(project.endDate ?? project.startDate ?? Date.now()),
     })),
