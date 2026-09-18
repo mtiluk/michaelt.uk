@@ -4,7 +4,6 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { getBlog, getBlogs } from "@/lib/blogs";
 import { mdxComponents, mdxOptions } from "@/components/article/mdx-components";
 import Badge from "@/components/ui/badge";
-import ShareMenu from "@/components/article/share-menu";
 import { BackLink } from "@/components/layout/page-shell";
 import References from "@/components/article/references";
 import { formatDate } from "@/lib/dates";
@@ -49,10 +48,9 @@ export default async function BlogPost({ params }: BlogPageProps) {
         })}
       />
       <main className="relative z-10 w-full pt-[14vh]">
-        <header className="mb-12 border-b border-foreground/10 pb-8">
+        <header className="mb-8">
             <div className="mb-6 flex items-center justify-between">
               <BackLink />
-              <ShareMenu title={blog.title} />
             </div>
 
             <h1 className="font-serif text-[30px] leading-none tracking-[-0.01em] text-balance text-text-highlight">

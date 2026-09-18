@@ -1,6 +1,5 @@
 export default function Video({
   src,
-  caption,
   autoplay = false,
   maxHeight,
   aspect,
@@ -8,7 +7,6 @@ export default function Video({
   position = "center",
 }: {
   src: string;
-  caption?: string;
   autoplay?: boolean;
   maxHeight?: number;
   aspect?: string;
@@ -18,7 +16,7 @@ export default function Video({
   const constrained = Boolean(maxHeight || aspect);
 
   return (
-    <figure className="my-6 overflow-hidden rounded-xl border border-foreground/10">
+    <figure className="my-6 overflow-hidden rounded-xl">
       <div
         className="relative w-full bg-black/20"
         style={{
@@ -41,12 +39,6 @@ export default function Video({
             : { controls: true })}
         />
       </div>
-
-      {caption && (
-        <figcaption className="border-t border-foreground/10 px-4 py-2 text-[10px] tracking-wide text-foreground/40">
-          {caption}
-        </figcaption>
-      )}
     </figure>
   );
 }
