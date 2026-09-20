@@ -39,7 +39,6 @@ All content for the site is done using markdown or JSON - there is no database o
 ```
 content/
 ├── blogs/*.mdx        posts — frontmatter + body
-├── projects/*.mdx     project write-ups
 └── socials.yaml       profile data for the social hover cards
 ```
 
