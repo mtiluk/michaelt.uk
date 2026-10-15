@@ -1,0 +1,101 @@
+---
+slug: the-need-for-privacy
+title: The Need for Privacy
+description: >-
+  A post exploring my journey towards privacy and the importance of data privacy in today's digital world of artificial intelligence and Big Tech.
+timeToRead: 4 Minutes
+publishedAt: "2026-10-15"
+---
+
+Since the internet began, our privacy has been fleeting. This has only got worse with the rise of artificial intelligence, with examples like [Turnitin using students' and educators' data to train AI models](https://san.com/cc/this-company-checks-schoolwork-for-ai-cheating-now-it-wants-to-use-students-papers-to-train-ai/), [Gmail ad-targeting email scans until 2017](https://www.bbc.co.uk/news/technology-40404923), [Flock cameras](https://en.wikipedia.org/wiki/Flock_Safety) or [Google using search uploads for AI training](https://uk.pcmag.com/ai/166039/google-can-now-use-your-search-uploads-for-ai-training-heres-how-to-opt).
+
+I'll admit, this change was enormous and challenging because of my dependence on Google. I've had several Gmail accounts, the first created on *19 April 2011*, so moving away isn't easy. It means moving banking, socials and everything else. But it also puts into perspective how much Google knows about you and me.
+
+There is a need for privacy, now more than ever. This short post will delve into the steps I took, what I use and why I chose it over the alternatives.
+
+### Browser
+
+The core of browsing the internet is the web browser. There were a few criteria that I wanted from my browser. It had to be privacy-focused, open-source, lightweight, customisable and preferably have built-in ad and tracker blocking. The issue with browsers is there are so many choices, but here are a few I looked at:
+
+<Table
+  stickyFirstColumn
+  caption="Browser options compared"
+  columns={["Provider", "Features", "Cons"]}
+  rows={[
+    [<a href="https://www.waterfox.net/">Waterfox</a>, "Open-source, customisable", "It looks horrible"],
+    [<a href="https://helium.computer/">Helium</a>, "Open-source, customisable, lightweight, privacy-focused, nice features (such as bang shortcuts like !w for Wikipedia)", "Possible DRM issues"],
+    [<a href="https://brave.com/">Brave</a>, "Open-source, somewhat private", "Poor built-in VPN, built-in AI, Brave Rewards, Brave Wallet"],
+    [<a href="https://www.firefox.com/">Firefox</a>, "Simple, lightweight", "Not privacy-focused"],
+  ]}
+/>
+
+For a long time I used Brave, but the constant stream of crypto and other unnecessary features, which can be toggled off but are still annoying, eventually got to me. I ditched it for Firefox, which is nice, but could be better. Which is why I settled on Helium.
+
+Helium comes with built-in uBlock Origin and a beautiful design that can be customised exactly to your liking. I've been using it for a few weeks now and I adore it.
+
+<Figure
+  images={[
+    { src: "/articles/theneedforprivacy/Helium.png", alt: "Helium Browser Banner" },
+  ]}
+  caption="Helium Browser Banner"
+/>
+
+### Email
+
+This was the largest decision of all, since it meant moving fifteen years' worth of emails and accounts to a new provider, which is still an ongoing process. I wanted something with a clean interface, cross-platform apps and web access, that encrypts all emails.
+
+<Table
+  stickyFirstColumn
+  caption="Email provider options compared"
+  columns={["Provider", "Features", "Cons", "Price"]}
+  rows={[
+    ["Fastmail", "Decent interface, cross-platform apps", "Not E2EE", "£5.40/month"],
+    ["iCloud", "It's Apple", "It's Apple", "Free"],
+    ["Proton", "Clean interface, cross-platform, accessible, E2EE", "N/A", "£3.99/month"],
+  ]}
+/>
+
+To be honest, the comparison above means nothing. I knew that I was going to Proton well before looking into other providers, but doing so only confirmed my decision. Proton is a great ecosystem with Proton VPN, Proton Docs, Proton Pass and Proton Mail. All are great applications that provide good privacy and encryption.
+
+<Figure
+  images={[
+    { src: "/articles/theneedforprivacy/Proton.png", alt: "Proton Banner" },
+  ]}
+  caption="Proton Banner"
+/>
+
+### Search Engines
+
+Like most, I've been using Google since I connected to the internet. However, I believe that it's time to swap to something that doesn't take all of our data to train its AI models or use it for targeted ads. To put it into perspective, here is the search engine market share worldwide:
+- Google: 92%
+- Bing: 3.33%
+- Yahoo: 1.34%
+- Yandex: 0.97%
+- DuckDuckGo: 0.71%
+
+There aren't many great search engines out there, so it was quite difficult to choose. It was a decision between [DuckDuckGo](https://duckduckgo.com/) and [Kagi](https://kagi.com/). Kagi is the closest thing to perfection in a search engine, but it's a paid subscription.
+
+For now, I've simply settled on DuckDuckGo.
+
+<Figure
+  images={[
+    { src: "/articles/theneedforprivacy/DuckDuck.png", alt: "DuckDuckGo Banner" },
+  ]}
+  caption="DuckDuckGo Banner"
+/>
+
+### Files & Personal
+
+Everything else within my privacy stack is hosted locally within my home lab. This includes: [Pi-hole](https://pi-hole.net/) for network-wide ad blocking, [Vaultwarden](https://github.com/dani-garcia/vaultwarden) as a password manager and [Ente](https://ente.com/) for end-to-end encrypted, cross-platform photo storage.
+
+I have been running this home lab for a while, but I'm still looking for alternatives to things that I use. If you have any recommendations, please reach out to me at [me@mtil.uk](mailto:me@mtil.uk?subject=Open%20Source%20Alternative%20Suggestion).
+
+### Discovery
+
+For those looking to do something like this themselves, I'd recommend [Switch To EU](https://www.switch-to.eu/en). Although the UK is no longer in the EU, it's still the best place to find well-regulated, solid software.
+
+I haven't tried these yet, but I've found some potential alternatives:
+- Google Maps -> [HERE WeGo](https://www.switch-to.eu/en/services/eu/here-wego)
+- Figma -> [Penpot](https://github.com/penpot/penpot)
+
+Furthermore, I have an urge to deploy my own local large language model (LLM) as an alternative to Big Tech for privacy reasons. I'll write a more in-depth post on why I want to do this and how I'll go about it in the future.
